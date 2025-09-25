@@ -36,7 +36,10 @@ class _FakeFormState implements DraftModeFormStateI {
   final Map<dynamic, dynamic> _values;
 
   @override
-  void registerProperty(DraftModeEntityAttributeI attribute, {String? debugName}) {
+  void registerProperty(
+    DraftModeEntityAttributeI attribute, {
+    String? debugName,
+  }) {
     throw UnimplementedError();
   }
 
@@ -46,12 +49,18 @@ class _FakeFormState implements DraftModeFormStateI {
   }
 
   @override
-  void registerField(DraftModeEntityAttributeI attribute, GlobalKey<FormFieldState> key) {
+  void registerField(
+    DraftModeEntityAttributeI attribute,
+    GlobalKey<FormFieldState> key,
+  ) {
     throw UnimplementedError();
   }
 
   @override
-  void unregisterField(DraftModeEntityAttributeI attribute, GlobalKey<FormFieldState> key) {
+  void unregisterField(
+    DraftModeEntityAttributeI attribute,
+    GlobalKey<FormFieldState> key,
+  ) {
     throw UnimplementedError();
   }
 
@@ -68,27 +77,32 @@ class _FakeFormState implements DraftModeFormStateI {
 
 void main() {
   group('vRequired()', () {
-    testWidgets('returns localized error for null and empty; null for valid values', (tester) async {
-      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
-      await tester.pump();
-      final context = SimpleContext.lastContext!;
-      final loc = DraftModeLocalizations.of(context)!;
-      final validator = vRequired();
+    testWidgets(
+      'returns localized error for null and empty; null for valid values',
+      (tester) async {
+        await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+        await tester.pump();
+        final context = SimpleContext.lastContext!;
+        final loc = DraftModeLocalizations.of(context)!;
+        final validator = vRequired();
 
-      final errNull = validator(context, null, null);
-      final errEmpty = validator(context, null, '');
-      final okString = validator(context, null, 'hello');
-      final okNonString = validator(context, null, 0);
+        final errNull = validator(context, null, null);
+        final errEmpty = validator(context, null, '');
+        final okString = validator(context, null, 'hello');
+        final okNonString = validator(context, null, 0);
 
-      expect(errNull, loc.validationRequired);
-      expect(errEmpty, loc.validationRequired);
-      expect(okString, isNull);
-      expect(okNonString, isNull);
-    });
+        expect(errNull, loc.validationRequired);
+        expect(errEmpty, loc.validationRequired);
+        expect(okString, isNull);
+        expect(okNonString, isNull);
+      },
+    );
   });
 
   group('vRequiredOn()', () {
-    testWidgets('returns error when linked attribute requires value', (tester) async {
+    testWidgets('returns error when linked attribute requires value', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
       await tester.pump();
       final context = SimpleContext.lastContext!;
@@ -103,7 +117,9 @@ void main() {
       expect(error, loc.validationRequired);
     });
 
-    testWidgets('returns null when linked attribute does not require value', (tester) async {
+    testWidgets('returns null when linked attribute does not require value', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
       await tester.pump();
       final context = SimpleContext.lastContext!;

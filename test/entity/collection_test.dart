@@ -22,23 +22,24 @@ class _TestItemMapper extends DraftModeEntityMapper<_TestItem> {
 
   @override
   Map<String, dynamic> toMap(_TestItem value) {
-    return <String, dynamic>{
-      'id': value.id,
-      'label': value.label,
-    };
+    return <String, dynamic>{'id': value.id, 'label': value.label};
   }
 }
 
 void main() {
   group('DraftModeEntityCollectionMapper', () {
     test('fromMap returns empty list when raw is null', () {
-      final mapper = DraftModeEntityCollectionMapper<_TestItem>(_TestItemMapper());
+      final mapper = DraftModeEntityCollectionMapper<_TestItem>(
+        _TestItemMapper(),
+      );
 
       expect(mapper.fromMap(null), isEmpty);
     });
 
     test('fromMap converts dynamic list using item mapper', () {
-      final mapper = DraftModeEntityCollectionMapper<_TestItem>(_TestItemMapper());
+      final mapper = DraftModeEntityCollectionMapper<_TestItem>(
+        _TestItemMapper(),
+      );
 
       final items = mapper.fromMap(<dynamic>[
         <String, dynamic>{'id': 1, 'label': 'foo'},
@@ -49,7 +50,9 @@ void main() {
     });
 
     test('toMap delegates to item mapper', () {
-      final mapper = DraftModeEntityCollectionMapper<_TestItem>(_TestItemMapper());
+      final mapper = DraftModeEntityCollectionMapper<_TestItem>(
+        _TestItemMapper(),
+      );
       final collection = DraftModeEntityCollection<_TestItem>([
         const _TestItem(1, 'foo'),
         const _TestItem(2, 'bar'),
@@ -74,9 +77,7 @@ void main() {
       expect(sameRef, isTrue);
 
       final listRef = initial.items;
-      initial.items = [
-        const _TestItem(2, 'b'),
-      ];
+      initial.items = [const _TestItem(2, 'b')];
 
       expect(identical(initial.items, listRef), isTrue);
       expect(initial.items.single.id, 2);
