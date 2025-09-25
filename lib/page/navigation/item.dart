@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../platform/config.dart';
 
+/// Shared navigation button used by top and bottom bars.
 class DraftModePageNavigationItem extends StatelessWidget {
   final String? text;
   final IconData? icon;
@@ -23,17 +24,17 @@ class DraftModePageNavigationItem extends StatelessWidget {
   });
 
   Future<void> _onTap(BuildContext context) async {
-    try {
-      if (onTap != null) {
-        await onTap!();
-      } else if (loadWidget != null) {
-        Navigator.of(context).push(
-          PlatformConfig.isIOS
-              ? CupertinoPageRoute(builder: (_) => loadWidget!)
-              : MaterialPageRoute(builder: (_) => loadWidget!),
-        );
-      }
-    } catch (_) {}
+    if (onTap != null) {
+      await onTap!();
+      return;
+    }
+    if (loadWidget != null) {
+      await Navigator.of(context).push(
+        PlatformConfig.isIOS
+            ? CupertinoPageRoute(builder: (_) => loadWidget!)
+            : MaterialPageRoute(builder: (_) => loadWidget!),
+      );
+    }
   }
 
   @override
@@ -55,7 +56,10 @@ class DraftModePageNavigationItem extends StatelessWidget {
         child: Icon(icon, size: iconSize, color: iconColor),
       );
     } else if (text?.isNotEmpty == true) {
-      child = Padding(padding: EdgeInsets.only(right: 5), child: Text(text!));
+      child = Padding(
+        padding: const EdgeInsets.only(right: 5),
+        child: Text(text!),
+      );
     } else {
       child = const SizedBox();
     }

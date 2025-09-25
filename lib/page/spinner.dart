@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../platform/config.dart';
 
+/// Lightweight activity indicator used while loading page content.
 class DraftModePageSpinner extends StatelessWidget {
   final double size;
   final Color? color;
@@ -21,7 +22,7 @@ class DraftModePageSpinner extends StatelessWidget {
         child: SizedBox(
           width: size,
           height: size,
-          child: CupertinoActivityIndicator(color: const Color(0xFFC7FF00)),
+          child: CupertinoActivityIndicator(color: effectiveColor),
         ),
       );
     }
@@ -54,7 +55,7 @@ class DraftModePageSpinnerPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final arcRect = Offset.zero & size;
-    canvas.drawArc(arcRect, 0, 3.14 * 1.5, false, paint);
+    canvas.drawArc(arcRect, 0, 3.141592653589793 * 1.5, false, paint);
   }
 
   @override

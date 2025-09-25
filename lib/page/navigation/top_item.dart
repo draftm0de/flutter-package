@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'item.dart';
 import '../../platform/config.dart';
 
+/// Convenience wrapper configuring a [DraftModePageNavigationItem] for the top bar.
 class DraftModePageNavigationTopItem extends StatelessWidget {
   final String? text;
   final IconData? icon;

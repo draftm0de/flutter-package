@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../platform/config.dart';
 
+/// Platform-aware top navigation bar used by [DraftModePage].
 class DraftModePageNavigationTop extends StatelessWidget
     implements PreferredSizeWidget, ObstructingPreferredSizeWidget {
   final String? title;

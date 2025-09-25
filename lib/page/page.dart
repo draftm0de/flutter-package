@@ -1,26 +1,56 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //
-import '../platform/config.dart';
 import '../platform/buttons.dart';
+import '../platform/config.dart';
 import '../l10n/app_localizations.dart';
-import 'navigation/top_item.dart';
-import 'navigation/top.dart';
-import 'navigation/bottom_item.dart';
 import 'navigation/bottom.dart';
+import 'navigation/bottom_item.dart';
+import 'navigation/top.dart';
+import 'navigation/top_item.dart';
 
+/// Encapsulates shared scaffolding behaviour for DraftMode pages.
+///
+/// Provides platform-aware navigation bars, optional save/back handling, and a
+/// bottom navigation container. Business logic should be provided via callbacks
+/// and injected widgets to keep this component purely presentational.
 class DraftModePage extends StatelessWidget {
+  /// Default placeholder used when the caller does not specify a leading widget.
   static const Widget defaultLeading = SizedBox.shrink();
+
+  /// Title displayed in the navigation bar.
   final String? navigationTitle;
+
+  /// Fallback label for the back button on iOS when [topLeading] is not
+  /// provided.
   final String? topLeadingText;
+
+  /// Custom leading widget; falls back to a platform back button.
   final Widget? topLeading;
+
+  /// Widgets displayed on the right side of the navigation bar.
   final List<DraftModePageNavigationTopItem>? topTrailing;
+
+  /// Widgets anchored to the left side of the bottom bar.
   final List<DraftModePageNavigationBottomItem>? bottomLeading;
+
+  /// Widgets anchored to the right side of the bottom bar.
   final List<DraftModePageNavigationBottomItem>? bottomTrailing;
+
+  /// Main content of the page.
   final Widget body;
+
+  /// Optional callback invoked when the save action is triggered; returning
+  /// `true` pops the page with a positive result.
   final Future<bool> Function()? onSavePressed;
+
+  /// Horizontal padding applied around [body].
   final double? horizontalContainerPadding;
+
+  /// Vertical padding applied around [body].
   final double? verticalContainerPadding;
+
+  /// Overrides the default background colour.
   final Color? containerBackgroundColor;
 
   const DraftModePage({
@@ -47,11 +77,9 @@ class DraftModePage extends StatelessWidget {
       }
     }
 
-    Future<void> btnSavePressed() async {
-      final success = await onSavePressed?.call();
-      if (success == true) {
-        await btnBackPressed(result: true);
-      }
+    Future<void> handleSavePressed() async {
+      final bool? success = await onSavePressed?.call();
+      if (success == true) await btnBackPressed(result: true);
     }
 
     Widget? topLeadingElement;
@@ -69,26 +97,28 @@ class DraftModePage extends StatelessWidget {
       topLeadingElement = topLeading;
     }
 
-    final List<Widget> topTrailingElements = onSavePressed != null
+    final List<Widget> automaticTrailing = onSavePressed != null
         ? [
             DraftModePageNavigationTopItem(
-              text: (PlatformConfig.isIOS)
+              text: PlatformConfig.isIOS
                   ? (DraftModeLocalizations.of(context)?.navigationBtnSave ??
                         'Ready')
                   : null,
-              icon: (PlatformConfig.isIOS) ? null : PlatformButtons.save,
-              onTap: btnSavePressed,
+              icon: PlatformConfig.isIOS ? null : PlatformButtons.save,
+              onTap: handleSavePressed,
             ),
           ]
-        : topTrailing ?? [];
+        : const [];
 
     final navigationTop = DraftModePageNavigationTop(
       title: navigationTitle,
       leading: topLeadingElement,
-      trailing: topTrailing ?? topTrailingElements,
+      trailing: topTrailing ?? automaticTrailing,
     );
 
-    final navigationBottom = (bottomLeading != null || bottomTrailing != null)
+    final navigationBottom =
+        (bottomLeading?.isNotEmpty == true ||
+            bottomTrailing?.isNotEmpty == true)
         ? DraftModePageNavigationBottom(
             leading: bottomLeading,
             trailing: bottomTrailing,
@@ -112,19 +142,19 @@ class DraftModePage extends StatelessWidget {
             ],
           );
 
+    final Color background =
+        containerBackgroundColor ??
+        PlatformConfig.containerBackgroundColor(context);
+
     return PlatformConfig.isIOS
         ? CupertinoPageScaffold(
-            backgroundColor:
-                containerBackgroundColor ??
-                PlatformConfig.containerBackgroundColor(context),
-            navigationBar: navigationTop as ObstructingPreferredSizeWidget?,
+            backgroundColor: background,
+            navigationBar: navigationTop,
             child: SafeArea(top: false, child: content),
           )
         : Scaffold(
-            appBar: navigationTop as PreferredSizeWidget?,
-            backgroundColor:
-                containerBackgroundColor ??
-                PlatformConfig.containerBackgroundColor(context),
+            appBar: navigationTop,
+            backgroundColor: background,
             body: content,
           );
   }
