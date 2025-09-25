@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../platform/config.dart';
 
+/// Groups related form rows into a platform-adaptive container.
 class DraftModeUISection extends StatelessWidget {
   final String? header;
   final List<Widget> children;
@@ -18,7 +19,7 @@ class DraftModeUISection extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasHeader = header != null;
 
-    return DraftModeUISectionContext(
+    return DraftModeSectionScope(
       child: PlatformConfig.isIOS
           ? CupertinoFormSection.insetGrouped(
               decoration: transparent ? BoxDecoration(color: null) : null,
@@ -34,11 +35,10 @@ class DraftModeUISection extends StatelessWidget {
             )
           : Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Rounded corners
+                borderRadius: BorderRadius.circular(10.0),
               ),
-              //elevation: 4.0,
               child: Padding(
-                padding: EdgeInsets.zero, // Inset padding
+                padding: EdgeInsets.zero,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -60,17 +60,18 @@ class DraftModeUISection extends StatelessWidget {
   }
 }
 
-class DraftModeUISectionContext extends InheritedWidget {
-  const DraftModeUISectionContext({super.key, required super.child});
+/// Exposes contextual hints for descendants rendered within a [DraftModeUISection].
+class DraftModeSectionScope extends InheritedWidget {
+  const DraftModeSectionScope({super.key, required super.child});
 
   static bool isInSection(BuildContext context) {
     return context
-            .dependOnInheritedWidgetOfExactType<DraftModeUISectionContext>() !=
+            .dependOnInheritedWidgetOfExactType<DraftModeSectionScope>() !=
         null;
   }
 
   static EdgeInsetsGeometry get containerPadding =>
-      EdgeInsets.symmetric(horizontal: 20);
+      const EdgeInsets.symmetric(horizontal: 20);
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;

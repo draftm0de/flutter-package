@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' as m;
 import '../l10n/app_localizations.dart';
 import '../platform/config.dart';
 
+/// Platform-aware confirmation dialog that falls back to sensible defaults.
 class DraftModeUIConfirm extends StatelessWidget {
   final String title;
   final String message;
@@ -16,6 +17,7 @@ class DraftModeUIConfirm extends StatelessWidget {
     this.cancelLabel,
   });
 
+  /// Displays the dialog using Cupertino styling on iOS and returns the choice.
   static Future<bool?> show({
     required BuildContext context,
     required String title,
@@ -57,7 +59,6 @@ class DraftModeUIConfirm extends StatelessWidget {
         actions: [
           CupertinoDialogAction(
             onPressed: () {
-              //onConfirm.call();
               Navigator.of(context).pop(false);
             },
             child: Text(cancelBtn),
@@ -65,7 +66,6 @@ class DraftModeUIConfirm extends StatelessWidget {
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
-              //onCancel!.call();
               Navigator.of(context).pop(true);
             },
             child: Text(confirmBtn),
@@ -74,7 +74,6 @@ class DraftModeUIConfirm extends StatelessWidget {
       );
     }
 
-    // ANDROID: Material AlertDialog (simple + native look)
     return m.AlertDialog(
       title: m.Text(title),
       content: m.Text(message),

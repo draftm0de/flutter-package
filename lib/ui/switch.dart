@@ -1,25 +1,19 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as material;
+
 import '../platform/config.dart';
 
+/// Adaptive switch that mirrors the native control for the active platform.
 class DraftModeUISwitch extends StatelessWidget {
   final bool value;
-  final Function(bool)? onChanged;
-  const DraftModeUISwitch({
-    super.key,
-    this.value = false,
-    required this.onChanged,
-  });
-
-  Widget _layoutIOS() {
-    return CupertinoSwitch(value: value, onChanged: onChanged);
-  }
-
-  Widget _layoutAndroid() {
-    return Text("not implemented");
-  }
+  final ValueChanged<bool>? onChanged;
+  const DraftModeUISwitch({super.key, this.value = false, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return PlatformConfig.isIOS ? _layoutIOS() : _layoutAndroid();
+    if (PlatformConfig.isIOS) {
+      return CupertinoSwitch(value: value, onChanged: onChanged);
+    }
+    return material.Switch.adaptive(value: value, onChanged: onChanged);
   }
 }

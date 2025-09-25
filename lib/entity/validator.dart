@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../l10n/app_localizations.dart';
 import 'interface.dart';
 
-/// Creates a validator that fails when [v] is null or, for strings, empty.
+/// Creates a validator that fails when the inspected value is null or, for strings, empty.
 /// The returned message is localized using [DraftModeLocalizations].
 DraftModeEntityValidator vRequired() {
   return (BuildContext context, DraftModeFormContext? form, dynamic v) {

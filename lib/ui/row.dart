@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:draftmode/platform.dart';
 
+/// Displays a form row with an optional leading label and adaptive padding.
 class DraftModeUIRow extends StatelessWidget {
   final Widget child;
   final String? label;
@@ -10,7 +11,7 @@ class DraftModeUIRow extends StatelessWidget {
     super.key,
     required this.child,
     this.label,
-    this.alignment = AlignmentGeometry.centerLeft,
+    this.alignment = Alignment.centerLeft,
     this.verticalDoubled = false,
   });
 
@@ -40,12 +41,7 @@ class DraftModeUIRow extends StatelessWidget {
                     style: PlatformConfig.labelStyle(context),
                   ),
                 ),
-                Expanded(
-                  child: content,
-                  /*child: SizedBox(
-                child: child,
-              )*/
-                ),
+                Expanded(child: content),
               ],
             )
           : content,

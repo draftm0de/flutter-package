@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../platform/config.dart';
 
+/// Displays validation errors with consistent spacing and styling.
 class DraftModeUITextError extends StatelessWidget {
   final String? text;
   final bool visible;
@@ -18,7 +19,7 @@ class DraftModeUITextError extends StatelessWidget {
     if (text == null || text!.isEmpty || !visible) {
       return SizedBox.shrink();
     }
-    Widget content = Text(
+    final Widget content = Text(
       text!,
       style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 14),
     );
@@ -27,6 +28,7 @@ class DraftModeUITextError extends StatelessWidget {
         left: PlatformConfig.horizontalContainerPadding,
         right: PlatformConfig.horizontalContainerPadding,
         bottom: PlatformConfig.verticalContainerPadding,
+        top: spacing,
       ),
       child: content,
     );
