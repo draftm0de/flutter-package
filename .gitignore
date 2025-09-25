@@ -1,1 +1,4 @@
 /.idea/
+!/.git/hooks/pre-commit
+/build/
+/.dart_tool/
