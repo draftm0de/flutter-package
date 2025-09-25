@@ -7,10 +7,11 @@ class PlatformLocalization {
   PlatformLocalization._(this._loc);
 
   static PlatformLocalization of(BuildContext context) {
-    final loc = Localizations.of<DraftModeLocalizations>(
-      context,
-      DraftModeLocalizations,
-    ) ??
+    final loc =
+        Localizations.of<DraftModeLocalizations>(
+          context,
+          DraftModeLocalizations,
+        ) ??
         _fallback;
 
     return PlatformLocalization._(loc);
@@ -22,7 +23,9 @@ class PlatformLocalization {
 }
 
 class _ManualFallback implements DraftModeLocalizations {
-  @override String get navigationBtnBack => 'xZurück';
+  @override
+  String get navigationBtnBack => 'xZurück';
 
-  @override noSuchMethod(Invocation i) => super.noSuchMethod(i);
+  @override
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
 }

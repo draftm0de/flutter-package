@@ -8,10 +8,7 @@ Widget wrapWithLoc(Widget child) {
       DefaultWidgetsLocalizations.delegate,
       DraftModeLocalizations.delegate,
     ],
-    child: Directionality(
-      textDirection: TextDirection.ltr,
-      child: child,
-    ),
+    child: Directionality(textDirection: TextDirection.ltr, child: child),
   );
 }
 

@@ -18,13 +18,13 @@ class DraftModeFormButtonText extends StatelessWidget {
     this.formKey,
     this.styleSize,
     this.styleColor,
-    this.stretched = false
+    this.stretched = false,
   });
 
   @override
   Widget build(BuildContext context) {
     Color? color;
-    switch(styleColor ?? 'none') {
+    switch (styleColor ?? 'none') {
       case DraftModeFromButtonColor.dateTime:
         color = CupertinoColors.systemGrey5;
 
@@ -40,12 +40,15 @@ class DraftModeFormButtonText extends StatelessWidget {
         fontSize = 14;
     }
 
-    final Widget content = Text(text, style: TextStyle(
-      color: color,
-      fontSize: fontSize,
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.normal,
-    ));
+    final Widget content = Text(
+      text,
+      style: TextStyle(
+        color: color,
+        fontSize: fontSize,
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.normal,
+      ),
+    );
 
     return DraftModeFormButton(
       content: content,

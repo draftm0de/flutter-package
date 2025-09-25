@@ -5,14 +5,18 @@ abstract class DraftModeEntityCollectionItem<KeyType> {
   KeyType getId();
 }
 
-class DraftModeEntityCollectionMapper<Item extends DraftModeEntityCollectionItem> {
+class DraftModeEntityCollectionMapper<
+  Item extends DraftModeEntityCollectionItem
+> {
   final DraftModeEntityMapper itemMapper;
   DraftModeEntityCollectionMapper(this.itemMapper);
 
   List<Item> fromMap(List<dynamic>? raw) {
     if (raw == null) return [];
     final List<Item> items = raw
-        .map<Item>((e) => itemMapper.fromMap((e as Map).cast<String, dynamic>()))
+        .map<Item>(
+          (e) => itemMapper.fromMap((e as Map).cast<String, dynamic>()),
+        )
         .toList();
     return items;
   }
@@ -32,5 +36,6 @@ class DraftModeEntityCollection<Item extends DraftModeEntityCollectionItem> {
       ..clear()
       ..addAll(items);
   }
+
   Item? getById(dynamic id) => _items.firstWhereOrNull((e) => e.getId() == id);
 }

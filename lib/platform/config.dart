@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,11 +26,10 @@ class PlatformConfig {
   static TextStyle labelStyle(BuildContext context, {bool strike = false}) {
     final base = isIOS
         ? CupertinoTheme.of(context).textTheme.textStyle
-        : (Theme.of(context).textTheme.bodySmall ?? DefaultTextStyle.of(context).style);
+        : (Theme.of(context).textTheme.bodySmall ??
+              DefaultTextStyle.of(context).style);
 
-    final activeColor = isIOS
-        ? CupertinoColors.label
-        : Colors.grey;
+    final activeColor = isIOS ? CupertinoColors.label : Colors.grey;
 
     return base.copyWith(
       color: activeColor,
@@ -39,14 +39,16 @@ class PlatformConfig {
 
   final Color active = isIOS ? CupertinoColors.activeBlue : Colors.blue;
 
-  static TextStyle labelStyleActive(BuildContext context, {bool strike = false}) {
+  static TextStyle labelStyleActive(
+    BuildContext context, {
+    bool strike = false,
+  }) {
     final base = isIOS
         ? CupertinoTheme.of(context).textTheme.textStyle
-        : (Theme.of(context).textTheme.bodySmall ?? DefaultTextStyle.of(context).style);
+        : (Theme.of(context).textTheme.bodySmall ??
+              DefaultTextStyle.of(context).style);
 
-    final activeColor = isIOS
-        ? CupertinoColors.activeBlue
-        : Colors.blue;
+    final activeColor = isIOS ? CupertinoColors.activeBlue : Colors.blue;
 
     return base.copyWith(
       color: activeColor,
@@ -56,32 +58,27 @@ class PlatformConfig {
 
   static TextStyle placeHolderStyle(BuildContext context) {
     if (isIOS) {
-        return CupertinoTheme.of(
-            context
-          ).textTheme.textStyle.copyWith(color: CupertinoColors.placeholderText);
+      return CupertinoTheme.of(
+        context,
+      ).textTheme.textStyle.copyWith(color: CupertinoColors.placeholderText);
     } else {
       final hintStyle = Theme.of(context).inputDecorationTheme.hintStyle;
       if (hintStyle != null) return hintStyle;
-      return Theme.of(context)
-          .textTheme
-          .bodyMedium!
-          .copyWith(color: Colors.grey);
+      return Theme.of(
+        context,
+      ).textTheme.bodyMedium!.copyWith(color: Colors.grey);
     }
-
   }
 
   static TextStyle buttonTextStyle(BuildContext context) {
     if (isIOS) {
       return TextStyle(
-          color: CupertinoColors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w500
+        color: CupertinoColors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
       );
     } else {
-      return TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      );
+      return TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
     }
   }
 

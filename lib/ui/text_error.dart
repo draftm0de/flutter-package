@@ -20,16 +20,13 @@ class DraftModeUITextError extends StatelessWidget {
     }
     Widget content = Text(
       text!,
-      style: const TextStyle(
-        color: CupertinoColors.systemRed,
-        fontSize: 14,
-      ),
+      style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 14),
     );
     return Padding(
       padding: EdgeInsets.only(
-          left: PlatformConfig.horizontalContainerPadding,
-          right: PlatformConfig.horizontalContainerPadding,
-          bottom: PlatformConfig.verticalContainerPadding
+        left: PlatformConfig.horizontalContainerPadding,
+        right: PlatformConfig.horizontalContainerPadding,
+        bottom: PlatformConfig.verticalContainerPadding,
       ),
       child: content,
     );

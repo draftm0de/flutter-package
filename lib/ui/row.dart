@@ -11,44 +11,44 @@ class DraftModeUIRow extends StatelessWidget {
     required this.child,
     this.label,
     this.alignment = AlignmentGeometry.centerLeft,
-    this.verticalDoubled = false
+    this.verticalDoubled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final hasLabel = (label != null && label!.trim().isNotEmpty);
 
-    final content = Align(
-      alignment: alignment,
-      child: child,
-    );
+    final content = Align(alignment: alignment, child: child);
 
-    final paddingVertical = (verticalDoubled) ? PlatformConfig.verticalContainerPadding * 2 : PlatformConfig.verticalContainerPadding;
+    final paddingVertical = (verticalDoubled)
+        ? PlatformConfig.verticalContainerPadding * 2
+        : PlatformConfig.verticalContainerPadding;
 
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: PlatformConfig.horizontalContainerPadding,
-        vertical: paddingVertical
+        vertical: paddingVertical,
       ),
-      child: hasLabel ?
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: PlatformConfig.labelWidth,
-              child: Text(
-                label!,
-                style: PlatformConfig.labelStyle(context)
-              ),
-            ),
-            Expanded(
-              child: content,
-              /*child: SizedBox(
+      child: hasLabel
+          ? Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: PlatformConfig.labelWidth,
+                  child: Text(
+                    label!,
+                    style: PlatformConfig.labelStyle(context),
+                  ),
+                ),
+                Expanded(
+                  child: content,
+                  /*child: SizedBox(
                 child: child,
               )*/
-            ),
-          ]
-        ) : content,
+                ),
+              ],
+            )
+          : content,
     );
   }
 }

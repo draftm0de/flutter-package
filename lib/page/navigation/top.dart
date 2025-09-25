@@ -29,16 +29,14 @@ class DraftModePageNavigationTop extends StatelessWidget
         leading: leading,
         trailing: trailing != null && trailing!.isNotEmpty
             ? Padding(
-                padding: EdgeInsets.only(right: PlatformConfig.verticalContainerPadding),
+                padding: EdgeInsets.only(
+                  right: PlatformConfig.verticalContainerPadding,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: trailing!
-                      .map(
-                        (widget) => widget,
-                      )
-                      .toList(),
-                )
+                  children: trailing!.map((widget) => widget).toList(),
+                ),
               )
             : null,
         backgroundColor: backgroundColor,

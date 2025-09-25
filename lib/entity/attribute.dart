@@ -19,8 +19,9 @@ class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
     this.value,
     this.validator,
     List<DraftModeEntityValidator>? validators,
-  }) :
-    validators = validators != null ? List.of(validators) : <DraftModeEntityValidator>[];
+  }) : validators = validators != null
+           ? List.of(validators)
+           : <DraftModeEntityValidator>[];
 
   @override
   void addValidator(DraftModeEntityValidator validator) {

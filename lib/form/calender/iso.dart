@@ -17,7 +17,7 @@ class DraftModeCalenderIOS extends StatelessWidget {
     required this.mode,
     required this.dateTime,
     required this.onPressed,
-    required this.onChange
+    required this.onChange,
   });
 
   @override
@@ -37,7 +37,15 @@ class DraftModeCalenderIOS extends StatelessWidget {
               dateTime: dateTime,
               onPressed: onPressed,
               onSelect: (DateTime day) {
-                onChange(DateTime(day.year, day.month, day.day, dateTime.hour, dateTime.minute));
+                onChange(
+                  DateTime(
+                    day.year,
+                    day.month,
+                    day.day,
+                    dateTime.hour,
+                    dateTime.minute,
+                  ),
+                );
               },
               height: height,
             );
@@ -48,22 +56,26 @@ class DraftModeCalenderIOS extends StatelessWidget {
               dateTime: dateTime,
               onPressed: onPressed,
               onChanged: (m, y) {
-                onChange(DateTime(y, m, dateTime.day, dateTime.hour, dateTime.minute));
+                onChange(
+                  DateTime(y, m, dateTime.day, dateTime.hour, dateTime.minute),
+                );
               },
               height: height,
             );
 
           case DraftModeFormCalenderPickerMode.hourMinute:
             return DraftModeCalenderHourMinuteInlinePicker(
-                key: ValueKey('hour_minute'),
-                dateTime: dateTime,
-                onChanged: (h, m) {
-                  onChange (DateTime(dateTime.year, dateTime.month, dateTime.day, h, m));
-                },
-                height: height
+              key: ValueKey('hour_minute'),
+              dateTime: dateTime,
+              onChanged: (h, m) {
+                onChange(
+                  DateTime(dateTime.year, dateTime.month, dateTime.day, h, m),
+                );
+              },
+              height: height,
             );
         }
-      }()
+      }(),
     );
   }
 }

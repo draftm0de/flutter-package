@@ -13,40 +13,38 @@ class DraftModePageSpinner extends StatelessWidget {
     this.strokeWidth = 2,
   });
 
-
   @override
   Widget build(BuildContext context) {
     final Color effectiveColor = color ?? const Color(0xFF888888);
     if (PlatformConfig.isIOS) {
-      return Center(child: SizedBox(
-        width: size,
-        height: size,
-        child: CupertinoActivityIndicator(
-          color: const Color(0xFFC7FF00)
+      return Center(
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: CupertinoActivityIndicator(color: const Color(0xFFC7FF00)),
         ),
-      ));
+      );
     }
     // Pure Flutter, without Material import
-    return Center(child: SizedBox(
-      width: size,
-      height: size,
-      child: CustomPaint(
-        painter: DraftModePageSpinnerPainter(
-          strokeWidth: strokeWidth,
-          color: effectiveColor
+    return Center(
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: CustomPaint(
+          painter: DraftModePageSpinnerPainter(
+            strokeWidth: strokeWidth,
+            color: effectiveColor,
+          ),
         ),
       ),
-    ));
+    );
   }
 }
 
 class DraftModePageSpinnerPainter extends CustomPainter {
   final double strokeWidth;
   final Color color;
-  DraftModePageSpinnerPainter({
-    required this.strokeWidth,
-    required this.color
-  });
+  DraftModePageSpinnerPainter({required this.strokeWidth, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {

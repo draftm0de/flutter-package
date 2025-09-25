@@ -7,7 +7,8 @@ abstract class DraftModeEntityMapper<T> {
   Future<T> empty();
 }
 
-abstract class DraftModeEntityRepository<T> implements DraftModeEntityMapper<T> {
+abstract class DraftModeEntityRepository<T>
+    implements DraftModeEntityMapper<T> {
   final DraftModeEntityStorage store;
 
   DraftModeEntityRepository(this.store);

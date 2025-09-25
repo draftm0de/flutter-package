@@ -22,35 +22,45 @@ class DraftModePageNavigationBottom extends StatelessWidget {
     final content = SafeArea(
       top: false,
       child: Container(
-        constraints: BoxConstraints(minHeight: PlatformConfig.bottomNavigationBarContainerHeight),
-        padding: EdgeInsets.symmetric(horizontal: PlatformConfig.verticalContainerPadding),
+        constraints: BoxConstraints(
+          minHeight: PlatformConfig.bottomNavigationBarContainerHeight,
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: PlatformConfig.verticalContainerPadding,
+        ),
         child: SizedBox(
           height: PlatformConfig.bottomNavigationBarItemHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (leading != null) Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: _spaced(leading!))
-                )
-              ),
-              if (primary != null) Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: primary,
-                )
-              ),
-              if (trailing != null) Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Row(mainAxisSize: MainAxisSize.min, children: _spaced(trailing!))
-                )
-              ),
+              if (leading != null)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _spaced(leading!),
+                    ),
+                  ),
+                ),
+              if (primary != null)
+                Expanded(
+                  child: Align(alignment: Alignment.center, child: primary),
+                ),
+              if (trailing != null)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _spaced(trailing!),
+                    ),
+                  ),
+                ),
             ],
           ),
-        )
+        ),
       ),
     );
 
@@ -76,7 +86,7 @@ class DraftModePageNavigationBottom extends StatelessWidget {
       for (int i = 0; i < items.length; i++) ...[
         items[i],
         if (i != items.length - 1) const SizedBox(width: 8),
-      ]
+      ],
     ];
   }
 }

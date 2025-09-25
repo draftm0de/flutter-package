@@ -9,7 +9,7 @@ class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
     super.key,
     required this.dateTime,
     required this.onChanged,
-    required this.height
+    required this.height,
   });
 
   @override
@@ -20,16 +20,17 @@ class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
     final hours = List<int>.generate(24, (i) => i);
     final hourNames = List<String>.generate(
       24,
-          (i) => i.toString().padLeft(2, '0'),
+      (i) => i.toString().padLeft(2, '0'),
     );
     final minutes = List<int>.generate(12, (i) => i * 5);
     final minuteNames = List<String>.generate(
       12,
-          (i) => (i * 5).toString().padLeft(2, '0'),
+      (i) => (i * 5).toString().padLeft(2, '0'),
     );
     int roundTo5(int minute) {
       return (minute / 5).round() * 5 % 60;
     }
+
     const double itemHeight = 28;
     return Column(
       key: const ValueKey('hourMinute'),
@@ -41,7 +42,9 @@ class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: CupertinoPicker(
-                  scrollController: FixedExtentScrollController(initialItem: hours.indexOf(hour)),
+                  scrollController: FixedExtentScrollController(
+                    initialItem: hours.indexOf(hour),
+                  ),
                   itemExtent: itemHeight,
                   useMagnifier: true,
                   onSelectedItemChanged: (i) => onChanged(hours[i], minute),
@@ -52,7 +55,9 @@ class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: CupertinoPicker(
-                  scrollController: FixedExtentScrollController(initialItem: minutes.indexOf(roundTo5(minute))),
+                  scrollController: FixedExtentScrollController(
+                    initialItem: minutes.indexOf(roundTo5(minute)),
+                  ),
                   itemExtent: itemHeight,
                   useMagnifier: true,
                   onSelectedItemChanged: (i) => onChanged(hour, minutes[i]),
@@ -62,8 +67,8 @@ class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
               ),
             ],
           ),
-        )
-      ]
+        ),
+      ],
     );
   }
 }

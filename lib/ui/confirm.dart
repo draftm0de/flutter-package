@@ -22,28 +22,30 @@ class DraftModeUIConfirm extends StatelessWidget {
     required String message,
     String? confirmLabel,
     String? cancelLabel,
-    bool? barrierDismissible
+    bool? barrierDismissible,
   }) async {
     return showCupertinoDialog<bool>(
-        context: context,
-        barrierDismissible: barrierDismissible ?? false,
-        builder: (_) => DraftModeUIConfirm(
-          title: title,
-          message: message,
-          confirmLabel: confirmLabel,
-          cancelLabel: cancelLabel
-        )
+      context: context,
+      barrierDismissible: barrierDismissible ?? false,
+      builder: (_) => DraftModeUIConfirm(
+        title: title,
+        message: message,
+        confirmLabel: confirmLabel,
+        cancelLabel: cancelLabel,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final String confirmBtn = confirmLabel ?? DraftModeLocalizations
-        .of(context)
-        ?.dialogBtnConfirm ?? 'OK';
-    final String cancelBtn = cancelLabel ?? DraftModeLocalizations
-        .of(context)
-        ?.dialogBtnCancel ?? 'Cancel';
+    final String confirmBtn =
+        confirmLabel ??
+        DraftModeLocalizations.of(context)?.dialogBtnConfirm ??
+        'OK';
+    final String cancelBtn =
+        cancelLabel ??
+        DraftModeLocalizations.of(context)?.dialogBtnCancel ??
+        'Cancel';
 
     if (PlatformConfig.isIOS) {
       return CupertinoAlertDialog(

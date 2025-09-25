@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../platform/config.dart';
 
 class PlatformButtons {
-
   static IconData get back =>
       PlatformConfig.isIOS ? CupertinoIcons.back : Icons.arrow_back;
 
@@ -31,8 +30,9 @@ class PlatformButtons {
   static IconData get arrowRight =>
       PlatformConfig.isIOS ? CupertinoIcons.right_chevron : Icons.chevron_right;
 
-  static IconData get arrowDown =>
-      PlatformConfig.isIOS ? CupertinoIcons.chevron_down : Icons.arrow_drop_down;
+  static IconData get arrowDown => PlatformConfig.isIOS
+      ? CupertinoIcons.chevron_down
+      : Icons.arrow_drop_down;
 
   static IconData get arrowLeft =>
       PlatformConfig.isIOS ? CupertinoIcons.chevron_left : Icons.chevron_left;

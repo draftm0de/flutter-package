@@ -8,8 +8,12 @@ import '../l10n/app_localizations.dart';
 DraftModeEntityValidator vRequired() {
   return (BuildContext context, DraftModeFormStateI? form, dynamic v) {
     final loc = DraftModeLocalizations.of(context);
-    if (v == null) { return loc!.validationRequired; }
-    if (v is String && v.isEmpty) { return loc!.validationRequired; }
+    if (v == null) {
+      return loc!.validationRequired;
+    }
+    if (v is String && v.isEmpty) {
+      return loc!.validationRequired;
+    }
     return null;
   };
 }

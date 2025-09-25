@@ -43,11 +43,17 @@ class DraftModePageNavigationItem extends StatelessWidget {
       child = Row(
         mainAxisSize: MainAxisSize.min,
         children: iconExpanded
-            ? [Expanded(child: Text(text!)), Icon(icon, size: iconSize, color: iconColor)]
+            ? [
+                Expanded(child: Text(text!)),
+                Icon(icon, size: iconSize, color: iconColor),
+              ]
             : [Icon(icon, size: iconSize, color: iconColor), Text(text!)],
       );
     } else if (icon != null) {
-      child = Padding(padding: EdgeInsets.zero, child: Icon(icon, size: iconSize, color: iconColor));
+      child = Padding(
+        padding: EdgeInsets.zero,
+        child: Icon(icon, size: iconSize, color: iconColor),
+      );
     } else if (text?.isNotEmpty == true) {
       child = Padding(padding: EdgeInsets.only(right: 5), child: Text(text!));
     } else {

@@ -6,29 +6,35 @@ import '../../lib/entity/validator.dart';
 
 void main() {
   group('vRequired()', () {
-    testWidgets('returns localized error for null and empty; null for valid values', (tester) async {
-      String? errNull;
-      String? errEmpty;
-      String? okString;
-      String? okNonString;
+    testWidgets(
+      'returns localized error for null and empty; null for valid values',
+      (tester) async {
+        String? errNull;
+        String? errEmpty;
+        String? okString;
+        String? okNonString;
 
-      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+        await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
 
-      // Pull the context the probe saved for us.
-      final context = SimpleContext.lastContext!;
-      final loc = DraftModeLocalizations.of(context)!;
-      final validator = vRequired();
+        // Pull the context the probe saved for us.
+        final context = SimpleContext.lastContext!;
+        final loc = DraftModeLocalizations.of(context)!;
+        final validator = vRequired();
 
-      errNull     = validator(context, null, null);
-      errEmpty    = validator(context, null, '');
-      okString    = validator(context, null, 'hello');
-      okNonString = validator(context, null, 0); // any non-null non-empty value
+        errNull = validator(context, null, null);
+        errEmpty = validator(context, null, '');
+        okString = validator(context, null, 'hello');
+        okNonString = validator(
+          context,
+          null,
+          0,
+        ); // any non-null non-empty value
 
-      expect(errNull,  loc.validationRequired);
-      expect(errEmpty, loc.validationRequired);
-      expect(okString, isNull);
-      expect(okNonString, isNull);
-    });
+        expect(errNull, loc.validationRequired);
+        expect(errEmpty, loc.validationRequired);
+        expect(okString, isNull);
+        expect(okNonString, isNull);
+      },
+    );
   });
 }
-

@@ -13,10 +13,7 @@ enum DraftModeFormCalenderPicker { none, from, to }
 class DraftModeFormCalenderTigger {
   final DraftModeFormCalenderPicker mode;
   final DateTime? value;
-  const DraftModeFormCalenderTigger(
-    this.mode,
-    this.value
-  );
+  const DraftModeFormCalenderTigger(this.mode, this.value);
 }
 
 class DraftModeFormCalender extends StatefulWidget {
@@ -46,12 +43,13 @@ class DraftModeFormCalender extends StatefulWidget {
     DraftModeFormCalenderMode? toMode,
     DraftModeFormCalenderDurationMode? durationMode,
     this.durationLabel,
-    this.formTrigger
-  }) :
-    to = identical(to, _notSpecified) ? null : to as DraftModeEntityAttribute<DateTime>?,
-    toEnabled = ! identical(to, _notSpecified),
-    durationMode = durationMode ?? DraftModeFormCalenderDurationMode.none,
-    toMode = toMode ?? mode;
+    this.formTrigger,
+  }) : to = identical(to, _notSpecified)
+           ? null
+           : to as DraftModeEntityAttribute<DateTime>?,
+       toEnabled = !identical(to, _notSpecified),
+       durationMode = durationMode ?? DraftModeFormCalenderDurationMode.none,
+       toMode = toMode ?? mode;
 
   @override
   State<DraftModeFormCalender> createState() => _DraftModeFormCalenderState();
@@ -59,7 +57,8 @@ class DraftModeFormCalender extends StatefulWidget {
 
 class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
   DraftModeFormCalenderPicker _owner = DraftModeFormCalenderPicker.none;
-  DraftModeFormCalenderPickerMode _mode = DraftModeFormCalenderPickerMode.closed;
+  DraftModeFormCalenderPickerMode _mode =
+      DraftModeFormCalenderPickerMode.closed;
   String? _duration;
   late DateTime _selectedFrom;
   late DateTime _selectedTo;
@@ -73,11 +72,24 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
   void initState() {
     super.initState();
 
-    _selectedFrom = correctDateTime(widget.from.value ?? DateTime.now(), DraftModeFormCalenderPicker.from) as DateTime;
-    _selectedTo = correctDateTime(widget.to!.value ?? DateTime.now(), DraftModeFormCalenderPicker.to) as DateTime;
+    _selectedFrom =
+        correctDateTime(
+              widget.from.value ?? DateTime.now(),
+              DraftModeFormCalenderPicker.from,
+            )
+            as DateTime;
+    _selectedTo =
+        correctDateTime(
+              widget.to!.value ?? DateTime.now(),
+              DraftModeFormCalenderPicker.to,
+            )
+            as DateTime;
 
     _isLoading = false;
-    _duration = DraftModeDateTime.getDurationHourMinutes(_selectedFrom, _selectedTo);
+    _duration = DraftModeDateTime.getDurationHourMinutes(
+      _selectedFrom,
+      _selectedTo,
+    );
   }
 
   @override
@@ -86,9 +98,10 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
     if (_labelsInit) return;
 
     final loc = DraftModeLocalizations.of(context);
-    fromLabel     = widget.fromLabel     ?? (loc?.calendarStart    ?? 'Begin');
-    toLabel       = widget.toLabel       ?? (loc?.calendarEnd      ?? 'End');
-    durationLabel = widget.durationLabel ?? (loc?.calendarDuration ?? 'Duration');
+    fromLabel = widget.fromLabel ?? (loc?.calendarStart ?? 'Begin');
+    toLabel = widget.toLabel ?? (loc?.calendarEnd ?? 'End');
+    durationLabel =
+        widget.durationLabel ?? (loc?.calendarDuration ?? 'Duration');
 
     _labelsInit = true;
   }
@@ -115,12 +128,19 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
     final DraftModeFormCalenderTigger? pageTrigger = widget.formTrigger;
     final DraftModeFormCalenderTigger? oldPageTrigger = oldWidget.formTrigger;
 
-    if (pageTrigger?.mode == oldPageTrigger?.mode && pageTrigger?.value == oldPageTrigger?.value) {
+    if (pageTrigger?.mode == oldPageTrigger?.mode &&
+        pageTrigger?.value == oldPageTrigger?.value) {
       return; // nothing to do; don't close the picker needlessly
     }
 
-    final DateTime? selectedFrom = (pageTrigger?.mode == DraftModeFormCalenderPicker.from) ? correctDateTime(pageTrigger!.value, DraftModeFormCalenderPicker.from) : null;
-    final DateTime? selectedTo = (pageTrigger?.mode == DraftModeFormCalenderPicker.to) ? correctDateTime(pageTrigger!.value, DraftModeFormCalenderPicker.to) : null;
+    final DateTime? selectedFrom =
+        (pageTrigger?.mode == DraftModeFormCalenderPicker.from)
+        ? correctDateTime(pageTrigger!.value, DraftModeFormCalenderPicker.from)
+        : null;
+    final DateTime? selectedTo =
+        (pageTrigger?.mode == DraftModeFormCalenderPicker.to)
+        ? correctDateTime(pageTrigger!.value, DraftModeFormCalenderPicker.to)
+        : null;
 
     // Defer updates so we don't call setState during build.
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -141,37 +161,41 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading ? SizedBox.shrink() : Column(
-      children: [
-        buildDateTimePicker(
-          owner: DraftModeFormCalenderPicker.from,
-          label: fromLabel,
-          element: widget.from,
-          dateTime: _selectedFrom,
-          onChange: (DateTime v) {
-            _updateDateTimes(v, DraftModeFormCalenderPicker.from);
-            widget.fromOnChange?.call(v);
-          }
-        ),
-        if (widget.toEnabled) buildDateTimePicker(
-          owner: DraftModeFormCalenderPicker.to,
-          label: toLabel,
-          element: widget.to,
-          dateTime: _selectedTo,
-          onChange: (DateTime v) {
-            _updateDateTimes(v, DraftModeFormCalenderPicker.to);
-            widget.toOnChange?.call(v);
-          }
-        ),
-        if (widget.durationMode == DraftModeFormCalenderDurationMode.hours)
-          DraftModeUIRow(
-            alignment: AlignmentGeometry.centerRight,
-            label: durationLabel,
-            verticalDoubled: true,
-            child: Text(_duration ?? "-"),
-          )
-      ],
-    );
+    return _isLoading
+        ? SizedBox.shrink()
+        : Column(
+            children: [
+              buildDateTimePicker(
+                owner: DraftModeFormCalenderPicker.from,
+                label: fromLabel,
+                element: widget.from,
+                dateTime: _selectedFrom,
+                onChange: (DateTime v) {
+                  _updateDateTimes(v, DraftModeFormCalenderPicker.from);
+                  widget.fromOnChange?.call(v);
+                },
+              ),
+              if (widget.toEnabled)
+                buildDateTimePicker(
+                  owner: DraftModeFormCalenderPicker.to,
+                  label: toLabel,
+                  element: widget.to,
+                  dateTime: _selectedTo,
+                  onChange: (DateTime v) {
+                    _updateDateTimes(v, DraftModeFormCalenderPicker.to);
+                    widget.toOnChange?.call(v);
+                  },
+                ),
+              if (widget.durationMode ==
+                  DraftModeFormCalenderDurationMode.hours)
+                DraftModeUIRow(
+                  alignment: AlignmentGeometry.centerRight,
+                  label: durationLabel,
+                  verticalDoubled: true,
+                  child: Text(_duration ?? "-"),
+                ),
+            ],
+          );
   }
 
   // ------------------------------------------------------------------------
@@ -189,11 +213,16 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
 
   void _toggleMonthDropDown() {
     setState(() {
-      _mode = (_mode == DraftModeFormCalenderPickerMode.day) ? DraftModeFormCalenderPickerMode.monthYear : DraftModeFormCalenderPickerMode.day;
+      _mode = (_mode == DraftModeFormCalenderPickerMode.day)
+          ? DraftModeFormCalenderPickerMode.monthYear
+          : DraftModeFormCalenderPickerMode.day;
     });
   }
 
-  Future<void> _toggleOwner(DraftModeFormCalenderPicker owner, DraftModeFormCalenderPickerMode mode) async {
+  Future<void> _toggleOwner(
+    DraftModeFormCalenderPicker owner,
+    DraftModeFormCalenderPickerMode mode,
+  ) async {
     setState(() {
       if (_owner == owner && _mode == mode) {
         _owner = DraftModeFormCalenderPicker.none;
@@ -218,7 +247,10 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
     } else {
       setState(() => _selectedTo = v);
     }
-    _duration = DraftModeDateTime.getDurationHourMinutes(_selectedFrom, _selectedTo);
+    _duration = DraftModeDateTime.getDurationHourMinutes(
+      _selectedFrom,
+      _selectedTo,
+    );
   }
 
   Widget buildDateTimePicker({
@@ -226,23 +258,26 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
     required DraftModeEntityAttribute<DateTime>? element,
     required DraftModeFormCalenderPicker owner,
     required String label,
-    required ValueChanged<DateTime> onChange
+    required ValueChanged<DateTime> onChange,
   }) {
     // ----------------------------------------------------------------------
     // only the selected Pickers will be visible
     // ----------------------------------------------------------------------
-    final bool isActive = (_owner == owner && _mode != DraftModeFormCalenderPickerMode.closed);
+    final bool isActive =
+        (_owner == owner && _mode != DraftModeFormCalenderPickerMode.closed);
     final dateLabel = _getDateLabel(dateTime);
     final String timeLabel = _getTimeLabel(dateTime);
-    final bool endDateInvalid = (owner == DraftModeFormCalenderPicker.to && _selectedFrom.difference(_selectedTo).inMinutes > 0);
+    final bool endDateInvalid =
+        (owner == DraftModeFormCalenderPicker.to &&
+        _selectedFrom.difference(_selectedTo).inMinutes > 0);
 
     Widget showDateTime(
-        BuildContext context,
-        String text, {
-          required double width,
-          required Future<void> Function() onPressed,
-          bool isActive = false
-        }) {
+      BuildContext context,
+      String text, {
+      required double width,
+      required Future<void> Function() onPressed,
+      bool isActive = false,
+    }) {
       return DraftModeFormButton(
         styleSize: DraftModeFromButtonSize.medium,
         styleColor: DraftModeFromButtonColor.dateTime,
@@ -251,12 +286,18 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
           child: Text(
             textAlign: TextAlign.center,
             text,
-            style: isActive ? PlatformConfig.labelStyleActive(context, strike: endDateInvalid) : PlatformConfig.labelStyle(context, strike: endDateInvalid),
-          )
+            style: isActive
+                ? PlatformConfig.labelStyleActive(
+                    context,
+                    strike: endDateInvalid,
+                  )
+                : PlatformConfig.labelStyle(context, strike: endDateInvalid),
+          ),
         ),
         onPressed: onPressed,
       );
     }
+
     // ----------------------------------------------------------------------
     // Row(s)
     // ----------------------------------------------------------------------
@@ -264,11 +305,11 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
       initialValue: dateTime,
       autovalidateMode: AutovalidateMode.always,
       validator: (v) {
-        if (owner == DraftModeFormCalenderPicker.to && _selectedFrom.difference(_selectedTo).inMinutes > 0) {
-          return DraftModeLocalizations.of(context)!.calenderEndBeforeFailure(
-            startLabel: fromLabel,
-            endLabel: toLabel
-          );
+        if (owner == DraftModeFormCalenderPicker.to &&
+            _selectedFrom.difference(_selectedTo).inMinutes > 0) {
+          return DraftModeLocalizations.of(
+            context,
+          )!.calenderEndBeforeFailure(startLabel: fromLabel, endLabel: toLabel);
         }
         return null;
       },
@@ -286,39 +327,52 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  if (widget.mode == DraftModeFormCalenderMode.date || widget.mode == DraftModeFormCalenderMode.datetime)
+                  if (widget.mode == DraftModeFormCalenderMode.date ||
+                      widget.mode == DraftModeFormCalenderMode.datetime)
                     showDateTime(
                       context,
                       dateLabel,
-                      isActive: (_owner == owner && _mode != DraftModeFormCalenderPickerMode.closed),
-                      onPressed: () => _toggleOwner(owner, DraftModeFormCalenderPickerMode.day),
+                      isActive:
+                          (_owner == owner &&
+                          _mode != DraftModeFormCalenderPickerMode.closed),
+                      onPressed: () => _toggleOwner(
+                        owner,
+                        DraftModeFormCalenderPickerMode.day,
+                      ),
                       width: 105,
                     ),
                   if (widget.mode == DraftModeFormCalenderMode.datetime)
                     const SizedBox(width: 8),
-                  if (widget.mode == DraftModeFormCalenderMode.time || widget.mode == DraftModeFormCalenderMode.datetime)
+                  if (widget.mode == DraftModeFormCalenderMode.time ||
+                      widget.mode == DraftModeFormCalenderMode.datetime)
                     showDateTime(
                       context,
                       timeLabel,
-                      isActive: (_owner == owner && _mode != DraftModeFormCalenderPickerMode.closed),
-                      onPressed: () => _toggleOwner(owner, DraftModeFormCalenderPickerMode.hourMinute),
+                      isActive:
+                          (_owner == owner &&
+                          _mode != DraftModeFormCalenderPickerMode.closed),
+                      onPressed: () => _toggleOwner(
+                        owner,
+                        DraftModeFormCalenderPickerMode.hourMinute,
+                      ),
                       width: 63,
-                    )
-                ]
+                    ),
+                ],
               ),
             ),
-            if (isActive) DraftModeCalenderIOS(
-              mode: _mode,
-              dateTime: dateTime,
-              onPressed: _toggleMonthDropDown,
-              onChange: (DateTime v) {
-                field.didChange(v);
-                onChange(v);
-              }
-            )
+            if (isActive)
+              DraftModeCalenderIOS(
+                mode: _mode,
+                dateTime: dateTime,
+                onPressed: _toggleMonthDropDown,
+                onChange: (DateTime v) {
+                  field.didChange(v);
+                  onChange(v);
+                },
+              ),
           ],
         );
-      }
+      },
     );
   }
 }

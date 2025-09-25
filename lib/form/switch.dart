@@ -48,13 +48,10 @@ class DraftModeFormSwitch extends StatelessWidget {
                   form?.updateProperty(element, v);
                   field.didChange(v);
                   onChanged?.call(v ?? false);
-                }
+                },
               ),
             ),
-            DraftModeUITextError(
-              text: field.errorText,
-              visible: true,
-            )
+            DraftModeUITextError(text: field.errorText, visible: true),
           ],
         );
       },
