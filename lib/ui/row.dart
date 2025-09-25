@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:draftmode/platform.dart';
 
 /// Displays a form row with an optional leading label and adaptive padding.
+///
+/// When [label] is provided the row renders a fixed-width leading column using
+/// `PlatformConfig.labelWidth` before expanding [child]. Padding respects the
+/// platform-specific constants exposed by [PlatformConfig].
 class DraftModeUIRow extends StatelessWidget {
   final Widget child;
   final String? label;

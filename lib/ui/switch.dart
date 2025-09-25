@@ -4,6 +4,9 @@ import 'package:flutter/material.dart' as material;
 import '../platform/config.dart';
 
 /// Adaptive switch that mirrors the native control for the active platform.
+///
+/// Uses [CupertinoSwitch] on iOS and [Switch.adaptive] elsewhere so behaviour
+/// (haptics, motion, styling) matches user expectations.
 class DraftModeUISwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;

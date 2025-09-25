@@ -19,6 +19,8 @@ with existing projects, from validation and draft handling to secure storage.
   layer (`lib/form/*`).
 - [Storage](lib/storage/README.md): persistence contracts plus shared/secure
   implementations.
+- [UI](lib/ui/README.md): stateless layout widgets for rows, sections, dialogs,
+  and adaptive controls.
 - [Utils](lib/utils/README.md): date/time formatters, tolerant parsers, and
   lightweight serialization helpers.
 
