@@ -1,4 +1,4 @@
-abstract class DraftModeEntityStorage{
+abstract class DraftModeEntityStorage {
   Future<String?> read();
   Future<void> write(String value);
   Future<void> delete();

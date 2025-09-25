@@ -11,7 +11,7 @@ class DraftModeUISection extends StatelessWidget {
     super.key,
     this.header,
     required this.children,
-    this.transparent = false
+    this.transparent = false,
   });
 
   @override
@@ -21,15 +21,15 @@ class DraftModeUISection extends StatelessWidget {
     return DraftModeUISectionContext(
       child: PlatformConfig.isIOS
           ? CupertinoFormSection.insetGrouped(
-              decoration: transparent ? BoxDecoration(
-                color: null
-              ) : null,
-              header: hasHeader ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: PlatformConfig.horizontalContainerPadding
-                  ),
-                  child: Text(header ?? '')
-              ) : null,
+              decoration: transparent ? BoxDecoration(color: null) : null,
+              header: hasHeader
+                  ? Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: PlatformConfig.horizontalContainerPadding,
+                      ),
+                      child: Text(header ?? ''),
+                    )
+                  : null,
               children: children,
             )
           : Card(
@@ -42,14 +42,15 @@ class DraftModeUISection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (hasHeader) Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 16.0,
-                        top: 15.0,
-                        left: 10.0,
+                    if (hasHeader)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: 16.0,
+                          top: 15.0,
+                          left: 10.0,
+                        ),
+                        child: Text(header ?? ''),
                       ),
-                      child: Text(header ?? ''),
-                    ),
                     ...children,
                   ],
                 ),
@@ -63,7 +64,8 @@ class DraftModeUISectionContext extends InheritedWidget {
   const DraftModeUISectionContext({super.key, required super.child});
 
   static bool isInSection(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<DraftModeUISectionContext>() !=
+    return context
+            .dependOnInheritedWidgetOfExactType<DraftModeUISectionContext>() !=
         null;
   }
 

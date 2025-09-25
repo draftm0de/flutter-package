@@ -35,7 +35,7 @@ class DraftModeFormField<T> extends StatefulWidget {
     this.enabled = true,
     this.onSaved,
     this.clearErrorOnFocus = false,
-    this.autocorrect = false
+    this.autocorrect = false,
   });
 
   @override
@@ -107,23 +107,23 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
       },
       builder: (field) {
         final bool enableValidation = form?.enableValidation ?? false;
-        final bool showError = (enableValidation || !_focus.hasFocus) && field.hasError;
+        final bool showError =
+            (enableValidation || !_focus.hasFocus) && field.hasError;
 
-        final Widget? suffix = widget.obscureEye ?
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _obscureOn = !_obscureOn;
-            });
-          },
-          child: Icon(
-            _obscureOn
-                ? PlatformButtons.eyeSlash
-                : PlatformButtons.eye,
-            size: 20,
-            color: CupertinoColors.inactiveGray,
-          ),
-        ) : widget.suffix;
+        final Widget? suffix = widget.obscureEye
+            ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscureOn = !_obscureOn;
+                  });
+                },
+                child: Icon(
+                  _obscureOn ? PlatformButtons.eyeSlash : PlatformButtons.eye,
+                  size: 20,
+                  color: CupertinoColors.inactiveGray,
+                ),
+              )
+            : widget.suffix;
 
         Widget child = Focus(
           focusNode: _focus,
@@ -154,14 +154,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
         return Column(
           children: [
-            DraftModeUIRow(
-              label: widget.label,
-              child: child
-            ),
-            DraftModeUITextError(
-              text: field.errorText,
-              visible: showError
-            ),
+            DraftModeUIRow(label: widget.label, child: child),
+            DraftModeUITextError(text: field.errorText, visible: showError),
           ],
         );
       },

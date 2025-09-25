@@ -18,5 +18,4 @@ class SecretStorage {
   Future<void> write(String key, String? value) => _repo.write(key, value);
 
   Future<void> delete(String key) => _repo.delete(key);
-
 }

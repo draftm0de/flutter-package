@@ -4,6 +4,7 @@ import '../platform/config.dart';
 import 'button_spinner.dart';
 
 enum DraftModeFromButtonSize { medium, large }
+
 enum DraftModeFromButtonColor { dateTime, submit }
 
 class DraftModeFormButton extends StatefulWidget {
@@ -25,7 +26,7 @@ class DraftModeFormButton extends StatefulWidget {
     this.formKey,
     this.styleSize,
     this.styleColor,
-    this.stretched = false
+    this.stretched = false,
   });
 
   @override
@@ -34,7 +35,6 @@ class DraftModeFormButton extends StatefulWidget {
 
 class _DraftModeFormButtonState extends State<DraftModeFormButton> {
   bool _isPending = false;
-
 
   Future<void> _handlePressed(BuildContext context) async {
     if (_isPending) return;
@@ -45,12 +45,10 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
 
     try {
       if (widget.loadWidget != null) {
-        final result = await Navigator.of(
-          context,
-        ).push<bool>(
-            PlatformConfig.isIOS
-                ? CupertinoPageRoute(builder: (_) => widget.loadWidget!)
-                : MaterialPageRoute(builder: (_) => widget.loadWidget!)
+        final result = await Navigator.of(context).push<bool>(
+          PlatformConfig.isIOS
+              ? CupertinoPageRoute(builder: (_) => widget.loadWidget!)
+              : MaterialPageRoute(builder: (_) => widget.loadWidget!),
         );
         // onTap callback for true
         if (result == true && widget.onPressed != null) {
@@ -65,10 +63,11 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
       } else {
         debugPrint('FormPageBuilder: no action provided');
       }
-    }
-    finally {
+    } finally {
       if (mounted) {
-        setState(() { _isPending = false; });
+        setState(() {
+          _isPending = false;
+        });
       }
     }
   }
@@ -77,7 +76,7 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
     CupertinoButtonSize styleSize;
     BorderRadius borderRadius;
 
-    switch(widget.styleSize ?? DraftModeFromButtonSize.medium) {
+    switch (widget.styleSize ?? DraftModeFromButtonSize.medium) {
       case DraftModeFromButtonSize.medium:
         styleSize = CupertinoButtonSize.medium;
         borderRadius = BorderRadius.circular(12);
@@ -88,7 +87,7 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
     }
 
     Color color;
-    switch(widget.styleColor ?? DraftModeFromButtonColor.submit) {
+    switch (widget.styleColor ?? DraftModeFromButtonColor.submit) {
       case DraftModeFromButtonColor.dateTime:
         color = CupertinoColors.systemGrey5;
 
@@ -102,14 +101,16 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
       borderRadius: borderRadius,
       color: color,
       onPressed: () => _isPending ? null : _handlePressed(context),
-      child: _isPending ? DraftModeFormButtonSpinner(color: CupertinoColors.white) : widget.content,
+      child: _isPending
+          ? DraftModeFormButtonSpinner(color: CupertinoColors.white)
+          : widget.content,
     );
   }
 
   Widget materialButton() {
     double buttonSize;
     BorderRadius borderRadius;
-    switch(widget.styleSize ?? DraftModeFromButtonSize.medium) {
+    switch (widget.styleSize ?? DraftModeFromButtonSize.medium) {
       case DraftModeFromButtonSize.medium:
         buttonSize = 40;
         borderRadius = BorderRadius.circular(12);
@@ -127,21 +128,18 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
         fixedSize: Size.fromHeight(buttonSize),
       ),
       onPressed: () => _isPending ? null : _handlePressed(context),
-      child: _isPending ? DraftModeFormButtonSpinner(color: CupertinoColors.white) : widget.content,
+      child: _isPending
+          ? DraftModeFormButtonSpinner(color: CupertinoColors.white)
+          : widget.content,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget button = PlatformConfig.isIOS
-      ? iosButton()
-      : materialButton();
+    final Widget button = PlatformConfig.isIOS ? iosButton() : materialButton();
     late Widget content;
     if (widget.stretched) {
-      content = SizedBox(
-        width: double.infinity,
-        child: button,
-      );
+      content = SizedBox(width: double.infinity, child: button);
     } else {
       content = button;
     }

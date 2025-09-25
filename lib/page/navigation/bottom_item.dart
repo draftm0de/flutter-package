@@ -18,7 +18,7 @@ class DraftModePageNavigationBottomItem extends StatelessWidget {
     this.iconColor,
     this.iconExpanded = false,
     this.onTap,
-    this.loadWidget
+    this.loadWidget,
   });
 
   @override

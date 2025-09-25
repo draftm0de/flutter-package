@@ -25,10 +25,7 @@ Widget wrapWithLoc(Widget child) {
       DefaultWidgetsLocalizations.delegate,
       _TestDraftModeLocalizationsDelegate(),
     ],
-    child: Directionality(
-      textDirection: TextDirection.ltr,
-      child: child,
-    ),
+    child: Directionality(textDirection: TextDirection.ltr, child: child),
   );
 }
 

@@ -2,9 +2,9 @@ import 'dart:convert';
 
 class DraftModeSerializer {
   Future<T?> serialize<T>(
-      String jsonString,
-      T Function(Map<String, dynamic>) fromJson,
-      ) async {
+    String jsonString,
+    T Function(Map<String, dynamic>) fromJson,
+  ) async {
     try {
       final decoded = jsonDecode(jsonString);
       if (decoded is! Map<String, dynamic>) {
@@ -16,6 +16,3 @@ class DraftModeSerializer {
     }
   }
 }
-
-
-

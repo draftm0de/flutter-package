@@ -12,7 +12,11 @@ import '../entity/collection.dart';
 import '../platform/config.dart';
 import '../l10n/app_localizations.dart';
 
-class DraftModeFormDropDown<ItemType extends DraftModeEntityCollectionItem, ElementType> extends StatefulWidget {
+class DraftModeFormDropDown<
+  ItemType extends DraftModeEntityCollectionItem,
+  ElementType
+>
+    extends StatefulWidget {
   final DraftModeEntityCollection<ItemType> items;
   final DraftModeEntityAttribute<ElementType> element;
   final String placeholder;
@@ -29,14 +33,19 @@ class DraftModeFormDropDown<ItemType extends DraftModeEntityCollectionItem, Elem
     required this.renderItem,
     this.readOnly = false,
     this.label,
-    this.onSaved
+    this.onSaved,
   });
 
   @override
-  State<DraftModeFormDropDown<ItemType, ElementType>> createState() => _DraftModeFormDropDownState<ItemType, ElementType>();
+  State<DraftModeFormDropDown<ItemType, ElementType>> createState() =>
+      _DraftModeFormDropDownState<ItemType, ElementType>();
 }
 
-class _DraftModeFormDropDownState<ItemType extends DraftModeEntityCollectionItem, ElementType> extends State<DraftModeFormDropDown<ItemType, ElementType>> {
+class _DraftModeFormDropDownState<
+  ItemType extends DraftModeEntityCollectionItem,
+  ElementType
+>
+    extends State<DraftModeFormDropDown<ItemType, ElementType>> {
   final _fieldKey = GlobalKey<FormFieldState<ItemType>>();
 
   @override
@@ -95,8 +104,8 @@ class _DraftModeFormDropDownState<ItemType extends DraftModeEntityCollectionItem
           children: [
             Expanded(
               child: (field.value != null)
-              ? widget.renderItem(field.value as ItemType)
-              : Text(widget.placeholder),
+                  ? widget.renderItem(field.value as ItemType)
+                  : Text(widget.placeholder),
             ),
             Icon(
               Theme.of(context).platform == TargetPlatform.iOS
@@ -104,36 +113,35 @@ class _DraftModeFormDropDownState<ItemType extends DraftModeEntityCollectionItem
                   : Icons.arrow_forward_ios,
               size: 16,
               color: CupertinoColors.systemGrey,
-            )
-          ]
+            ),
+          ],
         );
         final Widget child = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DraftModeUIRow(
-              label: widget.label,
-              child: content
-            ),
-            DraftModeUITextError(
-                text: field.errorText,
-                visible: true
-            ),
+            DraftModeUIRow(label: widget.label, child: content),
+            DraftModeUITextError(text: field.errorText, visible: true),
           ],
         );
 
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: !widget.readOnly ? () {
-            selectItem(field);
-          } : null,
+          onTap: !widget.readOnly
+              ? () {
+                  selectItem(field);
+                }
+              : null,
           child: child,
         );
-      }
+      },
     );
   }
 }
 
-class DraftModeFormDropDownScreen<ItemType extends DraftModeEntityCollectionItem> extends StatefulWidget {
+class DraftModeFormDropDownScreen<
+  ItemType extends DraftModeEntityCollectionItem
+>
+    extends StatefulWidget {
   final String selectionTitle;
   final DraftModeEntityCollection<ItemType> items;
   final DraftModeEntityAttribute element;
@@ -156,37 +164,44 @@ class DraftModeFormDropDownScreen<ItemType extends DraftModeEntityCollectionItem
   }
 
   @override
-  State<DraftModeFormDropDownScreen<ItemType>> createState() => _DraftModeFormDropDownScreenState<ItemType>();
+  State<DraftModeFormDropDownScreen<ItemType>> createState() =>
+      _DraftModeFormDropDownScreenState<ItemType>();
 }
 
-class _DraftModeFormDropDownScreenState<ItemType extends DraftModeEntityCollectionItem> extends State<DraftModeFormDropDownScreen<ItemType>> {
+class _DraftModeFormDropDownScreenState<
+  ItemType extends DraftModeEntityCollectionItem
+>
+    extends State<DraftModeFormDropDownScreen<ItemType>> {
   @override
   Widget build(BuildContext context) {
     final DraftModeEntityCollection<ItemType> items = widget.items;
     return DraftModePage(
       navigationTitle: widget.selectionTitle,
-      topLeadingText: DraftModeLocalizations.of(context)?.navigationBtnCancel ?? 'Cancel',
+      topLeadingText:
+          DraftModeLocalizations.of(context)?.navigationBtnCancel ?? 'Cancel',
       topTrailing: widget.trailing != null ? [widget.trailing!] : null,
       body: ListView(
         children: [
           DraftModeUISection(
             children: items.items.map((item) {
               final itemId = item.getId();
-              final isSelected = (widget.element.value != null && itemId == widget.element.value);
+              final isSelected =
+                  (widget.element.value != null &&
+                  itemId == widget.element.value);
               final Widget child = CupertinoFormRow(
                 padding: EdgeInsets.symmetric(
-                    vertical: PlatformConfig.verticalContainerPadding / 2,
-                    horizontal: PlatformConfig.horizontalContainerPadding / 2
+                  vertical: PlatformConfig.verticalContainerPadding / 2,
+                  horizontal: PlatformConfig.horizontalContainerPadding / 2,
                 ),
                 prefix: widget.renderItem(item),
                 helper: null,
                 child: isSelected
-                  ? const Icon(
-                      CupertinoIcons.check_mark,
-                      size: 22,
-                      color: CupertinoColors.activeBlue,
-                    )
-                  : const SizedBox.shrink()
+                    ? const Icon(
+                        CupertinoIcons.check_mark,
+                        size: 22,
+                        color: CupertinoColors.activeBlue,
+                      )
+                    : const SizedBox.shrink(),
               );
               return GestureDetector(
                 behavior: HitTestBehavior.opaque,

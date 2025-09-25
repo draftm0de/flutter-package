@@ -57,68 +57,75 @@ class DraftModePage extends StatelessWidget {
     Widget? topLeadingElement;
     if (topLeading == defaultLeading) {
       topLeadingElement = DraftModePageNavigationTopItem(
-        text: (PlatformConfig.isIOS) ? (topLeadingText ?? DraftModeLocalizations.of(context)?.navigationBtnBack ?? 'Back') : null,
+        text: (PlatformConfig.isIOS)
+            ? (topLeadingText ??
+                  DraftModeLocalizations.of(context)?.navigationBtnBack ??
+                  'Back')
+            : null,
         icon: PlatformButtons.back,
-        onTap: btnBackPressed
+        onTap: btnBackPressed,
       );
     } else {
       topLeadingElement = topLeading;
     }
-    
-    final List<Widget> topTrailingElements = onSavePressed != null ?
-      [
-        DraftModePageNavigationTopItem(
-          text: (PlatformConfig.isIOS) ? (DraftModeLocalizations.of(context)?.navigationBtnSave ?? 'Ready') : null,
-          icon: (PlatformConfig.isIOS) ? null : PlatformButtons.save,
-          onTap: btnSavePressed,
-        )
-      ]
-      : topTrailing ?? [] ;
+
+    final List<Widget> topTrailingElements = onSavePressed != null
+        ? [
+            DraftModePageNavigationTopItem(
+              text: (PlatformConfig.isIOS)
+                  ? (DraftModeLocalizations.of(context)?.navigationBtnSave ??
+                        'Ready')
+                  : null,
+              icon: (PlatformConfig.isIOS) ? null : PlatformButtons.save,
+              onTap: btnSavePressed,
+            ),
+          ]
+        : topTrailing ?? [];
 
     final navigationTop = DraftModePageNavigationTop(
       title: navigationTitle,
       leading: topLeadingElement,
-      trailing: topTrailing ?? topTrailingElements
+      trailing: topTrailing ?? topTrailingElements,
     );
 
-    final navigationBottom = (bottomLeading != null || bottomTrailing != null) ?
-        DraftModePageNavigationBottom(
-          leading: bottomLeading,
-          trailing: bottomTrailing,
-        ) : null;
+    final navigationBottom = (bottomLeading != null || bottomTrailing != null)
+        ? DraftModePageNavigationBottom(
+            leading: bottomLeading,
+            trailing: bottomTrailing,
+          )
+        : null;
 
     final Widget pageContent = Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: horizontalContainerPadding ?? 0,
-          vertical: verticalContainerPadding ??  0,
-        ),
-        child: body
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalContainerPadding ?? 0,
+        vertical: verticalContainerPadding ?? 0,
+      ),
+      child: body,
     );
 
-    final Widget content = (navigationBottom == null) ? pageContent : Stack(
-      children: [
-        Positioned.fill(
-          child: pageContent
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: navigationBottom
-        )
-      ]
-    );
-    
+    final Widget content = (navigationBottom == null)
+        ? pageContent
+        : Stack(
+            children: [
+              Positioned.fill(child: pageContent),
+              Align(alignment: Alignment.bottomCenter, child: navigationBottom),
+            ],
+          );
+
     return PlatformConfig.isIOS
         ? CupertinoPageScaffold(
-      backgroundColor: containerBackgroundColor ?? PlatformConfig.containerBackgroundColor(context),
-      navigationBar: navigationTop as ObstructingPreferredSizeWidget?,
-      child: SafeArea(
-        top: false,
-        child: content
-      ),
-    ) : Scaffold(
-        appBar: navigationTop as PreferredSizeWidget?,
-        backgroundColor: containerBackgroundColor ?? PlatformConfig.containerBackgroundColor(context),
-        body: content
-    );
+            backgroundColor:
+                containerBackgroundColor ??
+                PlatformConfig.containerBackgroundColor(context),
+            navigationBar: navigationTop as ObstructingPreferredSizeWidget?,
+            child: SafeArea(top: false, child: content),
+          )
+        : Scaffold(
+            appBar: navigationTop as PreferredSizeWidget?,
+            backgroundColor:
+                containerBackgroundColor ??
+                PlatformConfig.containerBackgroundColor(context),
+            body: content,
+          );
   }
 }

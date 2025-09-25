@@ -14,13 +14,16 @@ class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
     required this.dateTime,
     required this.onChanged,
     required this.onPressed,
-    required this.height
+    required this.height,
   });
 
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final monthNames = List.generate(12, (i) => DateFormat.MMMM(locale).format(DateTime(2025, i + 1, 1)));
+    final monthNames = List.generate(
+      12,
+      (i) => DateFormat.MMMM(locale).format(DateTime(2025, i + 1, 1)),
+    );
 
     final int year = dateTime.year;
     final int month = dateTime.month;
@@ -45,9 +48,15 @@ class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
                 onPressed: onPressed, // back to day
                 child: Row(
                   children: [
-                    Text(monthLabel,style: PlatformConfig.labelStyleActive(context)),
+                    Text(
+                      monthLabel,
+                      style: PlatformConfig.labelStyleActive(context),
+                    ),
                     const SizedBox(width: 6),
-                    Icon(PlatformButtons.arrowUp, size: PlatformConfig.buttonSizeSmall),
+                    Icon(
+                      PlatformButtons.arrowUp,
+                      size: PlatformConfig.buttonSizeSmall,
+                    ),
                   ],
                 ),
               ),
@@ -62,29 +71,37 @@ class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: CupertinoPicker(
-                  scrollController: FixedExtentScrollController(initialItem: month - 1),
+                  scrollController: FixedExtentScrollController(
+                    initialItem: month - 1,
+                  ),
                   itemExtent: itemHeight,
                   useMagnifier: true,
                   looping: true,
                   onSelectedItemChanged: (i) => onChanged(i + 1, year),
-                  children: monthNames.map((m) => Center(child: Text(m))).toList(),
+                  children: monthNames
+                      .map((m) => Center(child: Text(m)))
+                      .toList(),
                 ),
               ),
               Expanded(
                 flex: 1,
                 child: CupertinoPicker(
-                  scrollController: FixedExtentScrollController(initialItem: years.indexOf(year)),
+                  scrollController: FixedExtentScrollController(
+                    initialItem: years.indexOf(year),
+                  ),
                   itemExtent: itemHeight,
                   useMagnifier: true,
                   looping: true,
                   onSelectedItemChanged: (i) => onChanged(month, years[i]),
-                  children: years.map((y) => Center(child: Text('$y'))).toList(),
+                  children: years
+                      .map((y) => Center(child: Text('$y')))
+                      .toList(),
                 ),
               ),
             ],
           ),
-        )
-      ]
+        ),
+      ],
     );
   }
 }

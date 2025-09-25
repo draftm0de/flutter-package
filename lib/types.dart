@@ -1,6 +1,11 @@
 import 'package:flutter/widgets.dart';
 
-typedef DraftModeEntityValidator = String? Function(BuildContext context, DraftModeFormStateI? form, dynamic v);
+typedef DraftModeEntityValidator =
+    String? Function(
+      BuildContext context,
+      DraftModeFormStateI? form,
+      dynamic v,
+    );
 
 abstract class DraftModeEntityAttributeI<T> {
   T? get value;
@@ -16,10 +21,19 @@ abstract class DraftModeEntityAttributeI<T> {
 }
 
 abstract class DraftModeFormStateI {
-  void registerProperty(DraftModeEntityAttributeI attribute, {String? debugName});
+  void registerProperty(
+    DraftModeEntityAttributeI attribute, {
+    String? debugName,
+  });
   void updateProperty<T>(DraftModeEntityAttributeI attribute, T? value);
-  void registerField(DraftModeEntityAttributeI attribute, GlobalKey<FormFieldState> key);
-  void unregisterField(DraftModeEntityAttributeI attribute, GlobalKey<FormFieldState> key);
+  void registerField(
+    DraftModeEntityAttributeI attribute,
+    GlobalKey<FormFieldState> key,
+  );
+  void unregisterField(
+    DraftModeEntityAttributeI attribute,
+    GlobalKey<FormFieldState> key,
+  );
   void validateAttribute(DraftModeEntityAttributeI attribute);
   V? read<V>(dynamic attribute);
 }

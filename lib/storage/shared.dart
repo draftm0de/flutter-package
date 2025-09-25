@@ -3,8 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DraftModeSharedStorage implements DraftModeEntityStorage {
   final String _key;
-  DraftModeSharedStorage(Type type) :
-    _key = type.toString();
+  DraftModeSharedStorage(Type type) : _key = type.toString();
 
   @override
   String get key => _key;
@@ -28,5 +27,4 @@ class DraftModeSharedStorage implements DraftModeEntityStorage {
     await storage.remove(_key);
     return true;
   }
-
 }

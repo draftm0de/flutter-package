@@ -7,15 +7,11 @@ class DraftModeUISwitch extends StatelessWidget {
   const DraftModeUISwitch({
     super.key,
     this.value = false,
-    required this.onChanged
+    required this.onChanged,
   });
 
-
   Widget _layoutIOS() {
-    return CupertinoSwitch(
-      value: value,
-      onChanged: onChanged,
-    );
+    return CupertinoSwitch(value: value, onChanged: onChanged);
   }
 
   Widget _layoutAndroid() {
