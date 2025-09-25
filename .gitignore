@@ -2,3 +2,4 @@
 !/.git/hooks/pre-commit
 /build/
 /.dart_tool/
+/doc/api/
