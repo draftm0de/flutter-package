@@ -1,6 +1,6 @@
-import 'package:draftmode/entity/types.dart';
+import 'package:draftmode/entity/interface.dart';
 import 'package:draftmode/entity/validator.dart';
-import 'package:draftmode/form/types.dart';
+import 'package:draftmode/form/interface.dart';
 import 'package:draftmode/l10n/app_localizations.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

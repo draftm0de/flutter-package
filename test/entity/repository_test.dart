@@ -1,5 +1,5 @@
 import 'package:draftmode/entity/repository.dart';
-import 'package:draftmode/storage/entity.dart';
+import 'package:draftmode/storage/interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Entity {
@@ -7,7 +7,7 @@ class _Entity {
   final int value;
 }
 
-class _FakeStorage implements DraftModeEntityStorage {
+class _FakeStorage implements DraftModeStorage {
   _FakeStorage({this.readResponse});
 
   String? readResponse;

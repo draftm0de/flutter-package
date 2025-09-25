@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'types.dart';
+import 'interface.dart';
 
 /// Mutable implementation of [DraftModeEntityAttributeI] used to back simple
 /// form fields. A single optional [validator] runs before any validators added
