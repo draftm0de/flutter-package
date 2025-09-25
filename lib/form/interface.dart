@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../entity/types.dart';
+import '../entity/interface.dart';
 
 /// Public interface implemented by the concrete form state so widgets can
 /// interact with it without creating tight coupling.

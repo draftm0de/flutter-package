@@ -1,5 +1,5 @@
-import '../entity/types.dart';
-import 'types.dart';
+import '../entity/interface.dart';
+import 'interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 

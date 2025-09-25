@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../storage/entity.dart';
+import '../storage/interface.dart';
 
 /// Translates a value of type [T] between strongly typed objects and raw map
 /// representations stored by a [DraftModeEntityRepository]. Implementations are
@@ -15,7 +15,7 @@ abstract class DraftModeEntityMapper<T> {
 /// delegates concrete mapping logic to [DraftModeEntityMapper].
 abstract class DraftModeEntityRepository<T>
     implements DraftModeEntityMapper<T> {
-  final DraftModeEntityStorage store;
+  final DraftModeStorage store;
 
   DraftModeEntityRepository(this.store);
 
