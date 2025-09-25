@@ -19,6 +19,8 @@ with existing projects, from validation and draft handling to secure storage.
   layer (`lib/form/*`).
 - [Storage](lib/storage/README.md): persistence contracts plus shared/secure
   implementations.
+- [Utils](lib/utils/README.md): date/time formatters, tolerant parsers, and
+  lightweight serialization helpers.
 
 Each module exposes its public API through an `interface.dart` file, keeping the
 pieces composable without circular imports.

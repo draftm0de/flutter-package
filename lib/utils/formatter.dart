@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 extension DraftModeDateTime on DateFormat {
-  /// Locale-aware yMd but with month always 2 digits (MM).
+  /// Locale-aware yMd but with month and day always padded to two digits.
   static DateFormat yMMdd([String? locale]) {
     final base = DateFormat.yMd(locale);
     final pattern = base.pattern ?? 'yMd'; // fallback, should never hit
@@ -11,8 +11,10 @@ extension DraftModeDateTime on DateFormat {
     return DateFormat(patched, locale);
   }
 
+  /// Parses ISO-8601 strings, returning `null` when the input is empty or
+  /// malformed.
   static DateTime? parse(String? value) {
-    if (value == null || value.trim().isNotEmpty) return null;
+    if (value == null || value.trim().isEmpty) return null;
     try {
       return DateTime.parse(value);
     } catch (_) {
@@ -20,6 +22,7 @@ extension DraftModeDateTime on DateFormat {
     }
   }
 
+  /// Returns the number of days in the provided [month] and [year].
   static int getDaysInMonth(int year, int month) {
     final beginningNextMonth = (month < 12)
         ? DateTime(year, month + 1, 1)
@@ -27,15 +30,24 @@ extension DraftModeDateTime on DateFormat {
     return beginningNextMonth.subtract(const Duration(days: 1)).day;
   }
 
+  /// Returns a `hh:mm` duration string representing the difference between [from]
+  /// and [to]. Negative durations are normalised to their absolute value.
   static String getDurationHourMinutes(DateTime from, DateTime to) {
     final Duration diff = to.difference(from);
-    final int hours = diff.inHours;
-    final int minutes = diff.inMinutes % 60;
+    final Duration positive = diff.isNegative
+        ? Duration(microseconds: -diff.inMicroseconds)
+        : diff;
+    final int hours = positive.inHours;
+    final int minutes = positive.inMinutes % 60;
     return '$hours:${minutes.toString().padLeft(2, '0')}';
   }
 }
 
 class DraftModeFormatter {
-  static int? parseInt(dynamic v) =>
-      v is int ? v : (v is String ? int.tryParse(v) : null);
+  /// Attempts to coerce [value] into an `int`, accepting `String` inputs.
+  static int? parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value.trim());
+    return null;
+  }
 }
