@@ -6,13 +6,16 @@ import '../test_utils.dart';
 
 void main() {
   group('DraftModeEntityAttribute.validate', () {
-    testWidgets('uses primary validator and stops on first error', (tester) async {
+    testWidgets('uses primary validator and stops on first error', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
       await tester.pump();
       final context = SimpleContext.lastContext!;
 
       final attribute = DraftModeEntityAttribute<String>(
-        validator: (ctx, form, value) => value == 'invalid' ? 'primary-error' : null,
+        validator: (ctx, form, value) =>
+            value == 'invalid' ? 'primary-error' : null,
       );
       attribute.addValidator((ctx, form, value) => 'secondary-error');
 
@@ -22,7 +25,9 @@ void main() {
       expect(attribute.error, 'primary-error');
     });
 
-    testWidgets('falls back to added validators when primary passes', (tester) async {
+    testWidgets('falls back to added validators when primary passes', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
       await tester.pump();
       final context = SimpleContext.lastContext!;
@@ -32,8 +37,12 @@ void main() {
       );
 
       attribute
-        ..addValidator((ctx, form, value) => value == null ? 'null-error' : null)
-        ..addValidator((ctx, form, value) => value.isEmpty ? 'empty-error' : null);
+        ..addValidator(
+          (ctx, form, value) => value == null ? 'null-error' : null,
+        )
+        ..addValidator(
+          (ctx, form, value) => value.isEmpty ? 'empty-error' : null,
+        );
 
       expect(attribute.validate(context, null, null), 'null-error');
       expect(attribute.error, 'null-error');
@@ -42,21 +51,22 @@ void main() {
       expect(attribute.error, 'empty-error');
     });
 
-    testWidgets('returns null and clears previous error when all validators pass', (tester) async {
-      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
-      await tester.pump();
-      final context = SimpleContext.lastContext!;
+    testWidgets(
+      'returns null and clears previous error when all validators pass',
+      (tester) async {
+        await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+        await tester.pump();
+        final context = SimpleContext.lastContext!;
 
-      final attribute = DraftModeEntityAttribute<String>(
-        validators: <DraftModeEntityValidator>[
-          (ctx, form, value) => null,
-        ],
-      )..error = 'stale';
+        final attribute = DraftModeEntityAttribute<String>(
+          validators: <DraftModeEntityValidator>[(ctx, form, value) => null],
+        )..error = 'stale';
 
-      final result = attribute.validate(context, null, 'ok');
+        final result = attribute.validate(context, null, 'ok');
 
-      expect(result, isNull);
-      expect(attribute.error, isNull);
-    });
+        expect(result, isNull);
+        expect(attribute.error, isNull);
+      },
+    );
   });
 }
