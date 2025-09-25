@@ -1,0 +1,40 @@
+{
+  "@@locale": "de",
+  "navigationBtnSave": "Fertig",
+  "navigationBtnBack": "Zurück",
+  "navigationBtnCancel": "Abbrechen",
+
+  "dialogBtnConfirm": "OK",
+  "dialogBtnCancel": "Abbrechen",
+
+  "calendarStart": "Beginn",
+  "calendarEnd": "Ende",
+  "calendarDuration": "Dauer",
+  "calenderEndBeforeFailure": "{endLabel} kann nicht kleiner als {startLabel} sein.",
+  "@calenderEndBeforeFailure": {
+    "placeholders": {
+      "startLabel": {},
+      "endLabel": {}
+    }
+  },
+
+  "validationRequired": "Eingabe erforderlich",
+  "validationLessThan" : "Muss kleiner sein als {expected}",
+  "@validationLessThan" : {
+    "placeholders" : {
+      "expected" : {}
+    }
+  },
+  "validationGreaterThan" : "Muss größer sein als {expected}",
+  "@validationGreaterThan" : {
+    "placeholders" : {
+      "expected" : {}
+    }
+  },
+  "validationFormat" : "Ungültiges Format ({expected})",
+  "@validationFormat" : {
+    "placeholders" : {
+      "expected" : {}
+    }
+  }
+}
