@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../platform/config.dart';
 
+/// Convenience accessors for platform-aware icons.
 class PlatformButtons {
   static IconData get back =>
       PlatformConfig.isIOS ? CupertinoIcons.back : Icons.arrow_back;

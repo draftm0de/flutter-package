@@ -1,7 +1,7 @@
 import 'package:draftmode/entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import '../platform/config.dart';
+import '../platform/styles.dart';
 import '../utils/formatter.dart';
 import '../l10n/app_localizations.dart';
 import '../form.dart';
@@ -287,11 +287,11 @@ class _DraftModeFormCalenderState extends State<DraftModeFormCalender> {
             textAlign: TextAlign.center,
             text,
             style: isActive
-                ? PlatformConfig.labelStyleActive(
+                ? PlatformStyles.labelStyleActive(
                     context,
                     strike: endDateInvalid,
                   )
-                : PlatformConfig.labelStyle(context, strike: endDateInvalid),
+                : PlatformStyles.labelStyle(context, strike: endDateInvalid),
           ),
         ),
         onPressed: onPressed,

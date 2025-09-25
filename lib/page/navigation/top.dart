@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../platform/config.dart';
+import '../../platform/styles.dart';
 
 /// Platform-aware top navigation bar used by [DraftModePage].
 class DraftModePageNavigationTop extends StatelessWidget
@@ -31,7 +32,7 @@ class DraftModePageNavigationTop extends StatelessWidget
         trailing: trailing != null && trailing!.isNotEmpty
             ? Padding(
                 padding: EdgeInsets.only(
-                  right: PlatformConfig.verticalContainerPadding,
+                  right: PlatformStyles.verticalContainerPadding,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import '../../utils/formatter.dart';
-import '../../platform/config.dart';
+import '../../platform/styles.dart';
 import '../../platform/buttons.dart';
 
 class DraftModeCalenderMonthGrid extends StatelessWidget {
@@ -193,7 +193,7 @@ class DraftModeCalenderMonthGrid extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: PlatformConfig.horizontalContainerPadding,
+            horizontal: PlatformStyles.horizontalContainerPadding,
           ),
           child: Row(
             children: [
@@ -203,11 +203,11 @@ class DraftModeCalenderMonthGrid extends StatelessWidget {
                 onPressed: onPressed,
                 child: Row(
                   children: [
-                    Text(monthLabel, style: PlatformConfig.labelStyle(context)),
+                    Text(monthLabel, style: PlatformStyles.labelStyle(context)),
                     const SizedBox(width: 6),
                     Icon(
                       PlatformButtons.arrowDown,
-                      size: PlatformConfig.buttonSizeSmall,
+                      size: PlatformStyles.buttonSizeSmall,
                     ),
                   ],
                 ),
