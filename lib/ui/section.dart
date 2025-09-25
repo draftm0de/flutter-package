@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import '../platform/config.dart';
 
 /// Groups related form rows into a platform-adaptive container.
+///
+/// On iOS this uses [CupertinoFormSection.insetGrouped]; on other platforms it
+/// wraps content in a `Card`. The [transparent] flag disables the Cupertino
+/// background decoration for sections that should visually blend with their
+/// parents.
 class DraftModeUISection extends StatelessWidget {
   final String? header;
   final List<Widget> children;
@@ -61,6 +66,9 @@ class DraftModeUISection extends StatelessWidget {
 }
 
 /// Exposes contextual hints for descendants rendered within a [DraftModeUISection].
+///
+/// Widgets can call [isInSection] to adjust layout or use [containerPadding] for
+/// consistent horizontal padding when emulating section spacing.
 class DraftModeSectionScope extends InheritedWidget {
   const DraftModeSectionScope({super.key, required super.child});
 

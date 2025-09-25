@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import '../../platform/config.dart';
 
+/// Platform-aware bottom navigation bar used by [DraftModePage].
 class DraftModePageNavigationBottom extends StatelessWidget {
   final List<Widget>? leading;
   final Widget? primary;

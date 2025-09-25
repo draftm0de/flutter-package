@@ -4,6 +4,10 @@ import '../l10n/app_localizations.dart';
 import '../platform/config.dart';
 
 /// Platform-aware confirmation dialog that falls back to sensible defaults.
+///
+/// The widget itself is stateless; prefer the static [show] helper to present
+/// it and await the result. When custom labels are omitted the component uses
+/// strings from [DraftModeLocalizations].
 class DraftModeUIConfirm extends StatelessWidget {
   final String title;
   final String message;
