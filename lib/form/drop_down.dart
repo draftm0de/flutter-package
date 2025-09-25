@@ -10,6 +10,7 @@ import '../page/navigation/top_item.dart';
 import '../entity/attribute.dart';
 import '../entity/collection.dart';
 import '../platform/config.dart';
+import '../platform/styles.dart';
 import '../l10n/app_localizations.dart';
 
 class DraftModeFormDropDown<
@@ -190,8 +191,8 @@ class _DraftModeFormDropDownScreenState<
                   itemId == widget.element.value);
               final Widget child = CupertinoFormRow(
                 padding: EdgeInsets.symmetric(
-                  vertical: PlatformConfig.verticalContainerPadding / 2,
-                  horizontal: PlatformConfig.horizontalContainerPadding / 2,
+                  vertical: PlatformStyles.verticalContainerPadding / 2,
+                  horizontal: PlatformStyles.horizontalContainerPadding / 2,
                 ),
                 prefix: widget.renderItem(item),
                 helper: null,

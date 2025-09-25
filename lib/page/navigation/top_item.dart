@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'item.dart';
-import '../../platform/config.dart';
+import '../../platform/styles.dart';
 
 /// Convenience wrapper configuring a [DraftModePageNavigationItem] for the top bar.
 class DraftModePageNavigationTopItem extends StatelessWidget {
@@ -27,7 +27,7 @@ class DraftModePageNavigationTopItem extends StatelessWidget {
     return DraftModePageNavigationItem(
       text: text,
       icon: icon,
-      iconSize: PlatformConfig.topNavigationBarIconHeight,
+      iconSize: PlatformStyles.topNavigationBarIconHeight,
       iconExpanded: iconExpanded,
       iconColor: iconColor,
       onTap: onTap,

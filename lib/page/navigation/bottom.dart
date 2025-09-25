@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import '../../platform/config.dart';
+import '../../platform/styles.dart';
 
 /// Platform-aware bottom navigation bar used by [DraftModePage].
 class DraftModePageNavigationBottom extends StatelessWidget {
@@ -24,13 +24,13 @@ class DraftModePageNavigationBottom extends StatelessWidget {
       top: false,
       child: Container(
         constraints: BoxConstraints(
-          minHeight: PlatformConfig.bottomNavigationBarContainerHeight,
+          minHeight: PlatformStyles.bottomNavigationBarContainerHeight,
         ),
         padding: EdgeInsets.symmetric(
-          horizontal: PlatformConfig.verticalContainerPadding,
+          horizontal: PlatformStyles.verticalContainerPadding,
         ),
         child: SizedBox(
-          height: PlatformConfig.bottomNavigationBarItemHeight,
+          height: PlatformStyles.bottomNavigationBarItemHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

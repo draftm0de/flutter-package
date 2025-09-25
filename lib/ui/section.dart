@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../platform/config.dart';
+import '../platform/styles.dart';
 
 /// Groups related form rows into a platform-adaptive container.
 ///
@@ -31,7 +32,7 @@ class DraftModeUISection extends StatelessWidget {
               header: hasHeader
                   ? Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: PlatformConfig.horizontalContainerPadding,
+                        horizontal: PlatformStyles.horizontalContainerPadding,
                       ),
                       child: Text(header ?? ''),
                     )

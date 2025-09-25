@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //
+import '../l10n/app_localizations.dart';
 import '../platform/buttons.dart';
 import '../platform/config.dart';
-import '../l10n/app_localizations.dart';
+import '../platform/styles.dart';
 import 'navigation/bottom.dart';
 import 'navigation/bottom_item.dart';
 import 'navigation/top.dart';
@@ -127,8 +128,11 @@ class DraftModePage extends StatelessWidget {
 
     final Widget pageContent = Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: horizontalContainerPadding ?? 0,
-        vertical: verticalContainerPadding ?? 0,
+        horizontal:
+            horizontalContainerPadding ??
+            PlatformStyles.horizontalContainerPadding,
+        vertical:
+            verticalContainerPadding ?? PlatformStyles.verticalContainerPadding,
       ),
       child: body,
     );
@@ -144,7 +148,7 @@ class DraftModePage extends StatelessWidget {
 
     final Color background =
         containerBackgroundColor ??
-        PlatformConfig.containerBackgroundColor(context);
+        PlatformStyles.containerBackgroundColor(context);
 
     return PlatformConfig.isIOS
         ? CupertinoPageScaffold(

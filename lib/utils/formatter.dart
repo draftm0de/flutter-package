@@ -11,10 +11,11 @@ extension DraftModeDateTime on DateFormat {
     return DateFormat(patched, locale);
   }
 
-  /// Parses ISO-8601 strings, returning `null` when the input is empty or
-  /// malformed.
-  static DateTime? parse(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
+  /// Parses ISO-8601 strings, returning `null` when the input is empty, not a
+  /// string, or malformed.
+  static DateTime? parse(dynamic value) {
+    if (value is! String) return null;
+    if (value.trim().isEmpty) return null;
     try {
       return DateTime.parse(value);
     } catch (_) {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import '../../platform/config.dart';
+import '../../platform/styles.dart';
 import '../../platform/buttons.dart';
 
 class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
@@ -39,7 +39,7 @@ class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
         // Optional small toolbar to go back to day view
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: PlatformConfig.horizontalContainerPadding,
+            horizontal: PlatformStyles.horizontalContainerPadding,
           ),
           child: Row(
             children: [
@@ -50,12 +50,12 @@ class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
                   children: [
                     Text(
                       monthLabel,
-                      style: PlatformConfig.labelStyleActive(context),
+                      style: PlatformStyles.labelStyleActive(context),
                     ),
                     const SizedBox(width: 6),
                     Icon(
                       PlatformButtons.arrowUp,
-                      size: PlatformConfig.buttonSizeSmall,
+                      size: PlatformStyles.buttonSizeSmall,
                     ),
                   ],
                 ),
