@@ -66,9 +66,8 @@ void main() {
         _cupertinoShell(
           Navigator(
             key: navigatorKey,
-            onGenerateRoute: (_) => CupertinoPageRoute(
-              builder: (_) => const Placeholder(),
-            ),
+            onGenerateRoute: (_) =>
+                CupertinoPageRoute(builder: (_) => const Placeholder()),
           ),
         ),
       );
@@ -76,10 +75,8 @@ void main() {
 
       navigatorKey.currentState!.push(
         CupertinoPageRoute(
-          builder: (_) => DraftModePage(
-            navigationTitle: 'Title',
-            body: const Text('Body'),
-          ),
+          builder: (_) =>
+              DraftModePage(navigationTitle: 'Title', body: const Text('Body')),
         ),
       );
       await tester.pumpAndSettle();
@@ -96,9 +93,8 @@ void main() {
         _cupertinoShell(
           Navigator(
             key: navigatorKey,
-            onGenerateRoute: (_) => CupertinoPageRoute(
-              builder: (_) => const Placeholder(),
-            ),
+            onGenerateRoute: (_) =>
+                CupertinoPageRoute(builder: (_) => const Placeholder()),
           ),
         ),
       );
@@ -154,5 +150,4 @@ void main() {
       expect(find.text('A'), findsOneWidget);
     });
   });
-
 }
