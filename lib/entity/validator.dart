@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
-import '../types.dart';
-import '../l10n/app_localizations.dart';
 
-// ----------------------------------------------------------------------
-// validations
-// ----------------------------------------------------------------------
+import '../l10n/app_localizations.dart';
+import '../types.dart';
+
+/// Creates a validator that fails when [v] is null or, for strings, empty.
+/// The returned message is localized using [DraftModeLocalizations].
 DraftModeEntityValidator vRequired() {
   return (BuildContext context, DraftModeFormStateI? form, dynamic v) {
     final loc = DraftModeLocalizations.of(context);
@@ -18,6 +18,8 @@ DraftModeEntityValidator vRequired() {
   };
 }
 
+/// Creates a validator that enforces a value only when [compare] evaluates to
+/// a truthy boolean within the surrounding form state.
 DraftModeEntityValidator vRequiredOn(DraftModeEntityAttributeI compare) {
   return (BuildContext context, DraftModeFormStateI? form, dynamic v) {
     //debugPrint("vRequiredOn for ${compare.debugName ?? "-"}");
