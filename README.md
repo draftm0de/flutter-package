@@ -22,3 +22,6 @@ import 'package:draftmode/localizations.dart'; // DraftmodeLocalizations
           AppLocalizations.delegate,
         ],
 ```
+## Entity Module
+See [lib/entity/README.md](lib/entity/README.md) for details on entity helpers.
+
