@@ -21,3 +21,9 @@ dependencies:
 flutter:
   generate: true
   uses-material-design: true
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: ^1.26.2
+  golden_toolkit: ^0.15.0
+
