@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../types.dart';
+import 'types.dart';
 
 /// Mutable implementation of [DraftModeEntityAttributeI] used to back simple
 /// form fields. A single optional [validator] runs before any validators added
@@ -40,7 +40,7 @@ class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
   /// Runs the primary [validator] (if present) and any additional validators
   /// until one returns a message. When all validators pass, [error] is cleared
   /// and `null` is returned.
-  String? validate(BuildContext context, DraftModeFormStateI? form, T? v) {
+  String? validate(BuildContext context, DraftModeFormContext? form, T? v) {
     if (validator != null) {
       final msg = validator!(context, form, v);
       if (msg != null) {

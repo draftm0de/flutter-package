@@ -4,7 +4,7 @@ import 'form.dart';
 import '../ui/text_error.dart';
 import '../ui/row.dart';
 import '../platform/buttons.dart';
-import '../types.dart';
+import '../entity/types.dart';
 
 class DraftModeFormField<T> extends StatefulWidget {
   final DraftModeEntityAttributeI element;

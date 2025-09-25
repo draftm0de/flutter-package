@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:draftmode/entity/attribute.dart';
-import 'package:draftmode/types.dart';
+import 'package:draftmode/entity/types.dart';
 
 import '../test_utils.dart';
 

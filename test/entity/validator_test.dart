@@ -1,5 +1,6 @@
+import 'package:draftmode/entity/types.dart';
 import 'package:draftmode/entity/validator.dart';
-import 'package:draftmode/types.dart';
+import 'package:draftmode/form/types.dart';
 import 'package:draftmode/l10n/app_localizations.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +26,7 @@ class _FakeAttribute<T> implements DraftModeEntityAttributeI<T> {
   }
 
   @override
-  String? validate(BuildContext context, DraftModeFormStateI? form, T? v) {
+  String? validate(BuildContext context, DraftModeFormContext? form, T? v) {
     throw UnimplementedError();
   }
 }
