@@ -30,9 +30,25 @@ class DraftModeUIConfirm extends StatelessWidget {
     String? cancelLabel,
     bool? barrierDismissible,
   }) async {
-    return showCupertinoDialog<bool>(
+    final bool dismissible =
+        barrierDismissible ?? (PlatformConfig.isIOS ? false : true);
+
+    if (PlatformConfig.isIOS) {
+      return showCupertinoDialog<bool>(
+        context: context,
+        barrierDismissible: dismissible,
+        builder: (_) => DraftModeUIConfirm(
+          title: title,
+          message: message,
+          confirmLabel: confirmLabel,
+          cancelLabel: cancelLabel,
+        ),
+      );
+    }
+
+    return m.showDialog<bool>(
       context: context,
-      barrierDismissible: barrierDismissible ?? false,
+      barrierDismissible: dismissible,
       builder: (_) => DraftModeUIConfirm(
         title: title,
         message: message,

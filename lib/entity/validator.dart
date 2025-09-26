@@ -22,7 +22,6 @@ DraftModeEntityValidator vRequired() {
 /// a truthy boolean within the surrounding form state.
 DraftModeEntityValidator vRequiredOn(DraftModeEntityAttributeI compare) {
   return (BuildContext context, DraftModeFormContext? form, dynamic v) {
-    //debugPrint("vRequiredOn for ${compare.debugName ?? "-"}");
     final cv = form!.read(compare);
     bool required = false;
     if (v == null) {
@@ -32,5 +31,27 @@ DraftModeEntityValidator vRequiredOn(DraftModeEntityAttributeI compare) {
     }
     final loc = DraftModeLocalizations.of(context);
     return (v == null && required) ? loc!.validationRequired : null;
+  };
+}
+
+/// Creates a validator that ensures [v] does not fall below the value resolved
+/// from [compare]. Accepts either another attribute or a literal `DateTime` or
+/// `int` and surfaces [DraftModeLocalizations.validationGreaterThan] when the
+/// inspected value is earlier (dates) or smaller/equal (ints) than the
+/// comparison.
+DraftModeEntityValidator vGreaterThan(dynamic compare) {
+  return (BuildContext context, DraftModeFormContext? form, dynamic v) {
+    final cv = (compare is DraftModeEntityAttributeI)
+        ? form!.read(compare)
+        : compare;
+    if (cv == null) return null;
+    final loc = DraftModeLocalizations.of(context);
+    if (v is DateTime && cv is DateTime && !v.isAfter(cv)) {
+      return loc!.validationGreaterThan(expected: cv.toIso8601String());
+    }
+    if (v is int && cv is int && v <= cv) {
+      return loc!.validationGreaterThan(expected: cv);
+    }
+    return null;
   };
 }

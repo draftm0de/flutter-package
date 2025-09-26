@@ -72,7 +72,7 @@ class DraftModePageNavigationItem extends StatelessWidget {
           )
         : TextButton(
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
             ),
             onPressed: () => _onTap(context),
             child: child,

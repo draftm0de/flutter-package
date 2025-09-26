@@ -40,5 +40,21 @@ void main() {
         throwsA(isA<FormatException>()),
       );
     });
+
+    test('wraps unexpected errors in FormatException', () {
+      const json = '{"id": 1}';
+      final serializer = DraftModeSerializer();
+
+      expect(
+        () => serializer.decodeObject(json, (map) => throw StateError('nope')),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('nope'),
+          ),
+        ),
+      );
+    });
   });
 }

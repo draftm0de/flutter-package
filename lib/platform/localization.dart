@@ -22,6 +22,9 @@ class PlatformLocalization {
 
   static final DraftModeLocalizations _fallback = _ManualFallback();
 
+  @visibleForTesting
+  static DraftModeLocalizations get debugFallback => _fallback;
+
   /// Localised label for navigation back buttons.
   String get navigationBtnBack => _loc.navigationBtnBack;
 }

@@ -134,4 +134,140 @@ void main() {
       expect(result, isNull);
     });
   });
+
+  group('vGreaterThan()', () {
+    testWidgets('returns error when value precedes compared attribute', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+      final loc = DraftModeLocalizations.of(context)!;
+
+      final compare = _FakeAttribute<DateTime>(debugName: 'startDate');
+      final targetDate = DateTime(2024, 1, 1);
+      final form = _FakeFormState(<dynamic, dynamic>{compare: targetDate});
+      final validator = vGreaterThan(compare);
+
+      final error = validator(
+        context,
+        form,
+        targetDate.subtract(const Duration(days: 1)),
+      );
+
+      expect(
+        error,
+        loc.validationGreaterThan(expected: targetDate.toIso8601String()),
+      );
+    });
+
+    testWidgets('returns error when value equals compared attribute', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+      final loc = DraftModeLocalizations.of(context)!;
+
+      final compare = _FakeAttribute<DateTime>(debugName: 'startDate');
+      final targetDate = DateTime(2024, 3, 10);
+      final form = _FakeFormState(<dynamic, dynamic>{compare: targetDate});
+      final validator = vGreaterThan(compare);
+
+      final sameDay = validator(context, form, targetDate);
+      expect(
+        sameDay,
+        loc.validationGreaterThan(expected: targetDate.toIso8601String()),
+      );
+    });
+
+    testWidgets('returns null when value exceeds compared attribute', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+
+      final compare = _FakeAttribute<DateTime>(debugName: 'startDate');
+      final targetDate = DateTime(2024, 3, 10);
+      final form = _FakeFormState(<dynamic, dynamic>{compare: targetDate});
+      final validator = vGreaterThan(compare);
+
+      final laterDay = validator(
+        context,
+        form,
+        targetDate.add(const Duration(days: 2)),
+      );
+
+      expect(laterDay, isNull);
+    });
+
+    testWidgets('returns null when compared attribute is missing', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+
+      final compare = _FakeAttribute<DateTime>(debugName: 'startDate');
+      final form = _FakeFormState(const <dynamic, dynamic>{});
+      final validator = vGreaterThan(compare);
+
+      final result = validator(context, form, DateTime(2024, 5, 1));
+
+      expect(result, isNull);
+    });
+
+    testWidgets('returns error when integer value below comparison attribute', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+      final loc = DraftModeLocalizations.of(context)!;
+
+      final compare = _FakeAttribute<int>(debugName: 'minValue');
+      final form = _FakeFormState(<dynamic, dynamic>{compare: 10});
+      final validator = vGreaterThan(compare);
+
+      final error = validator(context, form, 9);
+      final equal = validator(context, form, 10);
+
+      expect(error, loc.validationGreaterThan(expected: 10));
+      expect(equal, loc.validationGreaterThan(expected: 10));
+    });
+
+    testWidgets('returns null when integer exceeds comparison attribute', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+
+      final compare = _FakeAttribute<int>(debugName: 'minValue');
+      final form = _FakeFormState(<dynamic, dynamic>{compare: 10});
+      final validator = vGreaterThan(compare);
+
+      final result = validator(context, form, 11);
+
+      expect(result, isNull);
+    });
+
+    testWidgets('supports literal integer comparisons when form absent', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+      final loc = DraftModeLocalizations.of(context)!;
+
+      final validator = vGreaterThan(25);
+
+      final error = validator(context, null, 25);
+      final ok = validator(context, null, 42);
+
+      expect(error, loc.validationGreaterThan(expected: 25));
+      expect(ok, isNull);
+    });
+  });
 }
