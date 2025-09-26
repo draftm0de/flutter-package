@@ -1,16 +1,16 @@
 import 'package:flutter/widgets.dart';
 
+import '../entity/attribute.dart';
 import '../ui/row.dart';
 import '../ui/switch.dart';
 import '../ui/text_error.dart';
-import '../entity/attribute.dart';
 import 'form.dart';
 
 /// Toggle control bound to a [DraftModeEntityAttribute]. Mirrors the behaviour
 /// of other form inputs by participating in validation cycles and exposing the
 /// latest draft value through [DraftModeFormState].
 class DraftModeFormSwitch extends StatefulWidget {
-  final DraftModeEntityAttribute<bool> element;
+  final DraftModeEntityAttribute<bool> attribute;
   final bool enabled;
   final AutovalidateMode autovalidateMode;
   final FormFieldSetter<bool>? onSaved;
@@ -20,7 +20,7 @@ class DraftModeFormSwitch extends StatefulWidget {
 
   const DraftModeFormSwitch({
     super.key,
-    required this.element,
+    required this.attribute,
     this.enabled = true,
     this.autovalidateMode = AutovalidateMode.disabled,
     this.onSaved,
@@ -41,7 +41,7 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _form?.registerField(widget.element, _fieldKey);
+      _form?.registerField(widget.attribute, _fieldKey);
     });
   }
 
@@ -53,25 +53,26 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
 
   @override
   void dispose() {
-    _form?.unregisterField(widget.element, _fieldKey);
+    _form?.unregisterField(widget.attribute, _fieldKey);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final form = _form ?? DraftModeFormState.of(context);
-    form?.registerProperty(widget.element);
+    form?.registerProperty(widget.attribute);
 
     return FormField<bool>(
       key: _fieldKey,
-      initialValue: widget.element.value ?? false,
+      initialValue: widget.attribute.value ?? false,
       enabled: widget.enabled,
       autovalidateMode: widget.autovalidateMode,
       validator:
-          widget.validator ?? (v) => widget.element.validate(context, form, v),
+          widget.validator ??
+          (v) => widget.attribute.validate(context, form, v),
       onSaved: (value) {
         final nextValue = value ?? false;
-        widget.element.value = nextValue;
+        widget.attribute.value = nextValue;
         widget.onSaved?.call(nextValue);
       },
       builder: (field) {
@@ -90,7 +91,7 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
                         final resolved = value ?? false;
                         field.didChange(resolved);
                         (form ?? DraftModeFormState.of(context))
-                            ?.updateProperty(widget.element, resolved);
+                            ?.updateProperty(widget.attribute, resolved);
                         widget.onChanged?.call(resolved);
                       }
                     : null,

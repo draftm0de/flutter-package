@@ -48,7 +48,7 @@ void main() {
         home: DraftModeForm(
           child: DraftModeFormField<String>(
             key: const ValueKey('field'),
-            element: attribute,
+            attribute: attribute,
             label: 'Name',
           ),
         ),

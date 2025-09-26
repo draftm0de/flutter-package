@@ -35,7 +35,7 @@ void main() {
         home: DraftModeForm(
           child: DraftModeFormDropDown<_TestItem, String>(
             items: items,
-            element: attribute,
+            attribute: attribute,
             placeholder: 'Pick one',
             label: 'Choice',
             selectionTitle: 'Choose option',
@@ -72,7 +72,7 @@ void main() {
         home: DraftModeForm(
           child: DraftModeFormDropDown<_TestItem, String>(
             items: items,
-            element: attribute,
+            attribute: attribute,
             placeholder: 'Read only',
             label: 'Choice',
             readOnly: true,
