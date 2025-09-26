@@ -52,4 +52,49 @@ void main() {
     expect(find.text('Duration'), findsOneWidget);
     expect(find.text('1:45'), findsOneWidget);
   });
+
+  testWidgets('switches between day and month/year pickers', (tester) async {
+    final formKey = GlobalKey<DraftModeFormState>();
+    final fromAttr = DraftModeEntityAttribute<DateTime>(
+      value: DateTime(2024, 1, 15, 9, 0),
+    );
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          key: formKey,
+          child: DraftModeFormCalendar(from: fromAttr),
+        ),
+      ),
+    );
+
+    expect(find.text('01/15/2024'), findsOneWidget);
+
+    await tester.tap(find.textContaining('2024').first);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DraftModeCalendarMonthGrid), findsOneWidget);
+    expect(find.text('January 2024'), findsOneWidget);
+
+    await tester.tap(find.text('January 2024'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DraftModeCalendarMonthYearInlinePicker), findsOneWidget);
+
+    await tester.drag(find.byType(CupertinoPicker).first, const Offset(0, -50));
+    await tester.pumpAndSettle();
+
+    expect(find.text('February 2024'), findsOneWidget);
+
+    await tester.tap(find.text('February 2024'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DraftModeCalendarMonthGrid), findsOneWidget);
+    expect(find.text('02/15/2024'), findsOneWidget);
+
+    await tester.tap(find.text('20'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('02/20/2024'), findsOneWidget);
+  });
 }
