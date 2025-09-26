@@ -130,7 +130,7 @@ DA:65,5
 DA:66,10
 DA:70,5
 DA:71,5
-DA:188,1
+DA:188,2
 DA:190,1
 DA:192,1
 DA:193,1
@@ -623,7 +623,7 @@ LF:58
 LH:55
 end_of_record
 SF:lib/form/button_spinner.dart
-DA:9,4
+DA:9,3
 DA:11,2
 DA:13,2
 DA:18,4
