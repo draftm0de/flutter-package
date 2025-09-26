@@ -14,7 +14,8 @@ This file captures conventions and guardrails for automated contributors.
   .git/hooks/pre-commit`).
 - Avoid committing artefacts such as `coverage/` outputs.
 - Never commit directly to the `main` branch; if a session starts on `main`,
-  create a feature branch automatically before staging changes.
+  create a feature branch automatically before staging changes. When in doubt,
+  prefer creating a new branch before making edits.
 
 ## Code Organization
 - Shared interfaces live in `interface.dart` under each module (entity, form,
