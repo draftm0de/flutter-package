@@ -1,15 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import '../../platform/styles.dart';
-import '../../platform/buttons.dart';
 
-class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
+import '../../platform/buttons.dart';
+import '../../platform/styles.dart';
+
+class DraftModeCalendarMonthYearInlinePicker extends StatelessWidget {
   final DateTime dateTime;
   final double height;
   final void Function() onPressed;
   final void Function(int m, int y) onChanged;
 
-  const DraftModeCalenderMonthYearInlinePicker({
+  const DraftModeCalendarMonthYearInlinePicker({
     super.key,
     required this.dateTime,
     required this.onChanged,
@@ -105,3 +106,7 @@ class DraftModeCalenderMonthYearInlinePicker extends StatelessWidget {
     );
   }
 }
+
+@Deprecated('Use DraftModeCalendarMonthYearInlinePicker instead')
+typedef DraftModeCalenderMonthYearInlinePicker =
+    DraftModeCalendarMonthYearInlinePicker;

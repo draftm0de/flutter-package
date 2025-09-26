@@ -1,0 +1,62 @@
+import 'package:draftmode/entity.dart';
+import 'package:draftmode/form.dart';
+import 'package:draftmode/platform/config.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+class _TestItem extends DraftModeEntityCollectionItem<String> {
+  final String id;
+  final String label;
+  _TestItem(this.id, this.label);
+
+  @override
+  String getId() => id;
+}
+
+void main() {
+  setUp(() {
+    PlatformConfig.mode = ForcedPlatform.ios;
+  });
+
+  tearDown(() {
+    PlatformConfig.mode = ForcedPlatform.auto;
+  });
+
+  testWidgets('shows selection page and updates attribute', (tester) async {
+    final attribute = DraftModeEntityAttribute<String>();
+    final items = DraftModeEntityCollection<_TestItem>([
+      _TestItem('a', 'Alpha'),
+      _TestItem('b', 'Beta'),
+    ]);
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormDropDown<_TestItem, String>(
+            items: items,
+            element: attribute,
+            placeholder: 'Pick one',
+            label: 'Choice',
+            selectionTitle: 'Choose option',
+            renderItem: (item) => Text(item.label),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Pick one'), findsOneWidget);
+
+    await tester.tap(find.text('Pick one'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose option'), findsOneWidget);
+    await tester.tap(find.text('Beta'));
+    await tester.pumpAndSettle();
+
+    final formState = tester.state<DraftModeFormState>(
+      find.byType(DraftModeForm),
+    );
+    expect(formState.read(attribute), 'b');
+    expect(find.text('Beta'), findsWidgets);
+  });
+}

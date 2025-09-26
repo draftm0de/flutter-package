@@ -1,5 +1,14 @@
-enum DraftModeFormCalenderMode { date, time, datetime }
+enum DraftModeFormCalendarMode { date, time, datetime }
 
-enum DraftModeFormCalenderPickerMode { closed, day, hourMinute, monthYear }
+enum DraftModeFormCalendarPickerMode { closed, day, hourMinute, monthYear }
 
-enum DraftModeFormCalenderDurationMode { none, hours }
+enum DraftModeFormCalendarDurationMode { none, hours }
+
+@Deprecated('Use DraftModeFormCalendarMode instead')
+typedef DraftModeFormCalenderMode = DraftModeFormCalendarMode;
+
+@Deprecated('Use DraftModeFormCalendarPickerMode instead')
+typedef DraftModeFormCalenderPickerMode = DraftModeFormCalendarPickerMode;
+
+@Deprecated('Use DraftModeFormCalendarDurationMode instead')
+typedef DraftModeFormCalenderDurationMode = DraftModeFormCalendarDurationMode;

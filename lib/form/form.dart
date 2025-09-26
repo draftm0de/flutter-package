@@ -1,8 +1,11 @@
-import '../entity/interface.dart';
-import 'interface.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 
+import '../entity/interface.dart';
+import 'interface.dart';
+
+/// Thin wrapper around Flutter's [Form] that wires in Draftmode specific
+/// behaviour such as attribute tracking and deferred validation. Widgets inside
+/// the tree should use [DraftModeFormState.of] to access the shared state.
 class DraftModeForm extends Form {
   const DraftModeForm({
     super.key,
@@ -15,15 +18,26 @@ class DraftModeForm extends Form {
   DraftModeFormState createState() => DraftModeFormState();
 }
 
+/// Concrete [FormState] implementation that keeps a lightweight draft of
+/// attribute values and exposes helpers for other widgets in the module. This
+/// mirrors the entity layer interfaces so validation remains decoupled from the
+/// widget tree.
 class DraftModeFormState extends FormState implements DraftModeFormStateI {
+  static const bool _debugMode = false;
+
   bool _onSubmit = false;
   bool _enableValidation = false;
-  final bool _debugMode = false;
+
   bool get onSubmit => _onSubmit;
   bool get enableValidation => _enableValidation;
 
-  final Map<int, dynamic> _drafts = {};
-  final Map<int, Set<GlobalKey<FormFieldState>>> _fields = {};
+  final Map<int, Object?> _drafts = <int, Object?>{};
+  final Map<int, Set<GlobalKey<FormFieldState>>> _fields =
+      <int, Set<GlobalKey<FormFieldState>>>{};
+
+  void _log(String message) {
+    if (_debugMode) debugPrint('DraftModeFormState: $message');
+  }
 
   @override
   void registerProperty(
@@ -31,30 +45,23 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     String? debugName,
   }) {
     final key = identityHashCode(attribute);
-    if (!_drafts.containsKey(key)) {
-      _drafts[key] = null;
-      if (_debugMode)
-        debugPrint(
-          "DraftModeFormState.registerProperty property (${attribute.debugName ?? "-"}) #$key",
-        );
-    }
+    _drafts.putIfAbsent(key, () {
+      _log('registerProperty ${debugName ?? attribute.debugName ?? '-'} #$key');
+      return null;
+    });
   }
 
   @override
   void updateProperty<T>(DraftModeEntityAttributeI attribute, T? value) {
     final key = identityHashCode(attribute);
-    if (_drafts.containsKey(key)) {
-      if (_debugMode)
-        debugPrint(
-          "DraftModeFormState.updateProperty (${attribute.debugName ?? "-"}) value $value #$key",
-        );
-      _drafts[key] = value;
+    if (!_drafts.containsKey(key)) {
+      _log(
+        'updateProperty skipped (${attribute.debugName ?? '-'}) not registered #$key',
+      );
       return;
     }
-    if (_debugMode)
-      debugPrint(
-        "DraftModeFormState.updateProperty (${attribute.debugName ?? "-"}), failure, not registered #$key",
-      );
+    _log('updateProperty ${attribute.debugName ?? '-'} value: $value #$key');
+    _drafts[key] = value;
   }
 
   @override
@@ -63,10 +70,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     GlobalKey<FormFieldState> key,
   ) {
     final attributeKey = identityHashCode(attribute);
-    if (_debugMode)
-      debugPrint(
-        "DraftModeFormState.registerField: $attributeKey ${attribute.debugName ?? "-"} #$key",
-      );
+    _log('registerField ${attribute.debugName ?? '-'} #$attributeKey');
     _fields
         .putIfAbsent(attributeKey, () => <GlobalKey<FormFieldState>>{})
         .add(key);
@@ -80,10 +84,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     final attributeKey = identityHashCode(attribute);
     final set = _fields[attributeKey];
     if (set == null) return;
-    if (_debugMode)
-      debugPrint(
-        "DraftModeFormState.unregisterField: $attributeKey ${attribute.debugName ?? "-"} #$key",
-      );
+    _log('unregisterField ${attribute.debugName ?? '-'} #$attributeKey');
     set.remove(key);
     if (set.isEmpty) _fields.remove(attributeKey);
   }
@@ -93,47 +94,34 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     final attributeKey = identityHashCode(attribute);
     final fields = _fields[attributeKey];
     if (fields == null) {
-      if (_debugMode)
-        debugPrint(
-          "DraftModeFormState.validateAttribute: (${attribute.debugName ?? "-"}) no related field found #$attributeKey",
-        );
+      _log(
+        'validateAttribute no fields ${attribute.debugName ?? '-'} #$attributeKey',
+      );
       return;
-    } else {
-      for (final key in fields) {
-        if (_debugMode)
-          debugPrint(
-            "DraftModeFormState.validateAttribute: (${attribute.debugName ?? "-"}) related field found #$key",
-          );
-        key.currentState?.validate();
-      }
+    }
+    for (final key in fields) {
+      _log('validateAttribute -> field #${key.hashCode}');
+      key.currentState?.validate();
     }
   }
 
   @override
   V? read<V>(dynamic attribute) {
-    if (attribute is DraftModeEntityAttributeI) {
-      final key = identityHashCode(attribute);
-      if (_drafts.containsKey(key)) {
-        final value = _drafts[key] as V?;
-        if (_debugMode)
-          debugPrint(
-            "DraftModeFormState.read (${attribute.debugName ?? "-"}), use draft.value value $value #$key",
-          );
-        return value;
-      } else {
-        if (_debugMode)
-          debugPrint(
-            "DraftModeFormState.read (${attribute.debugName ?? "-"}), use prop.value (not registered) #$key",
-          );
-        return attribute.value;
-      }
-    } else {
-      if (_debugMode)
-        debugPrint(
-          "DraftModeFormState.read, not a DraftModeEntityAttribute, prop",
-        );
+    if (attribute is! DraftModeEntityAttributeI) {
+      _log('read dynamic value (not attribute)');
       return attribute as V?;
     }
+
+    final key = identityHashCode(attribute);
+    if (_drafts.containsKey(key)) {
+      final value = _drafts[key] as V?;
+      _log('read draft ${attribute.debugName ?? '-'} -> $value');
+      return value;
+    }
+
+    final value = attribute.value as V?;
+    _log('read attribute ${attribute.debugName ?? '-'} -> $value');
+    return value;
   }
 
   @override
@@ -152,6 +140,8 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   @override
   void reset() {
     _onSubmit = false;
+    _enableValidation = false;
+    _drafts.clear();
     super.reset();
   }
 

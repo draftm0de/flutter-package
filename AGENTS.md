@@ -4,6 +4,8 @@ This file captures conventions and guardrails for automated contributors.
 
 ## Workflow Expectations
 - Run `dart format --output=write .` before staging files.
+- Running any `dart format` command is pre-approved; feel free to use more
+  granular invocations when useful.
 - Ensure `dart analyze` passes with zero warnings.
 - Execute the full test suite (`flutter test`) after changes. The pre-commit
   hook already runs format + tests; confirm it stays executable (`chmod +x
@@ -29,6 +31,13 @@ This file captures conventions and guardrails for automated contributors.
   public APIs.
 - Use `PlatformStyles` for shared padding/typography rather than hard-coded
   values.
+- Prefer the canonical `DraftModeFormCalendar*` names in the form module; the
+  legacy `Calender` identifiers are temporary aliases for backwards
+  compatibility.
+
+# User interactions
+- The user is allowed to modify source code, which can influent the tests. 
+- In case of recognizing modifications ask before reverting to match the current cached sources.
 
 Update this guide whenever new conventions emerge so automated agents stay in
 sync.
