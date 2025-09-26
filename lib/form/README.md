@@ -16,6 +16,8 @@ Key files:
 - `switch.dart` - boolean toggle wired into the draft map and validation flow.
 - `button.dart` / `button_text.dart` - submit buttons that validate associated
   forms before invoking async handlers.
+- `date_time.dart` - slim single-attribute picker that wraps the core calendar
+  inline controls without range or duration features.
 - `calender.dart` and `calender/` - the date/time picker stack. Canonical type
   names now use the `Calendar` spelling; legacy `Calender` aliases remain for
   backwards compatibility.
