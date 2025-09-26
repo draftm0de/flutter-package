@@ -13,6 +13,7 @@ void main() {
     test('parse returns null for empty input and parses ISO strings', () {
       expect(DraftModeDateTime.parse(null), isNull);
       expect(DraftModeDateTime.parse('   '), isNull);
+      expect(DraftModeDateTime.parse('not-a-date'), isNull);
       final parsed = DraftModeDateTime.parse('2024-03-05T10:15:00.000Z');
       expect(parsed, isNotNull);
       expect(parsed!.year, 2024);
@@ -21,6 +22,10 @@ void main() {
     test('getDaysInMonth respects leap years', () {
       expect(DraftModeDateTime.getDaysInMonth(2024, 2), 29);
       expect(DraftModeDateTime.getDaysInMonth(2023, 2), 28);
+    });
+
+    test('getDaysInMonth handles December rollover', () {
+      expect(DraftModeDateTime.getDaysInMonth(2024, 12), 31);
     });
 
     test('getDurationHourMinutes normalises negative durations', () {

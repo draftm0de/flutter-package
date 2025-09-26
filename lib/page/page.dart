@@ -126,22 +126,11 @@ class DraftModePage extends StatelessWidget {
           )
         : null;
 
-    final Widget pageContent = Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal:
-            horizontalContainerPadding ??
-            PlatformStyles.horizontalContainerPadding,
-        vertical:
-            verticalContainerPadding ?? PlatformStyles.verticalContainerPadding,
-      ),
-      child: body,
-    );
-
     final Widget content = (navigationBottom == null)
-        ? pageContent
+        ? body
         : Stack(
             children: [
-              Positioned.fill(child: pageContent),
+              Positioned.fill(child: body),
               Align(alignment: Alignment.bottomCenter, child: navigationBottom),
             ],
           );

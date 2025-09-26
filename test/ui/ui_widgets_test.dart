@@ -224,9 +224,41 @@ void main() {
 
       expect(await future, isTrue);
     });
+
+    testWidgets('returns false when cancelled on Android', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+      final navigatorKey = GlobalKey<NavigatorState>();
+
+      await tester.pumpWidget(
+        MaterialApp(navigatorKey: navigatorKey, home: const SizedBox.shrink()),
+      );
+
+      final future = DraftModeUIConfirm.show(
+        context: navigatorKey.currentContext!,
+        title: 'Confirm',
+        message: 'Proceed?',
+      );
+
+      await tester.pump();
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(await future, isFalse);
+    });
   });
 
   group('DraftModeUITextError', () {
+    testWidgets('hides when text is null', (tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: DraftModeUITextError(),
+        ),
+      );
+
+      expect(find.byType(SizedBox), findsOneWidget);
+    });
+
     testWidgets('hides when not visible', (tester) async {
       await tester.pumpWidget(
         const Directionality(
@@ -279,6 +311,34 @@ void main() {
       );
 
       expect(find.byType(Switch), findsOneWidget);
+    });
+
+    testWidgets('invokes callback when toggled on Android', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+      bool? latest;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                return DraftModeUISwitch(
+                  value: latest ?? false,
+                  onChanged: (value) {
+                    latest = value;
+                    setState(() {});
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(Switch));
+      await tester.pumpAndSettle();
+
+      expect(latest, isTrue);
     });
   });
 }

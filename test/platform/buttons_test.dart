@@ -9,15 +9,67 @@ void main() {
     PlatformConfig.mode = ForcedPlatform.auto;
   });
 
+  Map<String, IconData> _resolveButtons() {
+    return {
+      'back': PlatformButtons.back,
+      'close': PlatformButtons.close,
+      'cancel': PlatformButtons.cancel,
+      'settings': PlatformButtons.settings,
+      'save': PlatformButtons.save,
+      'logout': PlatformButtons.logout,
+      'start': PlatformButtons.start,
+      'stop': PlatformButtons.stop,
+      'arrowRight': PlatformButtons.arrowRight,
+      'arrowDown': PlatformButtons.arrowDown,
+      'arrowLeft': PlatformButtons.arrowLeft,
+      'arrowUp': PlatformButtons.arrowUp,
+      'personCircle': PlatformButtons.personCircle,
+      'eye': PlatformButtons.eye,
+      'eyeSlash': PlatformButtons.eyeSlash,
+    };
+  }
+
   test('returns Cupertino icons when forced to iOS', () {
     PlatformConfig.mode = ForcedPlatform.ios;
-    expect(PlatformButtons.back, CupertinoIcons.back);
-    expect(PlatformButtons.save, CupertinoIcons.check_mark);
+
+    expect(_resolveButtons(), {
+      'back': CupertinoIcons.back,
+      'close': CupertinoIcons.clear,
+      'cancel': CupertinoIcons.clear_circled,
+      'settings': CupertinoIcons.settings,
+      'save': CupertinoIcons.check_mark,
+      'logout': CupertinoIcons.square_arrow_right,
+      'start': CupertinoIcons.play_arrow_solid,
+      'stop': CupertinoIcons.stop_fill,
+      'arrowRight': CupertinoIcons.right_chevron,
+      'arrowDown': CupertinoIcons.chevron_down,
+      'arrowLeft': CupertinoIcons.chevron_left,
+      'arrowUp': CupertinoIcons.chevron_up,
+      'personCircle': CupertinoIcons.person_crop_circle,
+      'eye': CupertinoIcons.eye,
+      'eyeSlash': CupertinoIcons.eye_slash,
+    });
   });
 
   test('returns Material icons when forced to Android', () {
     PlatformConfig.mode = ForcedPlatform.android;
-    expect(PlatformButtons.back, Icons.arrow_back);
-    expect(PlatformButtons.save, Icons.check);
+
+    expect(_resolveButtons(), {
+      'back': Icons.arrow_back,
+      'close': Icons.close,
+      'cancel': Icons.circle,
+      'settings': Icons.settings,
+      'save': Icons.check,
+      'logout': Icons.logout,
+      'start': Icons.play_arrow,
+      'stop': Icons.stop,
+      'arrowRight': Icons.chevron_right,
+      'arrowDown': Icons.arrow_drop_down,
+      'arrowLeft': Icons.chevron_left,
+      'arrowUp': Icons.arrow_drop_up,
+      'personCircle': Icons.person,
+      'eye': Icons.visibility,
+      'eyeSlash': Icons.visibility_off,
+    });
   });
 }

@@ -56,4 +56,10 @@ void main() {
     final loc = PlatformLocalization.of(tester.element(find.byType(SizedBox)));
     expect(loc.navigationBtnBack, 'Back');
   });
+
+  test('fallback propagates noSuchMethod for missing getters', () {
+    final fallback = PlatformLocalization.debugFallback;
+
+    expect(() => fallback.dialogBtnConfirm, throwsNoSuchMethodError);
+  });
 }

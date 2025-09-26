@@ -149,5 +149,101 @@ void main() {
 
       expect(find.text('A'), findsOneWidget);
     });
+
+    testWidgets('uses explicit top leading widget when provided', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
+      await tester.pumpWidget(
+        _cupertinoShell(
+          DraftModePage(
+            navigationTitle: 'Title',
+            topLeading: const Icon(CupertinoIcons.settings),
+            body: const Text('Body'),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Icon && widget.icon == CupertinoIcons.settings,
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+      'falls back to provided leading text when localisation missing',
+      (tester) async {
+        PlatformConfig.mode = ForcedPlatform.ios;
+
+        await tester.pumpWidget(
+          CupertinoApp(
+            home: DraftModePage(
+              navigationTitle: 'Title',
+              topLeadingText: 'Zurück',
+              body: const Text('Body'),
+            ),
+          ),
+        );
+
+        expect(find.text('Zurück'), findsOneWidget);
+      },
+    );
+
+    testWidgets('shows save icon on Android and stays when callback false', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+      bool called = false;
+
+      await tester.pumpWidget(
+        _materialShell(
+          DraftModePage(
+            navigationTitle: 'Title',
+            body: const Text('Body'),
+            onSavePressed: () async {
+              called = true;
+              return false;
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.check));
+      await tester.pumpAndSettle();
+
+      expect(called, isTrue);
+      expect(find.text('Body'), findsOneWidget);
+    });
+
+    testWidgets('renders body directly and applies background override', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+
+      await tester.pumpWidget(
+        _materialShell(
+          DraftModePage(
+            navigationTitle: 'Title',
+            body: const Text('Body'),
+            horizontalContainerPadding: 4,
+            verticalContainerPadding: 10,
+            containerBackgroundColor: const Color(0xFFABCDEF),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+      expect(scaffold.backgroundColor, const Color(0xFFABCDEF));
+      expect(
+        scaffold.body,
+        isA<Text>().having((text) => text.data, 'body text', 'Body'),
+      );
+    });
   });
 }
