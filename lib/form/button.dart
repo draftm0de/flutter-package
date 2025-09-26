@@ -1,20 +1,44 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../platform/config.dart';
 import 'button_spinner.dart';
 
-enum DraftModeFromButtonSize { medium, large }
+/// Available button sizes exposed by [DraftModeFormButton]. The medium variant
+/// mirrors the default `CupertinoButton` height while the large variant offers
+/// more comfortable tap targets for primary actions.
+enum DraftModeFormButtonSize { medium, large }
 
-enum DraftModeFromButtonColor { dateTime, submit }
+/// Optional palette used by [DraftModeFormButton] to render contextual
+/// variations (e.g. neutral time pickers vs. primary submit buttons).
+enum DraftModeFormButtonColor { dateTime, submit }
 
+/// Legacy alias maintained for backwards compatibility. Prefer
+/// [DraftModeFormButtonSize].
+@Deprecated('Use DraftModeFormButtonSize instead')
+typedef DraftModeFromButtonSize = DraftModeFormButtonSize;
+
+/// Legacy alias maintained for backwards compatibility. Prefer
+/// [DraftModeFormButtonColor].
+@Deprecated('Use DraftModeFormButtonColor instead')
+typedef DraftModeFromButtonColor = DraftModeFormButtonColor;
+
+/// Adaptive form button that understands Draftmode validation semantics. When
+/// provided with a [formKey] it validates and saves before invoking
+/// [onPressed]. Alternatively a modal [loadWidget] can be supplied to gather
+/// additional input before triggering the action.
 class DraftModeFormButton extends StatefulWidget {
   final Widget content;
-  final StatefulWidget? loadWidget;
+  final Widget? loadWidget;
   final Future<void> Function()? onPressed;
+
+  /// Retained for backwards compatibility; no longer used.
+  @Deprecated('No longer has any effect')
   final bool extendIcon;
+
   final GlobalKey<FormState>? formKey;
-  final DraftModeFromButtonSize? styleSize;
-  final DraftModeFromButtonColor? styleColor;
+  final DraftModeFormButtonSize? styleSize;
+  final DraftModeFormButtonColor? styleColor;
   final bool stretched;
 
   const DraftModeFormButton({
@@ -36,12 +60,16 @@ class DraftModeFormButton extends StatefulWidget {
 class _DraftModeFormButtonState extends State<DraftModeFormButton> {
   bool _isPending = false;
 
+  DraftModeFormButtonColor get _color =>
+      widget.styleColor ?? DraftModeFormButtonColor.submit;
+
+  DraftModeFormButtonSize get _size =>
+      widget.styleSize ?? DraftModeFormButtonSize.medium;
+
   Future<void> _handlePressed(BuildContext context) async {
     if (_isPending) return;
 
-    setState(() {
-      _isPending = true;
-    });
+    setState(() => _isPending = true);
 
     try {
       if (widget.loadWidget != null) {
@@ -50,99 +78,88 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
               ? CupertinoPageRoute(builder: (_) => widget.loadWidget!)
               : MaterialPageRoute(builder: (_) => widget.loadWidget!),
         );
-        // onTap callback for true
         if (result == true && widget.onPressed != null) {
           await widget.onPressed!();
         }
-      } else if (widget.onPressed != null) {
-        final isValid = widget.formKey?.currentState?.validate() ?? true;
-        if (isValid) {
-          widget.formKey?.currentState?.save();
-          await widget.onPressed!();
-        }
-      } else {
-        debugPrint('FormPageBuilder: no action provided');
+        return;
       }
+
+      if (widget.onPressed == null) {
+        debugPrint('DraftModeFormButton: no action provided');
+        return;
+      }
+
+      final isValid = widget.formKey?.currentState?.validate() ?? true;
+      if (!isValid) return;
+
+      widget.formKey?.currentState?.save();
+      await widget.onPressed!();
     } finally {
-      if (mounted) {
-        setState(() {
-          _isPending = false;
-        });
-      }
+      if (mounted) setState(() => _isPending = false);
     }
   }
 
-  Widget iosButton() {
-    CupertinoButtonSize styleSize;
-    BorderRadius borderRadius;
-
-    switch (widget.styleSize ?? DraftModeFromButtonSize.medium) {
-      case DraftModeFromButtonSize.medium:
-        styleSize = CupertinoButtonSize.medium;
-        borderRadius = BorderRadius.circular(12);
-
-      case DraftModeFromButtonSize.large:
-        styleSize = CupertinoButtonSize.large;
-        borderRadius = BorderRadius.circular(12);
+  CupertinoButtonSize _resolveCupertinoSize() {
+    switch (_size) {
+      case DraftModeFormButtonSize.large:
+        return CupertinoButtonSize.large;
+      case DraftModeFormButtonSize.medium:
+        return CupertinoButtonSize.medium;
     }
+  }
 
-    Color color;
-    switch (widget.styleColor ?? DraftModeFromButtonColor.submit) {
-      case DraftModeFromButtonColor.dateTime:
-        color = CupertinoColors.systemGrey5;
-
-      case DraftModeFromButtonColor.submit:
-        color = CupertinoColors.activeBlue;
+  double _resolveMaterialHeight() {
+    switch (_size) {
+      case DraftModeFormButtonSize.large:
+        return 48;
+      case DraftModeFormButtonSize.medium:
+        return 40;
     }
+  }
 
+  Color _resolveCupertinoColor() {
+    switch (_color) {
+      case DraftModeFormButtonColor.dateTime:
+        return CupertinoColors.systemGrey5;
+      case DraftModeFormButtonColor.submit:
+        return CupertinoColors.activeBlue;
+    }
+  }
+
+  Widget _buildCupertinoButton() {
     return CupertinoButton(
       padding: EdgeInsets.zero,
-      sizeStyle: styleSize,
-      borderRadius: borderRadius,
-      color: color,
+      sizeStyle: _resolveCupertinoSize(),
+      borderRadius: BorderRadius.circular(12),
+      color: _resolveCupertinoColor(),
       onPressed: () => _isPending ? null : _handlePressed(context),
       child: _isPending
-          ? DraftModeFormButtonSpinner(color: CupertinoColors.white)
+          ? const DraftModeFormButtonSpinner(color: CupertinoColors.white)
           : widget.content,
     );
   }
 
-  Widget materialButton() {
-    double buttonSize;
-    BorderRadius borderRadius;
-    switch (widget.styleSize ?? DraftModeFromButtonSize.medium) {
-      case DraftModeFromButtonSize.medium:
-        buttonSize = 40;
-        borderRadius = BorderRadius.circular(12);
-
-      case DraftModeFromButtonSize.large:
-        buttonSize = 48;
-        borderRadius = BorderRadius.circular(12);
-    }
-
+  Widget _buildMaterialButton() {
     return FilledButton(
       style: FilledButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: borderRadius),
-        fixedSize: Size.fromHeight(buttonSize),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        fixedSize: Size.fromHeight(_resolveMaterialHeight()),
       ),
       onPressed: () => _isPending ? null : _handlePressed(context),
       child: _isPending
-          ? DraftModeFormButtonSpinner(color: CupertinoColors.white)
+          ? const DraftModeFormButtonSpinner(color: CupertinoColors.white)
           : widget.content,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final Widget button = PlatformConfig.isIOS ? iosButton() : materialButton();
-    late Widget content;
-    if (widget.stretched) {
-      content = SizedBox(width: double.infinity, child: button);
-    } else {
-      content = button;
-    }
-    return content;
+    final button = PlatformConfig.isIOS
+        ? _buildCupertinoButton()
+        : _buildMaterialButton();
+    if (!widget.stretched) return button;
+    return SizedBox(width: double.infinity, child: button);
   }
 }

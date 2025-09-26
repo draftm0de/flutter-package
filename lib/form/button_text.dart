@@ -1,13 +1,18 @@
-import 'package:draftmode/form.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../platform/styles.dart';
+import 'button.dart';
+
+/// Convenience wrapper around [DraftModeFormButton] that renders a styled text
+/// label matching the platform typography conventions defined in
+/// [PlatformStyles].
 class DraftModeFormButtonText extends StatelessWidget {
   final String text;
-  final StatefulWidget? loadWidget;
+  final Widget? loadWidget;
   final Future<void> Function()? onPressed;
   final GlobalKey<FormState>? formKey;
-  final DraftModeFromButtonSize? styleSize;
-  final DraftModeFromButtonColor? styleColor;
+  final DraftModeFormButtonSize? styleSize;
+  final DraftModeFormButtonColor? styleColor;
   final bool stretched;
 
   const DraftModeFormButtonText({
@@ -21,40 +26,36 @@ class DraftModeFormButtonText extends StatelessWidget {
     this.stretched = false,
   });
 
+  TextStyle _resolveTextStyle(BuildContext context) {
+    final base = PlatformStyles.buttonTextStyle(context);
+    final resolvedColor = () {
+      switch (styleColor ?? DraftModeFormButtonColor.submit) {
+        case DraftModeFormButtonColor.dateTime:
+          return CupertinoColors.black;
+        case DraftModeFormButtonColor.submit:
+          return CupertinoColors.white;
+      }
+    }();
+
+    final resolvedSize = () {
+      switch (styleSize ?? DraftModeFormButtonSize.medium) {
+        case DraftModeFormButtonSize.large:
+          return 16.0;
+        case DraftModeFormButtonSize.medium:
+          return 14.0;
+      }
+    }();
+
+    return base.copyWith(color: resolvedColor, fontSize: resolvedSize);
+  }
+
   @override
   Widget build(BuildContext context) {
-    Color? color;
-    switch (styleColor ?? 'none') {
-      case DraftModeFromButtonColor.dateTime:
-        color = CupertinoColors.systemGrey5;
-
-      case DraftModeFromButtonColor.submit:
-        color = CupertinoColors.white;
-    }
-    double? fontSize;
-    switch (styleSize ?? 'none') {
-      case DraftModeFromButtonSize.large:
-        fontSize = 16;
-
-      case DraftModeFromButtonSize.medium:
-        fontSize = 14;
-    }
-
-    final Widget content = Text(
-      text,
-      style: TextStyle(
-        color: color,
-        fontSize: fontSize,
-        fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.normal,
-      ),
-    );
-
+    final content = Text(text, style: _resolveTextStyle(context));
     return DraftModeFormButton(
       content: content,
       loadWidget: loadWidget,
       onPressed: onPressed,
-      extendIcon: (loadWidget != null),
       formKey: formKey,
       styleSize: styleSize,
       styleColor: styleColor,

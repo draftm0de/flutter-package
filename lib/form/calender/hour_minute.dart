@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
-class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
+class DraftModeCalendarHourMinuteInlinePicker extends StatelessWidget {
   final DateTime dateTime;
   final double height;
   final void Function(int h, int m) onChanged;
 
-  const DraftModeCalenderHourMinuteInlinePicker({
+  const DraftModeCalendarHourMinuteInlinePicker({
     super.key,
     required this.dateTime,
     required this.onChanged,
@@ -72,3 +72,7 @@ class DraftModeCalenderHourMinuteInlinePicker extends StatelessWidget {
     );
   }
 }
+
+@Deprecated('Use DraftModeCalendarHourMinuteInlinePicker instead')
+typedef DraftModeCalenderHourMinuteInlinePicker =
+    DraftModeCalendarHourMinuteInlinePicker;

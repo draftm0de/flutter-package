@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
-import 'variables.dart';
+import 'hour_minute.dart';
 import 'month_grid.dart';
 import 'month_year.dart';
-import 'hour_minute.dart';
+import 'variables.dart';
 
-class DraftModeCalenderIOS extends StatelessWidget {
-  final DraftModeFormCalenderPickerMode mode;
+class DraftModeCalendarIOS extends StatelessWidget {
+  final DraftModeFormCalendarPickerMode mode;
   final DateTime dateTime;
   final void Function() onPressed;
   final void Function(DateTime v) onChange;
   // box height for all types
   final double height = 6 * 44;
 
-  const DraftModeCalenderIOS({
+  const DraftModeCalendarIOS({
     super.key,
     required this.mode,
     required this.dateTime,
@@ -28,11 +28,11 @@ class DraftModeCalenderIOS extends StatelessWidget {
       switchOutCurve: Curves.easeIn,
       child: () {
         switch (mode) {
-          case DraftModeFormCalenderPickerMode.closed:
+          case DraftModeFormCalendarPickerMode.closed:
             return const SizedBox(key: ValueKey('closed'), height: 0);
 
-          case DraftModeFormCalenderPickerMode.day:
-            return DraftModeCalenderMonthGrid(
+          case DraftModeFormCalendarPickerMode.day:
+            return DraftModeCalendarMonthGrid(
               key: ValueKey('month_grid'),
               dateTime: dateTime,
               onPressed: onPressed,
@@ -50,8 +50,8 @@ class DraftModeCalenderIOS extends StatelessWidget {
               height: height,
             );
 
-          case DraftModeFormCalenderPickerMode.monthYear:
-            return DraftModeCalenderMonthYearInlinePicker(
+          case DraftModeFormCalendarPickerMode.monthYear:
+            return DraftModeCalendarMonthYearInlinePicker(
               key: ValueKey('month_year'),
               dateTime: dateTime,
               onPressed: onPressed,
@@ -63,8 +63,8 @@ class DraftModeCalenderIOS extends StatelessWidget {
               height: height,
             );
 
-          case DraftModeFormCalenderPickerMode.hourMinute:
-            return DraftModeCalenderHourMinuteInlinePicker(
+          case DraftModeFormCalendarPickerMode.hourMinute:
+            return DraftModeCalendarHourMinuteInlinePicker(
               key: ValueKey('hour_minute'),
               dateTime: dateTime,
               onChanged: (h, m) {
@@ -79,3 +79,6 @@ class DraftModeCalenderIOS extends StatelessWidget {
     );
   }
 }
+
+@Deprecated('Use DraftModeCalendarIOS instead')
+typedef DraftModeCalenderIOS = DraftModeCalendarIOS;

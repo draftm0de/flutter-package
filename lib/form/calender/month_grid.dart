@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import '../../utils/formatter.dart';
-import '../../platform/styles.dart';
-import '../../platform/buttons.dart';
 
-class DraftModeCalenderMonthGrid extends StatelessWidget {
+import '../../platform/buttons.dart';
+import '../../platform/styles.dart';
+import '../../utils/formatter.dart';
+
+class DraftModeCalendarMonthGrid extends StatelessWidget {
   final DateTime dateTime;
   final void Function() onPressed;
   final ValueChanged<DateTime> onSelect;
   final double height;
 
-  const DraftModeCalenderMonthGrid({
+  const DraftModeCalendarMonthGrid({
     super.key,
     required this.dateTime,
     required this.onPressed,
@@ -244,3 +245,6 @@ class DraftModeCalenderMonthGrid extends StatelessWidget {
     );
   }
 }
+
+@Deprecated('Use DraftModeCalendarMonthGrid instead')
+typedef DraftModeCalenderMonthGrid = DraftModeCalendarMonthGrid;

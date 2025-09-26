@@ -1,20 +1,24 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-//
-import 'form.dart';
-import '../ui/row.dart';
-import '../ui/text_error.dart';
-import '../ui/section.dart';
-import '../page/page.dart';
-import '../page/navigation/top_item.dart';
+import 'package:flutter/material.dart';
+
 import '../entity/attribute.dart';
 import '../entity/collection.dart';
+import '../l10n/app_localizations.dart';
+import '../page/navigation/top_item.dart';
+import '../page/page.dart';
 import '../platform/config.dart';
 import '../platform/styles.dart';
-import '../l10n/app_localizations.dart';
+import '../ui/row.dart';
+import '../ui/section.dart';
+import '../ui/text_error.dart';
+import 'form.dart';
 
+/// Draftmode-aware dropdown field that navigates to a platform-appropriate
+/// selection screen. Values propagate through the associated
+/// [DraftModeEntityAttribute] so validators and persistence behave the same as
+/// other form controls.
 class DraftModeFormDropDown<
-  ItemType extends DraftModeEntityCollectionItem,
+  ItemType extends DraftModeEntityCollectionItem<ElementType>,
   ElementType
 >
     extends StatefulWidget {
@@ -24,7 +28,8 @@ class DraftModeFormDropDown<
   final Widget Function(ItemType) renderItem;
   final bool readOnly;
   final String? label;
-  final ValueChanged<String>? onSaved;
+  final String? selectionTitle;
+  final ValueChanged<ElementType?>? onSaved;
 
   const DraftModeFormDropDown({
     super.key,
@@ -34,6 +39,7 @@ class DraftModeFormDropDown<
     required this.renderItem,
     this.readOnly = false,
     this.label,
+    this.selectionTitle,
     this.onSaved,
   });
 
@@ -43,7 +49,7 @@ class DraftModeFormDropDown<
 }
 
 class _DraftModeFormDropDownState<
-  ItemType extends DraftModeEntityCollectionItem,
+  ItemType extends DraftModeEntityCollectionItem<ElementType>,
   ElementType
 >
     extends State<DraftModeFormDropDown<ItemType, ElementType>> {
@@ -59,20 +65,16 @@ class _DraftModeFormDropDownState<
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final form = DraftModeFormState.of(context);
     form?.registerProperty(widget.element);
-    final DraftModeEntityCollection<ItemType> items = widget.items;
-    final value = widget.element.value;
+    final items = widget.items;
+    final selectedId = widget.element.value;
 
     Future<void> selectItem(FormFieldState<ItemType> field) async {
-      final screen = DraftModeFormDropDownScreen<ItemType>(
-        selectionTitle: 'selectionTitle',
+      final screen = DraftModeFormDropDownScreen<ItemType, ElementType>(
+        selectionTitle:
+            widget.selectionTitle ?? widget.label ?? widget.placeholder,
         items: widget.items,
         element: widget.element,
         renderItem: widget.renderItem,
@@ -82,29 +84,33 @@ class _DraftModeFormDropDownState<
             ? CupertinoPageRoute(builder: (_) => screen)
             : MaterialPageRoute(builder: (_) => screen),
       );
-      if (item != null) {
-        field.didChange(item);
-        form?.updateProperty(widget.element, item.getId());
-        field.validate();
-      }
+      if (item == null) return;
+
+      field.didChange(item);
+      form?.updateProperty(widget.element, item.getId());
+      field.validate();
     }
 
     return FormField<ItemType>(
       key: _fieldKey,
-      initialValue: items.getById(value),
+      initialValue: items.getById(selectedId),
       autovalidateMode: AutovalidateMode.disabled,
-      onSaved: (v) {
-        final value = v?.getId();
-        widget.element.value = value;
-        widget.onSaved?.call(value);
+      onSaved: (value) {
+        final id = value?.getId();
+        widget.element.value = id;
+        widget.onSaved?.call(id);
       },
-      validator: (v) => widget.element.validate(context, form, v?.getId()),
+      validator: (value) =>
+          widget.element.validate(context, form, value?.getId()),
       builder: (field) {
-        final Widget content = Row(
+        final enableValidation = form?.enableValidation ?? false;
+        final showError = enableValidation && field.hasError;
+
+        final content = Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: (field.value != null)
+              child: field.value != null
                   ? widget.renderItem(field.value as ItemType)
                   : Text(widget.placeholder),
             ),
@@ -117,21 +123,18 @@ class _DraftModeFormDropDownState<
             ),
           ],
         );
-        final Widget child = Column(
+
+        final child = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DraftModeUIRow(label: widget.label, child: content),
-            DraftModeUITextError(text: field.errorText, visible: true),
+            DraftModeUITextError(text: field.errorText, visible: showError),
           ],
         );
 
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: !widget.readOnly
-              ? () {
-                  selectItem(field);
-                }
-              : null,
+          onTap: widget.readOnly ? null : () => selectItem(field),
           child: child,
         );
       },
@@ -139,13 +142,16 @@ class _DraftModeFormDropDownState<
   }
 }
 
+/// Selection sheet pushed by [DraftModeFormDropDown]. Extracted so navigation
+/// follows the existing Draftmode page scaffolding and localisation helpers.
 class DraftModeFormDropDownScreen<
-  ItemType extends DraftModeEntityCollectionItem
+  ItemType extends DraftModeEntityCollectionItem<ElementType>,
+  ElementType
 >
     extends StatefulWidget {
   final String selectionTitle;
   final DraftModeEntityCollection<ItemType> items;
-  final DraftModeEntityAttribute element;
+  final DraftModeEntityAttribute<ElementType> element;
   final DraftModePageNavigationTopItem? trailing;
   final Widget Function(ItemType) renderItem;
 
@@ -159,23 +165,23 @@ class DraftModeFormDropDownScreen<
   });
 
   void setItem(BuildContext context, ItemType item) {
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop<ItemType>(item);
-    }
+    if (!Navigator.of(context).canPop()) return;
+    Navigator.of(context).pop<ItemType>(item);
   }
 
   @override
-  State<DraftModeFormDropDownScreen<ItemType>> createState() =>
-      _DraftModeFormDropDownScreenState<ItemType>();
+  State<DraftModeFormDropDownScreen<ItemType, ElementType>> createState() =>
+      _DraftModeFormDropDownScreenState<ItemType, ElementType>();
 }
 
 class _DraftModeFormDropDownScreenState<
-  ItemType extends DraftModeEntityCollectionItem
+  ItemType extends DraftModeEntityCollectionItem<ElementType>,
+  ElementType
 >
-    extends State<DraftModeFormDropDownScreen<ItemType>> {
+    extends State<DraftModeFormDropDownScreen<ItemType, ElementType>> {
   @override
   Widget build(BuildContext context) {
-    final DraftModeEntityCollection<ItemType> items = widget.items;
+    final items = widget.items;
     return DraftModePage(
       navigationTitle: widget.selectionTitle,
       topLeadingText:
@@ -187,9 +193,9 @@ class _DraftModeFormDropDownScreenState<
             children: items.items.map((item) {
               final itemId = item.getId();
               final isSelected =
-                  (widget.element.value != null &&
-                  itemId == widget.element.value);
-              final Widget child = CupertinoFormRow(
+                  widget.element.value != null &&
+                  itemId == widget.element.value;
+              final child = CupertinoFormRow(
                 padding: EdgeInsets.symmetric(
                   vertical: PlatformStyles.verticalContainerPadding / 2,
                   horizontal: PlatformStyles.horizontalContainerPadding / 2,

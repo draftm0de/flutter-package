@@ -1,11 +1,15 @@
 import 'package:flutter/cupertino.dart';
-//
-import 'form.dart';
-import '../ui/text_error.dart';
-import '../ui/row.dart';
-import '../platform/buttons.dart';
-import '../entity/interface.dart';
 
+import '../entity/interface.dart';
+import '../platform/buttons.dart';
+import '../ui/row.dart';
+import '../ui/text_error.dart';
+import 'form.dart';
+
+/// Adaptive text entry field wired into the Draftmode form infrastructure. It
+/// keeps the associated [DraftModeEntityAttributeI] in sync with the UI and
+/// exposes Draftmode-specific affordances such as optional eye toggles and
+/// validation orchestration.
 class DraftModeFormField<T> extends StatefulWidget {
   final DraftModeEntityAttributeI element;
   final String? label;
@@ -14,7 +18,7 @@ class DraftModeFormField<T> extends StatefulWidget {
   final bool obscureEye;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
-  final ValueChanged<T>? onSaved;
+  final ValueChanged<T?>? onSaved;
   final Widget? prefix;
   final Widget? suffix;
   final bool enabled;
@@ -53,14 +57,15 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   String get text => _controller.text;
   set text(String? value) {
-    if (_controller.text != value) {
-      _controller.text = value!;
-      _controller.selection = TextSelection.collapsed(offset: value.length);
+    final nextValue = value ?? '';
+    if (_controller.text != nextValue) {
+      _controller.text = nextValue;
+      _controller.selection = TextSelection.collapsed(offset: nextValue.length);
       setState(() {});
     }
   }
 
-  String encodeValue(dynamic value) {
+  String _encodeValue(dynamic value) {
     if (value == null) {
       return '';
     }
@@ -77,7 +82,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = encodeValue(widget.element.value);
+    _controller.text = _encodeValue(widget.element.value);
     _obscureOn = widget.obscureText;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final form = DraftModeFormState.of(context);
@@ -102,7 +107,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
       autovalidateMode: AutovalidateMode.disabled,
       validator: (v) => widget.element.validate(context, form, v),
       onSaved: (v) {
-        widget.element.value = v as T;
+        widget.element.value = v;
         widget.onSaved?.call(v);
       },
       builder: (field) {
@@ -128,6 +133,9 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
         Widget child = Focus(
           focusNode: _focus,
           onFocusChange: (hasFocus) {
+            if (hasFocus && widget.clearErrorOnFocus) {
+              field.setState(() {});
+            }
             if (!hasFocus) {
               field.validate();
             }
@@ -145,6 +153,9 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             autocorrect: widget.autocorrect,
             suffix: suffix,
             onChanged: (val) {
+              // `T` defaults to `dynamic`, but explicit cast keeps type
+              // inference stable when callers opt into a concrete type.
+              // ignore: unnecessary_cast
               field.didChange(val as T);
               form?.updateProperty(widget.element, val);
             },
