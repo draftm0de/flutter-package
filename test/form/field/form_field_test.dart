@@ -26,7 +26,7 @@ void main() {
       CupertinoApp(
         home: DraftModeForm(
           child: DraftModeFormField<String>(
-            element: attribute,
+            attribute: attribute,
             label: 'Name',
             placeholder: 'Enter name',
           ),
@@ -60,7 +60,7 @@ void main() {
       CupertinoApp(
         home: DraftModeForm(
           child: DraftModeFormField<String>(
-            element: attribute,
+            attribute: attribute,
             obscureText: true,
             obscureEye: true,
           ),

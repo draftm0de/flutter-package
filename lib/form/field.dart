@@ -11,7 +11,7 @@ import 'form.dart';
 /// exposes Draftmode-specific affordances such as optional eye toggles and
 /// validation orchestration.
 class DraftModeFormField<T> extends StatefulWidget {
-  final DraftModeEntityAttributeI element;
+  final DraftModeEntityAttributeI attribute;
   final String? label;
   final String? placeholder;
   final bool obscureText;
@@ -27,7 +27,7 @@ class DraftModeFormField<T> extends StatefulWidget {
 
   const DraftModeFormField({
     super.key,
-    required this.element,
+    required this.attribute,
     this.label,
     this.placeholder,
     this.obscureText = false,
@@ -82,11 +82,11 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = _encodeValue(widget.element.value);
+    _controller.text = _encodeValue(widget.attribute.value);
     _obscureOn = widget.obscureText;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final form = DraftModeFormState.of(context);
-      form?.registerField(widget.element, _fieldKey);
+      form?.registerField(widget.attribute, _fieldKey);
     });
   }
 
@@ -100,14 +100,14 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   @override
   Widget build(BuildContext context) {
     final form = DraftModeFormState.of(context);
-    form?.registerProperty(widget.element);
+    form?.registerProperty(widget.attribute);
     return FormField<T>(
       key: _fieldKey,
-      initialValue: widget.element.value,
+      initialValue: widget.attribute.value,
       autovalidateMode: AutovalidateMode.disabled,
-      validator: (v) => widget.element.validate(context, form, v),
+      validator: (v) => widget.attribute.validate(context, form, v),
       onSaved: (v) {
-        widget.element.value = v;
+        widget.attribute.value = v;
         widget.onSaved?.call(v);
       },
       builder: (field) {
@@ -157,7 +157,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
               // inference stable when callers opt into a concrete type.
               // ignore: unnecessary_cast
               field.didChange(val as T);
-              form?.updateProperty(widget.element, val);
+              form?.updateProperty(widget.attribute, val);
             },
             decoration: null,
           ),

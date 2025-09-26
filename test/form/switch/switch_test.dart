@@ -22,7 +22,7 @@ void main() {
       CupertinoApp(
         home: DraftModeForm(
           key: formKey,
-          child: DraftModeFormSwitch(element: attribute, label: 'Enabled'),
+          child: DraftModeFormSwitch(attribute: attribute, label: 'Enabled'),
         ),
       ),
     );
@@ -44,7 +44,7 @@ void main() {
       CupertinoApp(
         home: DraftModeForm(
           child: DraftModeFormSwitch(
-            element: attribute,
+            attribute: attribute,
             enabled: false,
             label: 'Enabled',
           ),

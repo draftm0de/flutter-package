@@ -13,6 +13,8 @@ This file captures conventions and guardrails for automated contributors.
   hook already runs format + tests; confirm it stays executable (`chmod +x
   .git/hooks/pre-commit`).
 - Avoid committing artefacts such as `coverage/` outputs.
+- Never commit directly to the `main` branch; if a session starts on `main`,
+  create a feature branch automatically before staging changes.
 
 ## Code Organization
 - Shared interfaces live in `interface.dart` under each module (entity, form,

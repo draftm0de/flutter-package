@@ -23,7 +23,7 @@ class DraftModeFormDropDown<
 >
     extends StatefulWidget {
   final DraftModeEntityCollection<ItemType> items;
-  final DraftModeEntityAttribute<ElementType> element;
+  final DraftModeEntityAttribute<ElementType> attribute;
   final String placeholder;
   final Widget Function(ItemType) renderItem;
   final bool readOnly;
@@ -34,7 +34,7 @@ class DraftModeFormDropDown<
   const DraftModeFormDropDown({
     super.key,
     required this.items,
-    required this.element,
+    required this.attribute,
     required this.placeholder,
     required this.renderItem,
     this.readOnly = false,
@@ -60,23 +60,23 @@ class _DraftModeFormDropDownState<
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final form = DraftModeFormState.of(context);
-      form?.registerField(widget.element, _fieldKey);
+      form?.registerField(widget.attribute, _fieldKey);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final form = DraftModeFormState.of(context);
-    form?.registerProperty(widget.element);
+    form?.registerProperty(widget.attribute);
     final items = widget.items;
-    final selectedId = widget.element.value;
+    final selectedId = widget.attribute.value;
 
     Future<void> selectItem(FormFieldState<ItemType> field) async {
       final screen = DraftModeFormDropDownScreen<ItemType, ElementType>(
         selectionTitle:
             widget.selectionTitle ?? widget.label ?? widget.placeholder,
         items: widget.items,
-        element: widget.element,
+        attribute: widget.attribute,
         renderItem: widget.renderItem,
       );
       final item = await Navigator.of(context).push<ItemType>(
@@ -87,7 +87,7 @@ class _DraftModeFormDropDownState<
       if (item == null) return;
 
       field.didChange(item);
-      form?.updateProperty(widget.element, item.getId());
+      form?.updateProperty(widget.attribute, item.getId());
       field.validate();
     }
 
@@ -97,11 +97,11 @@ class _DraftModeFormDropDownState<
       autovalidateMode: AutovalidateMode.disabled,
       onSaved: (value) {
         final id = value?.getId();
-        widget.element.value = id;
+        widget.attribute.value = id;
         widget.onSaved?.call(id);
       },
       validator: (value) =>
-          widget.element.validate(context, form, value?.getId()),
+          widget.attribute.validate(context, form, value?.getId()),
       builder: (field) {
         final enableValidation = form?.enableValidation ?? false;
         final showError = enableValidation && field.hasError;
@@ -151,14 +151,14 @@ class DraftModeFormDropDownScreen<
     extends StatefulWidget {
   final String selectionTitle;
   final DraftModeEntityCollection<ItemType> items;
-  final DraftModeEntityAttribute<ElementType> element;
+  final DraftModeEntityAttribute<ElementType> attribute;
   final DraftModePageNavigationTopItem? trailing;
   final Widget Function(ItemType) renderItem;
 
   const DraftModeFormDropDownScreen({
     required this.selectionTitle,
     required this.items,
-    required this.element,
+    required this.attribute,
     required this.renderItem,
     this.trailing,
     super.key,
@@ -193,8 +193,8 @@ class _DraftModeFormDropDownScreenState<
             children: items.items.map((item) {
               final itemId = item.getId();
               final isSelected =
-                  widget.element.value != null &&
-                  itemId == widget.element.value;
+                  widget.attribute.value != null &&
+                  itemId == widget.attribute.value;
               final child = CupertinoFormRow(
                 padding: EdgeInsets.symmetric(
                   vertical: PlatformStyles.verticalContainerPadding / 2,
