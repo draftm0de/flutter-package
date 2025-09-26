@@ -17,7 +17,10 @@ This file captures conventions and guardrails for automated contributors.
   etc.).
 - Styling constants reside in `lib/platform/styles.dart`; platform detection is
   handled by `PlatformConfig`.
-- Module READMEs document public APIs—update them when functionality moves.
+- Module READMEs document public APIs - update them when functionality moves.
+- Within modules prefer relative imports so dependencies remain explicit (avoid
+  `package:draftmode/...` for internals), while tests should import via the
+  public `package:draftmode/...` surface to mirror consumer usage.
 
 ## Testing Patterns
 - Unit tests are colocated under `test/<module>/`. Prefer targeted files over
@@ -25,6 +28,8 @@ This file captures conventions and guardrails for automated contributors.
 - When simulating platforms, use `PlatformConfig.mode` to force iOS/Android.
 - For widget tests, wrap content in `CupertinoApp` or `MaterialApp` with the
   correct localization delegates.
+- Strive for 100% code coverage; it is an aspirational target even if not a
+  hard requirement.
 
 ## Naming & Docs
 - Keep inline documentation concise and focused on intent, especially for

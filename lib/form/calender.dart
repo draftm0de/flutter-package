@@ -1,7 +1,7 @@
-import 'package:draftmode/entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
+import '../entity/attribute.dart';
 import '../l10n/app_localizations.dart';
 import '../platform/styles.dart';
 import '../ui.dart';

@@ -1,9 +1,9 @@
-import 'package:draftmode/entity/attribute.dart';
 import 'package:flutter/widgets.dart';
 
 import '../ui/row.dart';
 import '../ui/switch.dart';
 import '../ui/text_error.dart';
+import '../entity/attribute.dart';
 import 'form.dart';
 
 /// Toggle control bound to a [DraftModeEntityAttribute]. Mirrors the behaviour

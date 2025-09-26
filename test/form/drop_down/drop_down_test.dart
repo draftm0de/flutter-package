@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'package:draftmode/entity.dart';
 import 'package:draftmode/form.dart';
 import 'package:draftmode/platform/config.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 class _TestItem extends DraftModeEntityCollectionItem<String> {
   final String id;

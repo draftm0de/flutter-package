@@ -1,7 +1,8 @@
-import 'package:draftmode/entity.dart';
-import 'package:draftmode/form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:draftmode/entity.dart';
+import 'package:draftmode/form.dart';
 
 void main() {
   testWidgets('stores drafts and resets cleanly', (tester) async {

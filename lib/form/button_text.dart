@@ -1,7 +1,7 @@
-import 'package:draftmode/form.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../platform/styles.dart';
+import 'button.dart';
 
 /// Convenience wrapper around [DraftModeFormButton] that renders a styled text
 /// label matching the platform typography conventions defined in
