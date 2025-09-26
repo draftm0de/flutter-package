@@ -136,7 +136,9 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
             dateTime: _selected,
             onPressed: () {
               setState(() {
-                _mode = DraftModeFormCalendarPickerMode.monthYear;
+                _mode = _mode == DraftModeFormCalendarPickerMode.monthYear
+                    ? DraftModeFormCalendarPickerMode.day
+                    : DraftModeFormCalendarPickerMode.monthYear;
               });
             },
             onChange: (value) {
