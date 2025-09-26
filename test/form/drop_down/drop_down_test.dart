@@ -60,4 +60,31 @@ void main() {
     expect(formState.read(attribute), 'b');
     expect(find.text('Beta'), findsWidgets);
   });
+
+  testWidgets('respects readOnly flag', (tester) async {
+    final attribute = DraftModeEntityAttribute<String>();
+    final items = DraftModeEntityCollection<_TestItem>([
+      _TestItem('a', 'Alpha'),
+    ]);
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormDropDown<_TestItem, String>(
+            items: items,
+            element: attribute,
+            placeholder: 'Read only',
+            label: 'Choice',
+            readOnly: true,
+            renderItem: (item) => Text(item.label),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Read only'));
+    await tester.pumpAndSettle();
+    expect(find.text('Choice'), findsOneWidget);
+    expect(find.text('Alpha'), findsNothing);
+  });
 }

@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:draftmode/form.dart';
@@ -100,6 +102,47 @@ void main() {
     await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
     expect(pressed, 1, reason: 'onPressed should not run when result is false');
+  });
+
+  testWidgets('builds Material button when platform forced to Android', (
+    tester,
+  ) async {
+    PlatformConfig.mode = ForcedPlatform.android;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DraftModeForm(
+          child: DraftModeFormButton(
+            content: const Text('Submit'),
+            styleSize: DraftModeFormButtonSize.large,
+            stretched: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(FilledButton), findsOneWidget);
+    final filled = tester.widget<FilledButton>(find.byType(FilledButton));
+    final style = filled.style;
+    expect(style?.fixedSize?.resolve({})?.height, 48);
+  });
+
+  testWidgets('prints diagnostic when no action provided', (tester) async {
+    final logs = <String?>[];
+    final prior = debugPrint;
+    debugPrint = (String? message, {int? wrapWidth}) {
+      logs.add(message);
+    };
+
+    await tester.pumpWidget(
+      const CupertinoApp(home: DraftModeFormButton(content: Text('Noop'))),
+    );
+
+    await tester.tap(find.text('Noop'));
+    await tester.pump();
+
+    expect(logs.last, contains('no action provided'));
+    debugPrint = prior;
   });
 }
 

@@ -93,9 +93,13 @@ void main() {
     expect(find.byType(DraftModeCalendarMonthGrid), findsOneWidget);
     expect(find.text('02/15/2024'), findsOneWidget);
 
-    await tester.tap(find.text('20'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text('09:00'));
+    await tester.pump();
+    expect(
+      find.byType(DraftModeCalendarHourMinuteInlinePicker),
+      findsOneWidget,
+    );
 
-    expect(find.text('02/20/2024'), findsOneWidget);
+    expect(find.text('02/15/2024'), findsOneWidget);
   });
 }

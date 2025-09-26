@@ -52,4 +52,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Required'), findsOneWidget);
   });
+
+  testWidgets('toggles obscure eye suffix', (tester) async {
+    final attribute = DraftModeEntityAttribute<String>(value: 'secret');
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormField<String>(
+            element: attribute,
+            obscureText: true,
+            obscureEye: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(CupertinoIcons.eye_slash), findsOneWidget);
+    await tester.tap(find.byIcon(CupertinoIcons.eye_slash));
+    await tester.pump();
+    expect(find.byIcon(CupertinoIcons.eye), findsOneWidget);
+  });
 }

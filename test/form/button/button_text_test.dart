@@ -28,4 +28,14 @@ void main() {
     expect(textWidget.style?.color, CupertinoColors.black);
     expect(textWidget.style?.fontSize, 16);
   });
+
+  testWidgets('defaults to submit styling', (tester) async {
+    await tester.pumpWidget(
+      const CupertinoApp(home: DraftModeFormButtonText(text: 'Submit')),
+    );
+
+    final textWidget = tester.widget<Text>(find.text('Submit'));
+    expect(textWidget.style?.color, CupertinoColors.white);
+    expect(textWidget.style?.fontSize, 14);
+  });
 }

@@ -36,4 +36,24 @@ void main() {
     formState.save();
     expect(attribute.value, isTrue);
   });
+
+  testWidgets('disabled switch does not change value', (tester) async {
+    final attribute = DraftModeEntityAttribute<bool>(value: false);
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormSwitch(
+            element: attribute,
+            enabled: false,
+            label: 'Enabled',
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(CupertinoSwitch));
+    await tester.pump();
+    expect(attribute.value, isFalse);
+  });
 }
