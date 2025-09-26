@@ -7,6 +7,8 @@ This file captures conventions and guardrails for automated contributors.
 - Running any `dart format` command is pre-approved; feel free to use more
   granular invocations when useful.
 - Ensure `dart analyze` passes with zero warnings.
+- Flutter SDK tooling (e.g. `flutter test`, `flutter analyze`, `flutter format`)
+  is pre-approved—run whatever commands are needed to validate changes.
 - Execute the full test suite (`flutter test`) after changes. The pre-commit
   hook already runs format + tests; confirm it stays executable (`chmod +x
   .git/hooks/pre-commit`).
@@ -30,6 +32,8 @@ This file captures conventions and guardrails for automated contributors.
   correct localization delegates.
 - Strive for 100% code coverage; it is an aspirational target even if not a
   hard requirement.
+- When renaming or adding small files, regenerate coverage reports so cached
+  artifacts do not point at stale paths before committing.
 
 ## Naming & Docs
 - Keep inline documentation concise and focused on intent, especially for
