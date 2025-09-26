@@ -179,14 +179,21 @@ class _DraftModeFormCalendarState extends State<DraftModeFormCalendar> {
     DraftModeFormCalendarPicker owner,
     DraftModeFormCalendarPickerMode mode,
   ) async {
-    setState(() {
-      if (_owner == owner && _mode == mode) {
-        _owner = DraftModeFormCalendarPicker.none;
-        _mode = DraftModeFormCalendarPickerMode.closed;
+    if (_owner == owner && _mode == mode) {
+      if (_mode == DraftModeFormCalendarPickerMode.monthYear) {
+        setState(() => _mode = DraftModeFormCalendarPickerMode.day);
       } else {
-        _owner = owner;
-        _mode = mode;
+        setState(() {
+          _owner = DraftModeFormCalendarPicker.none;
+          _mode = DraftModeFormCalendarPickerMode.closed;
+        });
       }
+      return;
+    }
+
+    setState(() {
+      _owner = owner;
+      _mode = mode;
     });
   }
 
