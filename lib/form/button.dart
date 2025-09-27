@@ -2,26 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../platform/config.dart';
+import '../ui/button.dart';
+import '../ui/diagnostics.dart';
 import 'button_spinner.dart';
 
 /// Available button sizes exposed by [DraftModeFormButton]. The medium variant
 /// mirrors the default `CupertinoButton` height while the large variant offers
 /// more comfortable tap targets for primary actions.
-enum DraftModeFormButtonSize { medium, large }
+typedef DraftModeFormButtonSize = DraftModeUIButtonSize;
 
 /// Optional palette used by [DraftModeFormButton] to render contextual
 /// variations (e.g. neutral time pickers vs. primary submit buttons).
-enum DraftModeFormButtonColor { dateTime, submit }
+typedef DraftModeFormButtonColor = DraftModeUIButtonColor;
 
 /// Legacy alias maintained for backwards compatibility. Prefer
 /// [DraftModeFormButtonSize].
 @Deprecated('Use DraftModeFormButtonSize instead')
-typedef DraftModeFromButtonSize = DraftModeFormButtonSize;
+typedef DraftModeFromButtonSize = DraftModeUIButtonSize;
 
 /// Legacy alias maintained for backwards compatibility. Prefer
 /// [DraftModeFormButtonColor].
 @Deprecated('Use DraftModeFormButtonColor instead')
-typedef DraftModeFromButtonColor = DraftModeFormButtonColor;
+typedef DraftModeFromButtonColor = DraftModeUIButtonColor;
 
 /// Adaptive form button that understands Draftmode validation semantics. When
 /// provided with a [formKey] it validates and saves before invoking
@@ -85,7 +87,7 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
       }
 
       if (widget.onPressed == null) {
-        debugPrint('DraftModeFormButton: no action provided');
+        DraftModeUIDiagnostics.debug('DraftModeFormButton: no action provided');
         return;
       }
 
@@ -99,67 +101,18 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
     }
   }
 
-  CupertinoButtonSize _resolveCupertinoSize() {
-    switch (_size) {
-      case DraftModeFormButtonSize.large:
-        return CupertinoButtonSize.large;
-      case DraftModeFormButtonSize.medium:
-        return CupertinoButtonSize.medium;
-    }
-  }
-
-  double _resolveMaterialHeight() {
-    switch (_size) {
-      case DraftModeFormButtonSize.large:
-        return 48;
-      case DraftModeFormButtonSize.medium:
-        return 40;
-    }
-  }
-
-  Color _resolveCupertinoColor() {
-    switch (_color) {
-      case DraftModeFormButtonColor.dateTime:
-        return CupertinoColors.systemGrey5;
-      case DraftModeFormButtonColor.submit:
-        return CupertinoColors.activeBlue;
-    }
-  }
-
-  Widget _buildCupertinoButton() {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      sizeStyle: _resolveCupertinoSize(),
-      borderRadius: BorderRadius.circular(12),
-      color: _resolveCupertinoColor(),
-      onPressed: () => _isPending ? null : _handlePressed(context),
-      child: _isPending
-          ? const DraftModeFormButtonSpinner(color: CupertinoColors.white)
-          : widget.content,
-    );
-  }
-
-  Widget _buildMaterialButton() {
-    return FilledButton(
-      style: FilledButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        fixedSize: Size.fromHeight(_resolveMaterialHeight()),
-      ),
-      onPressed: () => _isPending ? null : _handlePressed(context),
-      child: _isPending
-          ? const DraftModeFormButtonSpinner(color: CupertinoColors.white)
-          : widget.content,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final button = PlatformConfig.isIOS
-        ? _buildCupertinoButton()
-        : _buildMaterialButton();
-    if (!widget.stretched) return button;
-    return SizedBox(width: double.infinity, child: button);
+    return DraftModeUIButton(
+      child: widget.content,
+      pendingChild: const DraftModeFormButtonSpinner(
+        color: CupertinoColors.white,
+      ),
+      isPending: _isPending,
+      onPressed: () => _handlePressed(context),
+      size: _size,
+      color: _color,
+      stretched: widget.stretched,
+    );
   }
 }

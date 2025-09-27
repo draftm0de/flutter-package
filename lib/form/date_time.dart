@@ -1,12 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/widgets.dart';
 
 import '../entity/attribute.dart';
-import '../platform/styles.dart';
-import '../ui/row.dart';
-import '../utils/formatter.dart';
-import 'button.dart';
-import 'calender/ios.dart';
+import '../ui/date_time.dart';
 import 'calender/variables.dart';
 
 /// Slim date/time picker that focuses on a single [DraftModeEntityAttribute].
@@ -54,19 +49,17 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     );
   }
 
-  String _dateLabel(DateTime value) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    return DraftModeDateTime.yMMdd(locale).format(value);
-  }
-
-  String _timeLabel(DateTime value) {
-    final locale = Localizations.localeOf(context).toLanguageTag();
-    return DateFormat.Hm(locale).format(value);
-  }
-
-  Future<void> _toggle(DraftModeFormCalendarPickerMode mode) async {
+  void _toggle(DraftModeFormCalendarPickerMode mode) {
     setState(() {
       _mode = _mode == mode ? DraftModeFormCalendarPickerMode.closed : mode;
+    });
+  }
+
+  void _toggleMonthYear() {
+    setState(() {
+      _mode = _mode == DraftModeFormCalendarPickerMode.monthYear
+          ? DraftModeFormCalendarPickerMode.day
+          : DraftModeFormCalendarPickerMode.monthYear;
     });
   }
 
@@ -78,74 +71,14 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
 
   @override
   Widget build(BuildContext context) {
-    final label = widget.label ?? '';
-    final dateLabel = _dateLabel(_selected);
-    final timeLabel = _timeLabel(_selected);
-
-    Widget buildButton(
-      String text,
-      double width,
-      DraftModeFormCalendarPickerMode mode,
-    ) {
-      return DraftModeFormButton(
-        styleSize: DraftModeFormButtonSize.medium,
-        styleColor: DraftModeFormButtonColor.dateTime,
-        content: SizedBox(
-          width: width,
-          child: Text(
-            textAlign: TextAlign.center,
-            text,
-            style: PlatformStyles.labelStyle(context),
-          ),
-        ),
-        onPressed: () => _toggle(mode),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        DraftModeUIRow(
-          label: label.isNotEmpty ? label : null,
-          alignment: Alignment.centerRight,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.mode == DraftModeFormCalendarMode.date ||
-                  widget.mode == DraftModeFormCalendarMode.datetime)
-                buildButton(
-                  dateLabel,
-                  105,
-                  DraftModeFormCalendarPickerMode.day,
-                ),
-              if (widget.mode == DraftModeFormCalendarMode.datetime)
-                const SizedBox(width: 8),
-              if (widget.mode == DraftModeFormCalendarMode.time ||
-                  widget.mode == DraftModeFormCalendarMode.datetime)
-                buildButton(
-                  timeLabel,
-                  63,
-                  DraftModeFormCalendarPickerMode.hourMinute,
-                ),
-            ],
-          ),
-        ),
-        if (_mode != DraftModeFormCalendarPickerMode.closed)
-          DraftModeCalendarIOS(
-            mode: _mode,
-            dateTime: _selected,
-            onPressed: () {
-              setState(() {
-                _mode = _mode == DraftModeFormCalendarPickerMode.monthYear
-                    ? DraftModeFormCalendarPickerMode.day
-                    : DraftModeFormCalendarPickerMode.monthYear;
-              });
-            },
-            onChange: (value) {
-              _update(_normalize(value));
-            },
-          ),
-      ],
+    return DraftModeUIDateTimeField(
+      label: (widget.label?.isEmpty ?? true) ? null : widget.label,
+      mode: widget.mode,
+      pickerMode: _mode,
+      value: _selected,
+      onToggleMonthYear: _toggleMonthYear,
+      onPickerModeChanged: _toggle,
+      onChanged: (value) => _update(_normalize(value)),
     );
   }
 }

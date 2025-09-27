@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../entity/interface.dart';
+import '../ui/diagnostics.dart';
 import 'interface.dart';
 
 /// Thin wrapper around Flutter's [Form] that wires in Draftmode specific
@@ -36,7 +37,10 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
       <int, Set<GlobalKey<FormFieldState>>>{};
 
   void _log(String message) {
-    if (_debugMode) debugPrint('DraftModeFormState: $message');
+    DraftModeUIDiagnostics.debug(
+      'DraftModeFormState: $message',
+      enabled: _debugMode,
+    );
   }
 
   @override
