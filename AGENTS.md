@@ -26,6 +26,10 @@ This file captures conventions and guardrails for automated contributors.
 - Within modules prefer relative imports so dependencies remain explicit (avoid
   `package:draftmode/...` for internals), while tests should import via the
   public `package:draftmode/...` surface to mirror consumer usage.
+- Form layer must not emit console output directly; surface user-facing
+  messaging through components in `lib/ui` instead.
+- UI modules receive arguments and own platform-specific visualization for iOS
+  and Android.
 
 ## Testing Patterns
 - Unit tests are colocated under `test/<module>/`. Prefer targeted files over

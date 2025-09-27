@@ -1,4 +1,5 @@
 import 'package:draftmode/platform/config.dart';
+import 'package:draftmode/ui/button.dart';
 import 'package:draftmode/ui/confirm.dart';
 import 'package:draftmode/ui/row.dart';
 import 'package:draftmode/ui/section.dart';
@@ -244,6 +245,57 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(await future, isFalse);
+    });
+  });
+
+  group('DraftModeUIButton', () {
+    testWidgets('renders Cupertino button on iOS', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: DraftModeUIButton(child: const Text('Tap'), onPressed: () {}),
+        ),
+      );
+
+      expect(find.byType(CupertinoButton), findsOneWidget);
+    });
+
+    testWidgets('renders FilledButton on Android', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: DraftModeUIButton(child: const Text('Tap'), onPressed: () {}),
+        ),
+      );
+
+      expect(find.byType(FilledButton), findsOneWidget);
+    });
+
+    testWidgets('shows pending child when busy', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: DraftModeUIButton(
+            isPending: true,
+            pendingChild: const Text('Loading'),
+            child: const Text('Tap'),
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      expect(find.text('Loading'), findsOneWidget);
+      final cupertino = tester.widget<CupertinoButton>(
+        find.byType(CupertinoButton),
+      );
+      expect(
+        cupertino.onPressed,
+        isNull,
+        reason: 'button disabled while pending',
+      );
     });
   });
 
