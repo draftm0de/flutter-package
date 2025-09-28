@@ -114,6 +114,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
       validator: (value) => widget.attribute.validate(context, form, value),
       onSaved: (value) {
         widget.attribute.value = value ?? _selected;
+        widget.onSaved?.call(value ?? _selected);
       },
       builder: (field) {
         final hasFocus = _focusNode.hasFocus;
