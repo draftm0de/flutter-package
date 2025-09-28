@@ -41,6 +41,27 @@ void main() {
     expect(find.text('Select a future date'), findsOneWidget);
   });
 
+  testWidgets('DraftModeFormDateTime seeds attribute when missing', (
+    tester,
+  ) async {
+    final attribute = DraftModeEntityAttribute<DateTime>();
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormDateTime(attribute: attribute, label: 'Start'),
+        ),
+      ),
+    );
+
+    expect(attribute.value, isNotNull);
+
+    final state =
+        tester.state(find.byType(DraftModeFormDateTime))
+            as dynamic; // ignore: avoid_dynamic_calls
+    expect(attribute.value, state._selected);
+  });
+
   testWidgets(
     'DraftModeFormDateTime hides error text when focused but keeps strike',
     (tester) async {

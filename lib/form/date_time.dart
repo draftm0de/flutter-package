@@ -42,6 +42,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   void initState() {
     super.initState();
     _selected = _normalize(widget.attribute.value ?? DateTime.now());
+    widget.attribute.value ??= _selected;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final form = DraftModeFormState.of(context);
       form?.registerField(widget.attribute, _fieldKey);
