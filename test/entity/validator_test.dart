@@ -2,8 +2,11 @@ import 'package:draftmode/entity/interface.dart';
 import 'package:draftmode/entity/validator.dart';
 import 'package:draftmode/form/interface.dart';
 import 'package:draftmode/l10n/app_localizations.dart';
+import 'package:draftmode/utils/formatter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import '../test_utils.dart';
 
@@ -158,16 +161,18 @@ void main() {
       final form = _FakeFormState(<dynamic, dynamic>{compare: targetDate});
       final validator = vGreaterThan(compare);
 
+      final localeTag = Localizations.localeOf(context).toLanguageTag();
+      await initializeDateFormatting(localeTag);
+
       final error = validator(
         context,
         form,
         targetDate.subtract(const Duration(days: 1)),
       );
+      final expected =
+          '${DraftModeDateTime.yMMdd(localeTag).format(targetDate)} ${DateFormat.Hm(localeTag).format(targetDate)}';
 
-      expect(
-        error,
-        loc.validationGreaterThan(expected: targetDate.toIso8601String()),
-      );
+      expect(error, loc.validationGreaterThan(expected: expected));
     });
 
     testWidgets('returns error when value equals compared attribute', (
@@ -183,11 +188,14 @@ void main() {
       final form = _FakeFormState(<dynamic, dynamic>{compare: targetDate});
       final validator = vGreaterThan(compare);
 
+      final localeTag = Localizations.localeOf(context).toLanguageTag();
+      await initializeDateFormatting(localeTag);
+
       final sameDay = validator(context, form, targetDate);
-      expect(
-        sameDay,
-        loc.validationGreaterThan(expected: targetDate.toIso8601String()),
-      );
+      final expected =
+          '${DraftModeDateTime.yMMdd(localeTag).format(targetDate)} ${DateFormat.Hm(localeTag).format(targetDate)}';
+
+      expect(sameDay, loc.validationGreaterThan(expected: expected));
     });
 
     testWidgets('returns null when value exceeds compared attribute', (

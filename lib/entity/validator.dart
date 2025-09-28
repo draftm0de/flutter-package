@@ -1,7 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
 import 'interface.dart';
+import '../utils/formatter.dart';
 
 /// Creates a validator that fails when the inspected value is null or, for strings, empty.
 /// The returned message is localized using [DraftModeLocalizations].
@@ -47,7 +49,10 @@ DraftModeEntityValidator vGreaterThan(dynamic compare) {
     if (cv == null) return null;
     final loc = DraftModeLocalizations.of(context);
     if (v is DateTime && cv is DateTime && !v.isAfter(cv)) {
-      return loc!.validationGreaterThan(expected: cv.toIso8601String());
+      final localeTag = Localizations.localeOf(context).toLanguageTag();
+      final expected =
+          '${DraftModeDateTime.yMMdd(localeTag).format(cv)} ${DateFormat.Hm(localeTag).format(cv)}';
+      return loc!.validationGreaterThan(expected: expected);
     }
     if (v is int && cv is int && v <= cv) {
       return loc!.validationGreaterThan(expected: cv);
