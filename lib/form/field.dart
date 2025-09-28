@@ -52,8 +52,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   late bool _obscureOn;
 
-  FocusNode? _ownedFocus;
-  FocusNode get _focus => _ownedFocus ??= FocusNode();
+  late final FocusNode _focusNode = FocusNode(debugLabel: 'DraftModeFormField');
 
   DraftModeFormState? _form;
   bool _showErrorOnBlur = false;
@@ -73,7 +72,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   @override
   void dispose() {
     _form?.unregisterField(widget.attribute, _fieldKey);
-    _ownedFocus?.dispose();
+    _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -102,7 +101,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
         final bool enableValidation = form?.enableValidation ?? false;
         final bool showError =
             field.hasError &&
-            !_focus.hasFocus &&
+            !_focusNode.hasFocus &&
             (enableValidation || _showErrorOnBlur);
 
         final Widget? suffix = widget.obscureEye
@@ -121,7 +120,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             : widget.suffix;
 
         Widget child = Focus(
-          focusNode: _focus,
+          focusNode: _focusNode,
           onFocusChange: (hasFocus) {
             if (hasFocus) {
               if (widget.clearErrorOnFocus) {
