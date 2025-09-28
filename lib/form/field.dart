@@ -55,6 +55,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   FocusNode? _ownedFocus;
   FocusNode get _focus => _ownedFocus ??= FocusNode();
 
+  DraftModeFormState? _form;
+
   String get text => _controller.text;
   set text(String? value) {
     final nextValue = value ?? '';
@@ -92,14 +94,22 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   @override
   void dispose() {
+    _form?.unregisterField(widget.attribute, _fieldKey);
     _ownedFocus?.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _form = DraftModeFormState.of(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final form = DraftModeFormState.of(context);
+    _form = form ?? _form;
     form?.registerProperty(widget.attribute);
     return FormField<T>(
       key: _fieldKey,

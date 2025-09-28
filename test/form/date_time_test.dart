@@ -56,10 +56,9 @@ void main() {
 
     expect(attribute.value, isNotNull);
 
-    final state =
-        tester.state(find.byType(DraftModeFormDateTime))
-            as dynamic; // ignore: avoid_dynamic_calls
-    expect(attribute.value, state._selected);
+    final element = tester.element(find.byType(DraftModeFormDateTime));
+    final formState = DraftModeFormState.of(element)!;
+    expect(formState.read<DateTime>(attribute), attribute.value);
   });
 
   testWidgets(
