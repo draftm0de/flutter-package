@@ -57,34 +57,11 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   DraftModeFormState? _form;
 
-  String get text => _controller.text;
-  set text(String? value) {
-    final nextValue = value ?? '';
-    if (_controller.text != nextValue) {
-      _controller.text = nextValue;
-      _controller.selection = TextSelection.collapsed(offset: nextValue.length);
-      setState(() {});
-    }
-  }
-
-  String _encodeValue(dynamic value) {
-    if (value == null) {
-      return '';
-    }
-    if (value is String) {
-      return value;
-    }
-    if (value is DateTime) {
-      return value.toString();
-    }
-    return '';
-  }
-
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = _encodeValue(widget.attribute.value);
+    _controller.text = widget.attribute.value?.toString() ?? '';
     _obscureOn = widget.obscureText;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final form = DraftModeFormState.of(context);
