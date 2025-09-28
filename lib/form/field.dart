@@ -56,6 +56,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   FocusNode get _focus => _ownedFocus ??= FocusNode();
 
   DraftModeFormState? _form;
+  bool _showErrorOnBlur = false;
 
   @override
   void initState() {
@@ -100,7 +101,9 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
       builder: (field) {
         final bool enableValidation = form?.enableValidation ?? false;
         final bool showError =
-            (enableValidation || !_focus.hasFocus) && field.hasError;
+            field.hasError &&
+            !_focus.hasFocus &&
+            (enableValidation || _showErrorOnBlur);
 
         final Widget? suffix = widget.obscureEye
             ? GestureDetector(
@@ -120,13 +123,15 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
         Widget child = Focus(
           focusNode: _focus,
           onFocusChange: (hasFocus) {
-            if (hasFocus && widget.clearErrorOnFocus) {
-              field.setState(() {});
+            if (hasFocus) {
+              if (widget.clearErrorOnFocus) {
+                field.setState(() {});
+              }
+              setState(() => _showErrorOnBlur = false);
+            } else {
+              final isValid = field.validate();
+              setState(() => _showErrorOnBlur = !isValid);
             }
-            if (!hasFocus) {
-              field.validate();
-            }
-            field.setState(() {});
           },
           child: CupertinoTextField(
             padding: EdgeInsets.zero,
