@@ -196,6 +196,42 @@ void main() {
     },
   );
 
+  testWidgets('DraftModeFormDateTime onSaved writes attribute and draft', (
+    tester,
+  ) async {
+    final formKey = GlobalKey<DraftModeFormState>();
+    final attribute = DraftModeEntityAttribute<DateTime>(
+      value: DateTime(2024, 1, 1, 8, 0),
+    );
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          key: formKey,
+          child: DraftModeFormDateTime(
+            attribute: attribute,
+            label: 'Start',
+            onChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    final element = tester.element(find.byType(DraftModeFormDateTime));
+    final formState = DraftModeFormState.of(element)!;
+
+    final newValue = DateTime(2024, 1, 2, 9, 30);
+    final picker = tester.widget<DraftModeUIDateTimeField>(
+      find.byType(DraftModeUIDateTimeField),
+    );
+    picker.onChanged(newValue);
+
+    formKey.currentState!.save();
+
+    expect(attribute.value, newValue);
+    expect(formState.read<DateTime>(attribute), newValue);
+  });
+
   testWidgets(
     'DraftModeFormDateTime syncs end-before-start validation with blur and form.validate',
     (tester) async {

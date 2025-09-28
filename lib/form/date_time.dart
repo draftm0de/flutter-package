@@ -14,6 +14,7 @@ class DraftModeFormDateTime extends StatefulWidget {
   final String? label;
   final DraftModeFormCalendarMode mode;
   final ValueChanged<DateTime>? onChanged;
+  final ValueChanged<DateTime?>? onSaved;
 
   const DraftModeFormDateTime({
     super.key,
@@ -21,6 +22,7 @@ class DraftModeFormDateTime extends StatefulWidget {
     this.label,
     this.mode = DraftModeFormCalendarMode.datetime,
     this.onChanged,
+    this.onSaved,
   });
 
   @override
@@ -114,6 +116,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
         final resolved = value ?? _selected;
         widget.attribute.value = resolved;
         _form?.updateProperty(widget.attribute, resolved);
+        widget.onSaved?.call(value);
       },
       builder: (field) {
         final hasFocus = _focusNode.hasFocus;

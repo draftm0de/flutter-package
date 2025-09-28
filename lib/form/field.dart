@@ -90,10 +90,10 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
       key: _fieldKey,
       initialValue: widget.attribute.value,
       autovalidateMode: AutovalidateMode.disabled,
-      validator: (v) => widget.attribute.validate(context, form, v),
-      onSaved: (v) {
-        widget.attribute.value = v;
-        widget.onSaved?.call(v);
+      validator: (value) => widget.attribute.validate(context, form, value),
+      onSaved: (value) {
+        widget.attribute.value = value;
+        widget.onSaved?.call(value);
       },
       builder: (field) {
         final bool enableValidation = form?.enableValidation ?? false;

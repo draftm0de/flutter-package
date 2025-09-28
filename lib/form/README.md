@@ -17,7 +17,8 @@ Key files:
 - `button.dart` / `button_text.dart` - submit buttons that validate associated
   forms before invoking async handlers.
 - `date_time.dart` - slim single-attribute picker that wraps the inline iOS
-  calendar/time controls without range or duration features.
+  calendar/time controls without range or duration features. `onChanged` and
+  `onSaved` both keep the bound attribute and DraftModeForm draft map in sync.
 - `interface.dart` - shared form interfaces and enums, including the date-time
   picker mode types (`DraftModeFormCalendar*`) that expose the available
   segments.
