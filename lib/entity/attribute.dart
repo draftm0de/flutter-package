@@ -41,21 +41,30 @@ class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
   /// until one returns a message. When all validators pass, [error] is cleared
   /// and `null` is returned.
   String? validate(BuildContext context, DraftModeFormContext? form, T? v) {
-    if (validator != null) {
-      final msg = validator!(context, form, v);
-      if (msg != null) {
-        error = msg;
-        return error;
-      }
+    DraftModeFormDependencyContext? dependencyContext;
+    if (form is DraftModeFormDependencyContext) {
+      dependencyContext = form;
+      dependencyContext.beginAttributeValidation(this);
     }
-    for (final validator in validators) {
-      final msg = validator(context, form, v);
-      if (msg != null) {
-        error = msg;
-        return error;
+    try {
+      if (validator != null) {
+        final msg = validator!(context, form, v);
+        if (msg != null) {
+          error = msg;
+          return error;
+        }
       }
+      for (final validator in validators) {
+        final msg = validator(context, form, v);
+        if (msg != null) {
+          error = msg;
+          return error;
+        }
+      }
+      error = null;
+      return null;
+    } finally {
+      dependencyContext?.endAttributeValidation(this);
     }
-    error = null;
-    return null;
   }
 }

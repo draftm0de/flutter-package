@@ -25,7 +25,7 @@ void main() {
     );
 
     final form = formKey.currentState!;
-    expect(form.read<String>(attribute), isNull);
+    expect(form.read<String>(attribute), 'saved');
 
     form.updateProperty(attribute, 'draft');
     expect(form.read<String>(attribute), 'draft');

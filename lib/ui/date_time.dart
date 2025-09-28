@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../platform/styles.dart';
 import '../utils/formatter.dart';
-import '../form/calender/variables.dart';
+import '../form/interface.dart';
 import 'button.dart';
 import 'row.dart';
 import 'date_time/calendar_ios.dart';
@@ -16,6 +16,7 @@ class DraftModeUIDateTimeField extends StatelessWidget {
   final VoidCallback onToggleMonthYear;
   final ValueChanged<DraftModeFormCalendarPickerMode> onPickerModeChanged;
   final ValueChanged<DateTime> onChanged;
+  final bool strike;
 
   const DraftModeUIDateTimeField({
     super.key,
@@ -26,6 +27,7 @@ class DraftModeUIDateTimeField extends StatelessWidget {
     required this.onPickerModeChanged,
     required this.onChanged,
     this.label,
+    this.strike = false,
   });
 
   String _dateLabel(BuildContext context) {
@@ -54,7 +56,7 @@ class DraftModeUIDateTimeField extends StatelessWidget {
         child: Text(
           textAlign: TextAlign.center,
           text,
-          style: PlatformStyles.labelStyle(context),
+          style: PlatformStyles.labelStyle(context, strike: strike),
         ),
       ),
     );

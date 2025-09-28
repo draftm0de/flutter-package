@@ -33,8 +33,12 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   bool get enableValidation => _enableValidation;
 
   final Map<int, Object?> _drafts = <int, Object?>{};
+  final Map<int, DraftModeEntityAttributeI> _attributes =
+      <int, DraftModeEntityAttributeI>{};
   final Map<int, Set<GlobalKey<FormFieldState>>> _fields =
       <int, Set<GlobalKey<FormFieldState>>>{};
+  final Map<int, Set<int>> _dependents = <int, Set<int>>{};
+  final List<int> _validationStack = <int>[];
 
   void _log(String message) {
     DraftModeUIDiagnostics.debug(
@@ -49,9 +53,13 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     String? debugName,
   }) {
     final key = identityHashCode(attribute);
+    _attributes[key] = attribute;
     _drafts.putIfAbsent(key, () {
-      _log('registerProperty ${debugName ?? attribute.debugName ?? '-'} #$key');
-      return null;
+      final initial = attribute.value;
+      _log(
+        'registerProperty ${debugName ?? attribute.debugName ?? '-'} #$key -> $initial',
+      );
+      return initial;
     });
   }
 
@@ -66,6 +74,8 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     }
     _log('updateProperty ${attribute.debugName ?? '-'} value: $value #$key');
     _drafts[key] = value;
+    validateAttribute(attribute);
+    _triggerDependentValidation(key);
   }
 
   @override
@@ -120,12 +130,25 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     if (_drafts.containsKey(key)) {
       final value = _drafts[key] as V?;
       _log('read draft ${attribute.debugName ?? '-'} -> $value');
+      registerDependency(attribute);
       return value;
     }
 
     final value = attribute.value as V?;
     _log('read attribute ${attribute.debugName ?? '-'} -> $value');
+    registerDependency(attribute);
     return value;
+  }
+
+  void _triggerDependentValidation(int dependencyKey) {
+    final dependents = _dependents[dependencyKey];
+    if (dependents == null || dependents.isEmpty) return;
+    for (final dependentKey in dependents) {
+      if (dependentKey == dependencyKey) continue;
+      final attribute = _attributes[dependentKey];
+      if (attribute == null) continue;
+      validateAttribute(attribute);
+    }
   }
 
   @override
@@ -147,6 +170,35 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     _enableValidation = false;
     _drafts.clear();
     super.reset();
+  }
+
+  @override
+  void beginAttributeValidation(DraftModeEntityAttributeI attribute) {
+    final key = identityHashCode(attribute);
+    if (_validationStack.isEmpty || _validationStack.last != key) {
+      _validationStack.add(key);
+    }
+    _attributes.putIfAbsent(key, () => attribute);
+  }
+
+  @override
+  void endAttributeValidation(DraftModeEntityAttributeI attribute) {
+    final key = identityHashCode(attribute);
+    if (_validationStack.isNotEmpty && _validationStack.last == key) {
+      _validationStack.removeLast();
+    } else {
+      _validationStack.remove(key);
+    }
+  }
+
+  @override
+  void registerDependency(DraftModeEntityAttributeI dependency) {
+    if (_validationStack.isEmpty) return;
+    final dependentKey = _validationStack.last;
+    final dependencyKey = identityHashCode(dependency);
+    if (dependentKey == dependencyKey) return;
+    _attributes.putIfAbsent(dependencyKey, () => dependency);
+    _dependents.putIfAbsent(dependencyKey, () => <int>{}).add(dependentKey);
   }
 
   static DraftModeFormState? of(BuildContext context) {

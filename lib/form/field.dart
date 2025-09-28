@@ -22,7 +22,6 @@ class DraftModeFormField<T> extends StatefulWidget {
   final Widget? prefix;
   final Widget? suffix;
   final bool enabled;
-  final bool clearErrorOnFocus;
   final bool autocorrect;
 
   const DraftModeFormField({
@@ -38,7 +37,6 @@ class DraftModeFormField<T> extends StatefulWidget {
     this.suffix,
     this.enabled = true,
     this.onSaved,
-    this.clearErrorOnFocus = false,
     this.autocorrect = false,
   });
 
@@ -52,37 +50,16 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   late bool _obscureOn;
 
-  FocusNode? _ownedFocus;
-  FocusNode get _focus => _ownedFocus ??= FocusNode();
+  late final FocusNode _focusNode = FocusNode(debugLabel: 'DraftModeFormField');
 
-  String get text => _controller.text;
-  set text(String? value) {
-    final nextValue = value ?? '';
-    if (_controller.text != nextValue) {
-      _controller.text = nextValue;
-      _controller.selection = TextSelection.collapsed(offset: nextValue.length);
-      setState(() {});
-    }
-  }
-
-  String _encodeValue(dynamic value) {
-    if (value == null) {
-      return '';
-    }
-    if (value is String) {
-      return value;
-    }
-    if (value is DateTime) {
-      return value.toString();
-    }
-    return '';
-  }
+  DraftModeFormState? _form;
+  bool _showErrorOnBlur = false;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = _encodeValue(widget.attribute.value);
+    _controller.text = widget.attribute.value?.toString() ?? '';
     _obscureOn = widget.obscureText;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final form = DraftModeFormState.of(context);
@@ -92,28 +69,38 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   @override
   void dispose() {
-    _ownedFocus?.dispose();
+    _form?.unregisterField(widget.attribute, _fieldKey);
+    _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _form = DraftModeFormState.of(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final form = DraftModeFormState.of(context);
+    _form = form ?? _form;
     form?.registerProperty(widget.attribute);
     return FormField<T>(
       key: _fieldKey,
       initialValue: widget.attribute.value,
       autovalidateMode: AutovalidateMode.disabled,
-      validator: (v) => widget.attribute.validate(context, form, v),
-      onSaved: (v) {
-        widget.attribute.value = v;
-        widget.onSaved?.call(v);
+      validator: (value) => widget.attribute.validate(context, form, value),
+      onSaved: (value) {
+        widget.attribute.value = value;
+        widget.onSaved?.call(value);
       },
       builder: (field) {
         final bool enableValidation = form?.enableValidation ?? false;
         final bool showError =
-            (enableValidation || !_focus.hasFocus) && field.hasError;
+            field.hasError &&
+            !_focusNode.hasFocus &&
+            (enableValidation || _showErrorOnBlur);
 
         final Widget? suffix = widget.obscureEye
             ? GestureDetector(
@@ -131,15 +118,14 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             : widget.suffix;
 
         Widget child = Focus(
-          focusNode: _focus,
+          focusNode: _focusNode,
           onFocusChange: (hasFocus) {
-            if (hasFocus && widget.clearErrorOnFocus) {
-              field.setState(() {});
+            if (hasFocus) {
+              setState(() => _showErrorOnBlur = false);
+            } else {
+              final isValid = field.validate();
+              setState(() => _showErrorOnBlur = !isValid);
             }
-            if (!hasFocus) {
-              field.validate();
-            }
-            field.setState(() {});
           },
           child: CupertinoTextField(
             padding: EdgeInsets.zero,

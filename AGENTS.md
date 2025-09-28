@@ -3,7 +3,9 @@
 This file captures conventions and guardrails for automated contributors.
 
 ## Workflow Expectations
-- Run `dart format --output=write .` before staging files.
+- Run `dart format --output=write .` only after `dart analyze` and the test
+  suites succeed. After formatting, rerun `flutter test` to confirm nothing
+  regressed.
 - Running any `dart format` command is pre-approved; feel free to use more
   granular invocations when useful.
 - Ensure `dart analyze` passes with zero warnings.
