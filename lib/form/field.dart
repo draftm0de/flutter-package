@@ -22,7 +22,6 @@ class DraftModeFormField<T> extends StatefulWidget {
   final Widget? prefix;
   final Widget? suffix;
   final bool enabled;
-  final bool clearErrorOnFocus;
   final bool autocorrect;
 
   const DraftModeFormField({
@@ -38,7 +37,6 @@ class DraftModeFormField<T> extends StatefulWidget {
     this.suffix,
     this.enabled = true,
     this.onSaved,
-    this.clearErrorOnFocus = false,
     this.autocorrect = false,
   });
 
@@ -123,9 +121,6 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
           focusNode: _focusNode,
           onFocusChange: (hasFocus) {
             if (hasFocus) {
-              if (widget.clearErrorOnFocus) {
-                field.setState(() {});
-              }
               setState(() => _showErrorOnBlur = false);
             } else {
               final isValid = field.validate();
