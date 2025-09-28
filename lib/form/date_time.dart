@@ -127,11 +127,11 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
           focusNode: _focusNode,
           onFocusChange: (focused) {
             if (!mounted) return;
-            setState(() {
-              _showErrorOnBlur = !focused && field.hasError;
-            });
-            if (!focused) {
-              field.validate();
+            if (focused) {
+              setState(() => _showErrorOnBlur = false);
+            } else {
+              final isValid = field.validate();
+              setState(() => _showErrorOnBlur = !isValid);
             }
           },
           child: Column(
