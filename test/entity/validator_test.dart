@@ -74,6 +74,15 @@ class _FakeFormState implements DraftModeFormStateI {
   V? read<V>(dynamic attribute) {
     return _values[attribute] as V?;
   }
+
+  @override
+  void beginAttributeValidation(DraftModeEntityAttributeI attribute) {}
+
+  @override
+  void endAttributeValidation(DraftModeEntityAttributeI attribute) {}
+
+  @override
+  void registerDependency(DraftModeEntityAttributeI dependency) {}
 }
 
 void main() {

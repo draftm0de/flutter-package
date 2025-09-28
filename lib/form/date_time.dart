@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 
 import '../entity/attribute.dart';
 import '../ui/date_time.dart';
-import 'calender/variables.dart';
+import '../ui/text_error.dart';
+import 'interface.dart';
+import 'form.dart';
 
 /// Slim date/time picker that focuses on a single [DraftModeEntityAttribute].
 /// Ideal for forms that only need one timestamp without range selection or
@@ -26,14 +28,24 @@ class DraftModeFormDateTime extends StatefulWidget {
 }
 
 class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
+  final _fieldKey = GlobalKey<FormFieldState<DateTime>>();
+  late final FocusNode _focusNode = FocusNode(
+    debugLabel: 'DraftModeFormDateTime',
+  );
   DraftModeFormCalendarPickerMode _mode =
       DraftModeFormCalendarPickerMode.closed;
   late DateTime _selected;
+  DraftModeFormState? _form;
+  bool _showErrorOnBlur = false;
 
   @override
   void initState() {
     super.initState();
     _selected = _normalize(widget.attribute.value ?? DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final form = DraftModeFormState.of(context);
+      form?.registerField(widget.attribute, _fieldKey);
+    });
   }
 
   DateTime _normalize(DateTime value) {
@@ -53,6 +65,11 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     setState(() {
       _mode = _mode == mode ? DraftModeFormCalendarPickerMode.closed : mode;
     });
+    if (_mode == DraftModeFormCalendarPickerMode.closed) {
+      _focusNode.unfocus();
+    } else {
+      FocusScope.of(context).requestFocus(_focusNode);
+    }
   }
 
   void _toggleMonthYear() {
@@ -63,22 +80,97 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     });
   }
 
-  void _update(DateTime value) {
-    setState(() => _selected = value);
+  void _update(
+    DateTime value, {
+    DraftModeFormState? form,
+    required bool hasError,
+  }) {
+    setState(() {
+      _selected = value;
+      if (!hasError) {
+        _showErrorOnBlur = false;
+      }
+    });
     widget.attribute.value = value;
     widget.onChanged?.call(value);
+    (form ?? DraftModeFormState.of(context))?.updateProperty(
+      widget.attribute,
+      value,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return DraftModeUIDateTimeField(
-      label: (widget.label?.isEmpty ?? true) ? null : widget.label,
-      mode: widget.mode,
-      pickerMode: _mode,
-      value: _selected,
-      onToggleMonthYear: _toggleMonthYear,
-      onPickerModeChanged: _toggle,
-      onChanged: (value) => _update(_normalize(value)),
+    final form = _form ?? DraftModeFormState.of(context);
+    form?.registerProperty(widget.attribute);
+
+    return FormField<DateTime>(
+      key: _fieldKey,
+      initialValue: _selected,
+      autovalidateMode: AutovalidateMode.disabled,
+      validator: (value) => widget.attribute.validate(context, form, value),
+      onSaved: (value) {
+        widget.attribute.value = value ?? _selected;
+      },
+      builder: (field) {
+        final hasFocus = _focusNode.hasFocus;
+        final enableValidation = form?.enableValidation ?? false;
+        final showError =
+            field.hasError &&
+            !hasFocus &&
+            (enableValidation || _showErrorOnBlur);
+        final currentValue = field.value ?? _selected;
+        final strike = field.hasError;
+
+        return Focus(
+          focusNode: _focusNode,
+          onFocusChange: (focused) {
+            if (!mounted) return;
+            setState(() {
+              _showErrorOnBlur = !focused && field.hasError;
+            });
+            if (!focused) {
+              field.validate();
+            }
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              DraftModeUIDateTimeField(
+                label: (widget.label?.isEmpty ?? true) ? null : widget.label,
+                mode: widget.mode,
+                pickerMode: _mode,
+                value: currentValue,
+                strike: strike,
+                onToggleMonthYear: _toggleMonthYear,
+                onPickerModeChanged: (mode) {
+                  _toggle(mode);
+                },
+                onChanged: (value) {
+                  final resolved = _normalize(value);
+                  field.didChange(resolved);
+                  final isValid = field.validate();
+                  _update(resolved, form: form, hasError: !isValid);
+                },
+              ),
+              DraftModeUITextError(text: field.errorText, visible: showError),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _form = DraftModeFormState.of(context);
+  }
+
+  @override
+  void dispose() {
+    _form?.unregisterField(widget.attribute, _fieldKey);
+    _focusNode.dispose();
+    super.dispose();
   }
 }

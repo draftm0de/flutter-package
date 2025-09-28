@@ -7,6 +7,14 @@ abstract class DraftModeFormContext {
   V? read<V>(dynamic attribute);
 }
 
+/// Extended form context that tracks cross-field dependencies during
+/// validation so linked attributes can re-validate when their source changes.
+abstract class DraftModeFormDependencyContext extends DraftModeFormContext {
+  void beginAttributeValidation(DraftModeEntityAttributeI attribute);
+  void endAttributeValidation(DraftModeEntityAttributeI attribute);
+  void registerDependency(DraftModeEntityAttributeI dependency);
+}
+
 /// Signature for entity-level validators that run in the UI layer but should
 /// remain agnostic of concrete form implementations.
 typedef DraftModeEntityValidator =
