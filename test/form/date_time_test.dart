@@ -232,6 +232,37 @@ void main() {
     expect(formState.read<DateTime>(attribute), newValue);
   });
 
+  testWidgets('DraftModeFormDateTime invokes onSaved callback', (tester) async {
+    final attribute = DraftModeEntityAttribute<DateTime>(
+      value: DateTime(2024, 2, 10, 14, 45),
+    );
+    DateTime? savedValue;
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormDateTime(
+            attribute: attribute,
+            onSaved: (value) => savedValue = value,
+          ),
+        ),
+      ),
+    );
+
+    final formState = tester.state<DraftModeFormState>(
+      find.byType(DraftModeForm),
+    );
+
+    final newValue = DateTime(2024, 2, 11, 9, 0);
+    tester
+        .widget<DraftModeUIDateTimeField>(find.byType(DraftModeUIDateTimeField))
+        .onChanged(newValue);
+
+    formState.save();
+
+    expect(savedValue, newValue);
+  });
+
   testWidgets(
     'DraftModeFormDateTime syncs end-before-start validation with blur and form.validate',
     (tester) async {
