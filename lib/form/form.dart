@@ -24,7 +24,7 @@ class DraftModeForm extends Form {
 /// mirrors the entity layer interfaces so validation remains decoupled from the
 /// widget tree.
 class DraftModeFormState extends FormState implements DraftModeFormStateI {
-  static const bool _debugMode = true;
+  static const bool _debugMode = false;
 
   bool _onSubmit = false;
   bool _enableValidation = false;
@@ -64,7 +64,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void updateProperty<T>(DraftModeEntityAttributeI attribute, T? value) {
+  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
     final key = identityHashCode(attribute);
     if (!_drafts.containsKey(key)) {
       _log(
@@ -72,14 +72,17 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
       );
       return;
     }
-    _log('updateProperty ${attribute.debugName ?? '-'} value: $value #$key');
-    _drafts[key] = value;
-    _setProperty(attribute, value);
+    final mapped = attribute.mapValue(value);
+    _log(
+      'updateProperty ${attribute.debugName ?? '-'} value: $value mapped: $mapped #$key',
+    );
+    _drafts[key] = mapped;
+    _setProperty(attribute, mapped);
     validateAttribute(attribute);
     _triggerDependentValidation(key);
   }
 
-  void _setProperty<T>(DraftModeEntityAttributeI attribute, T? value) {
+  void _setProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
     final key = identityHashCode(attribute);
     _log('setProperty ${attribute.debugName ?? '-'} value: $value #$key');
     final fields = _fields[key];

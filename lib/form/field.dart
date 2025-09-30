@@ -11,7 +11,7 @@ import 'form.dart';
 /// exposes Draftmode-specific affordances such as optional eye toggles and
 /// validation orchestration.
 class DraftModeFormField<T> extends StatefulWidget {
-  final DraftModeEntityAttributeI attribute;
+  final DraftModeEntityAttributeI<T> attribute;
   final String? label;
   final String? placeholder;
   final bool obscureText;
@@ -101,7 +101,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   }
 
   @override
-  void didUpdateWidget(covariant DraftModeFormField oldWidget) {
+  void didUpdateWidget(covariant DraftModeFormField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.attribute, widget.attribute)) {
       _detachFromForm(attribute: oldWidget.attribute);

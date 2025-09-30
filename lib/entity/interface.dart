@@ -35,5 +35,13 @@ abstract class DraftModeEntityAttributeI<T> {
   set error(String? v);
 
   void addValidator(DraftModeEntityValidator validator);
+
+  /// Registers a synchronous transformation that should run before persisting
+  /// or broadcasting updates to this attribute.
+  void addValueMapper(T Function(T value) mapper);
+
+  /// Applies all registered mappers to [value] and returns the transformed
+  /// result. Implementations should be null-safe and treat `null` as pass-through.
+  T? mapValue(T? value);
   String? validate(BuildContext context, DraftModeFormContext? form, T? v);
 }

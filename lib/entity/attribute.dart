@@ -9,8 +9,7 @@ class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
   @override
   final String? debugName;
 
-  @override
-  T? value;
+  T? _value;
 
   @override
   String? error;
@@ -18,22 +17,56 @@ class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
   final DraftModeEntityValidator? validator;
   final List<DraftModeEntityValidator> validators;
 
+  /// Optional transformers that run before storing or propagating values.
+  final List<T Function(T value)> _valueMappers = <T Function(T value)>[];
+
   /// Creates a new attribute with an optional [debugName], [value], and
   /// initial [validator] list.
   DraftModeEntityAttribute({
     this.debugName,
-    this.value,
+    T? value,
     this.validator,
     List<DraftModeEntityValidator>? validators,
   }) : validators = validators != null
            ? List.of(validators)
-           : <DraftModeEntityValidator>[];
+           : <DraftModeEntityValidator>[] {
+    this.value = value;
+  }
+
+  @override
+  T? get value => _value;
+
+  @override
+  set value(T? v) => _value = mapValue(v);
 
   @override
   /// Registers an additional validator that runs after the optional
   /// constructor-provided [validator].
   void addValidator(DraftModeEntityValidator validator) {
     validators.add(validator);
+  }
+
+  @override
+  /// Registers a synchronous mapper that runs whenever [value] is set or the
+  /// form layer pushes an update through [DraftModeFormState.updateProperty].
+  ///
+  /// Mappers run in registration order, allowing callers to compose multiple
+  /// transformations (for example, rounding to the nearest interval and then
+  /// clamping to a minimum bound).
+  void addValueMapper(T Function(T value) mapper) {
+    _valueMappers.add(mapper);
+  }
+
+  @override
+  T? mapValue(T? v) {
+    if (v == null || _valueMappers.isEmpty) {
+      return v;
+    }
+    var result = v;
+    for (final mapper in _valueMappers) {
+      result = mapper(result);
+    }
+    return result;
   }
 
   @override
