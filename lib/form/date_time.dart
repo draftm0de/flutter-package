@@ -37,7 +37,8 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   DraftModeFormCalendarPickerMode _mode =
       DraftModeFormCalendarPickerMode.closed;
   late DateTime _selected;
-  late DraftModeFormState? _form;
+  DraftModeFormState? _form;
+  bool _fieldRegistered = false;
   bool _showErrorOnBlur = false;
 
   @override
@@ -45,8 +46,29 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     super.initState();
     _selected = _normalize(widget.attribute.value ?? DateTime.now());
     widget.attribute.value ??= _selected;
-    _form = DraftModeFormState.of(context);
-    _form?.registerField(widget.attribute, _fieldKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _syncFormAssociation();
+    });
+  }
+
+  void _syncFormAssociation() {
+    final candidate = DraftModeFormState.of(context);
+    if (!identical(candidate, _form)) {
+      _detachFromForm();
+      _form = candidate;
+    }
+    final form = _form;
+    if (form != null && !_fieldRegistered) {
+      form.registerField(widget.attribute, _fieldKey);
+      _fieldRegistered = true;
+    }
+  }
+
+  void _detachFromForm({DraftModeEntityAttribute<DateTime>? attribute}) {
+    if (_form == null || !_fieldRegistered) return;
+    _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
+    _fieldRegistered = false;
   }
 
   DateTime _normalize(DateTime value) {
@@ -66,9 +88,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     setState(() {
       _mode = _mode == mode ? DraftModeFormCalendarPickerMode.closed : mode;
     });
-    if (_mode == DraftModeFormCalendarPickerMode.closed) {
-      _focusNode.unfocus();
-    } else {
+    if (_mode != DraftModeFormCalendarPickerMode.closed) {
       FocusScope.of(context).requestFocus(_focusNode);
     }
   }
@@ -95,6 +115,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
 
   @override
   Widget build(BuildContext context) {
+    _syncFormAssociation();
     _form?.registerProperty(widget.attribute);
 
     return FormField<DateTime>(
@@ -117,39 +138,50 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
         final currentValue = field.value ?? _selected;
         final strike = field.hasError;
 
-        return Focus(
-          focusNode: _focusNode,
-          onFocusChange: (focused) {
+        return TapRegion(
+          onTapOutside: (_) {
             if (!mounted) return;
-            if (focused) {
-              setState(() => _showErrorOnBlur = false);
-            } else {
-              final isValid = field.validate();
-              setState(() => _showErrorOnBlur = !isValid);
+            if (_mode != DraftModeFormCalendarPickerMode.closed) {
+              setState(() => _mode = DraftModeFormCalendarPickerMode.closed);
+            }
+            if (_focusNode.hasFocus) {
+              _focusNode.unfocus();
             }
           },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DraftModeUIDateTimeField(
-                label: (widget.label?.isEmpty ?? true) ? null : widget.label,
-                mode: widget.mode,
-                pickerMode: _mode,
-                value: currentValue,
-                strike: strike,
-                onToggleMonthYear: _toggleMonthYear,
-                onPickerModeChanged: (mode) {
-                  _toggle(mode);
-                },
-                onChanged: (value) {
-                  final resolved = _normalize(value);
-                  field.didChange(resolved);
-                  final isValid = field.validate();
-                  _update(resolved, hasError: !isValid);
-                },
-              ),
-              DraftModeUITextError(text: field.errorText, visible: showError),
-            ],
+          child: Focus(
+            focusNode: _focusNode,
+            onFocusChange: (focused) {
+              if (!mounted) return;
+              if (focused) {
+                setState(() => _showErrorOnBlur = false);
+              } else {
+                final isValid = field.validate();
+                setState(() => _showErrorOnBlur = !isValid);
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                DraftModeUIDateTimeField(
+                  label: (widget.label?.isEmpty ?? true) ? null : widget.label,
+                  mode: widget.mode,
+                  pickerMode: _mode,
+                  value: currentValue,
+                  strike: strike,
+                  onToggleMonthYear: _toggleMonthYear,
+                  onPickerModeChanged: (mode) {
+                    _toggle(mode);
+                  },
+                  onChanged: (value) {
+                    final resolved = _normalize(value);
+                    field.didChange(resolved);
+                    final isValid = field.validate();
+                    _update(resolved, hasError: !isValid);
+                  },
+                ),
+                DraftModeUITextError(text: field.errorText, visible: showError),
+              ],
+            ),
           ),
         );
       },
@@ -159,12 +191,21 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _form = DraftModeFormState.of(context);
+    _syncFormAssociation();
+  }
+
+  @override
+  void didUpdateWidget(covariant DraftModeFormDateTime oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.attribute, widget.attribute)) {
+      _detachFromForm(attribute: oldWidget.attribute);
+      _syncFormAssociation();
+    }
   }
 
   @override
   void dispose() {
-    _form?.unregisterField(widget.attribute, _fieldKey);
+    _detachFromForm();
     _focusNode.dispose();
     super.dispose();
   }

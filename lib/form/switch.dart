@@ -35,29 +35,61 @@ class DraftModeFormSwitch extends StatefulWidget {
 
 class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
   final _fieldKey = GlobalKey<FormFieldState<bool>>();
-  late DraftModeFormState? _form;
+  DraftModeFormState? _form;
+  bool _fieldRegistered = false;
 
   @override
   void initState() {
     super.initState();
-    _form = DraftModeFormState.of(context);
-    _form?.registerField(widget.attribute, _fieldKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _syncFormAssociation();
+    });
+  }
+
+  void _syncFormAssociation() {
+    final candidate = DraftModeFormState.of(context);
+    if (!identical(candidate, _form)) {
+      _detachFromForm();
+      _form = candidate;
+    }
+    final form = _form;
+    if (form != null && !_fieldRegistered) {
+      form.registerField(widget.attribute, _fieldKey);
+      _fieldRegistered = true;
+    }
+  }
+
+  void _detachFromForm({DraftModeEntityAttribute<bool>? attribute}) {
+    if (_form == null || !_fieldRegistered) return;
+    _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
+    _fieldRegistered = false;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _form = DraftModeFormState.of(context);
+    _syncFormAssociation();
+  }
+
+  @override
+  void didUpdateWidget(covariant DraftModeFormSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.attribute, widget.attribute)) {
+      _detachFromForm(attribute: oldWidget.attribute);
+      _syncFormAssociation();
+    }
   }
 
   @override
   void dispose() {
-    _form?.unregisterField(widget.attribute, _fieldKey);
+    _detachFromForm();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _syncFormAssociation();
     _form?.registerProperty(widget.attribute);
 
     return FormField<bool>(

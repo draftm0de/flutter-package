@@ -51,8 +51,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   late bool _obscureOn;
 
   late final FocusNode _focusNode = FocusNode(debugLabel: 'DraftModeFormField');
-
   DraftModeFormState? _form;
+  bool _fieldRegistered = false;
   bool _showErrorOnBlur = false;
 
   @override
@@ -61,13 +61,34 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     _controller = TextEditingController();
     _controller.text = widget.attribute.value?.toString() ?? '';
     _obscureOn = widget.obscureText;
-    _form = DraftModeFormState.of(context);
-    _form?.registerField(widget.attribute, _fieldKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _syncFormAssociation();
+    });
+  }
+
+  void _syncFormAssociation() {
+    final candidate = DraftModeFormState.of(context);
+    if (!identical(candidate, _form)) {
+      _detachFromForm();
+      _form = candidate;
+    }
+    final form = _form;
+    if (form != null && !_fieldRegistered) {
+      form.registerField(widget.attribute, _fieldKey);
+      _fieldRegistered = true;
+    }
+  }
+
+  void _detachFromForm({DraftModeEntityAttributeI? attribute}) {
+    if (_form == null || !_fieldRegistered) return;
+    _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
+    _fieldRegistered = false;
   }
 
   @override
   void dispose() {
-    _form?.unregisterField(widget.attribute, _fieldKey);
+    _detachFromForm();
     _focusNode.dispose();
     _controller.dispose();
     super.dispose();
@@ -76,11 +97,21 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _form = DraftModeFormState.of(context);
+    _syncFormAssociation();
+  }
+
+  @override
+  void didUpdateWidget(covariant DraftModeFormField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.attribute, widget.attribute)) {
+      _detachFromForm(attribute: oldWidget.attribute);
+      _syncFormAssociation();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    _syncFormAssociation();
     _form?.registerProperty(widget.attribute);
     return FormField<T>(
       key: _fieldKey,

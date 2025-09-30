@@ -24,7 +24,7 @@ class DraftModeForm extends Form {
 /// mirrors the entity layer interfaces so validation remains decoupled from the
 /// widget tree.
 class DraftModeFormState extends FormState implements DraftModeFormStateI {
-  static const bool _debugMode = false;
+  static const bool _debugMode = true;
 
   bool _onSubmit = false;
   bool _enableValidation = false;
@@ -74,8 +74,23 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     }
     _log('updateProperty ${attribute.debugName ?? '-'} value: $value #$key');
     _drafts[key] = value;
+    _setProperty(attribute, value);
     validateAttribute(attribute);
     _triggerDependentValidation(key);
+  }
+
+  void _setProperty<T>(DraftModeEntityAttributeI attribute, T? value) {
+    final key = identityHashCode(attribute);
+    _log('setProperty ${attribute.debugName ?? '-'} value: $value #$key');
+    final fields = _fields[key];
+    if (fields != null && fields.isNotEmpty) {
+      for (final fieldKey in List<GlobalKey<FormFieldState>>.of(fields)) {
+        final state = fieldKey.currentState;
+        if (state == null) continue;
+        _log('setProperty ${attribute.debugName ?? '-'} state.didChange');
+        state.didChange(value);
+      }
+    }
   }
 
   @override
