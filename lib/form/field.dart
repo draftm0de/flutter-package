@@ -11,7 +11,7 @@ import 'form.dart';
 /// exposes Draftmode-specific affordances such as optional eye toggles and
 /// validation orchestration.
 class DraftModeFormField<T> extends StatefulWidget {
-  final DraftModeEntityAttributeI attribute;
+  final DraftModeEntityAttributeI<T> attribute;
   final String? label;
   final String? placeholder;
   final bool obscureText;
@@ -51,8 +51,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   late bool _obscureOn;
 
   late final FocusNode _focusNode = FocusNode(debugLabel: 'DraftModeFormField');
-
   DraftModeFormState? _form;
+  bool _fieldRegistered = false;
   bool _showErrorOnBlur = false;
 
   @override
@@ -62,14 +62,33 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     _controller.text = widget.attribute.value?.toString() ?? '';
     _obscureOn = widget.obscureText;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final form = DraftModeFormState.of(context);
-      form?.registerField(widget.attribute, _fieldKey);
+      if (!mounted) return;
+      _syncFormAssociation();
     });
+  }
+
+  void _syncFormAssociation() {
+    final candidate = DraftModeFormState.of(context);
+    if (!identical(candidate, _form)) {
+      _detachFromForm();
+      _form = candidate;
+    }
+    final form = _form;
+    if (form != null && !_fieldRegistered) {
+      form.registerField(widget.attribute, _fieldKey);
+      _fieldRegistered = true;
+    }
+  }
+
+  void _detachFromForm({DraftModeEntityAttributeI? attribute}) {
+    if (_form == null || !_fieldRegistered) return;
+    _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
+    _fieldRegistered = false;
   }
 
   @override
   void dispose() {
-    _form?.unregisterField(widget.attribute, _fieldKey);
+    _detachFromForm();
     _focusNode.dispose();
     _controller.dispose();
     super.dispose();
@@ -78,25 +97,33 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _form = DraftModeFormState.of(context);
+    _syncFormAssociation();
+  }
+
+  @override
+  void didUpdateWidget(covariant DraftModeFormField<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.attribute, widget.attribute)) {
+      _detachFromForm(attribute: oldWidget.attribute);
+      _syncFormAssociation();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final form = DraftModeFormState.of(context);
-    _form = form ?? _form;
-    form?.registerProperty(widget.attribute);
+    _syncFormAssociation();
+    _form?.registerProperty(widget.attribute);
     return FormField<T>(
       key: _fieldKey,
       initialValue: widget.attribute.value,
       autovalidateMode: AutovalidateMode.disabled,
-      validator: (value) => widget.attribute.validate(context, form, value),
+      validator: (value) => widget.attribute.validate(context, _form, value),
       onSaved: (value) {
         widget.attribute.value = value;
         widget.onSaved?.call(value);
       },
       builder: (field) {
-        final bool enableValidation = form?.enableValidation ?? false;
+        final bool enableValidation = _form?.enableValidation ?? false;
         final bool showError =
             field.hasError &&
             !_focusNode.hasFocus &&
@@ -143,7 +170,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
               // inference stable when callers opt into a concrete type.
               // ignore: unnecessary_cast
               field.didChange(val as T);
-              form?.updateProperty(widget.attribute, val);
+              _form?.updateProperty(widget.attribute, val);
             },
             decoration: null,
           ),

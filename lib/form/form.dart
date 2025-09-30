@@ -64,7 +64,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void updateProperty<T>(DraftModeEntityAttributeI attribute, T? value) {
+  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
     final key = identityHashCode(attribute);
     if (!_drafts.containsKey(key)) {
       _log(
@@ -72,10 +72,28 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
       );
       return;
     }
-    _log('updateProperty ${attribute.debugName ?? '-'} value: $value #$key');
-    _drafts[key] = value;
+    final mapped = attribute.mapValue(value);
+    _log(
+      'updateProperty ${attribute.debugName ?? '-'} value: $value mapped: $mapped #$key',
+    );
+    _drafts[key] = mapped;
+    _setProperty(attribute, mapped);
     validateAttribute(attribute);
     _triggerDependentValidation(key);
+  }
+
+  void _setProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
+    final key = identityHashCode(attribute);
+    _log('setProperty ${attribute.debugName ?? '-'} value: $value #$key');
+    final fields = _fields[key];
+    if (fields != null && fields.isNotEmpty) {
+      for (final fieldKey in List<GlobalKey<FormFieldState>>.of(fields)) {
+        final state = fieldKey.currentState;
+        if (state == null) continue;
+        _log('setProperty ${attribute.debugName ?? '-'} state.didChange');
+        state.didChange(value);
+      }
+    }
   }
 
   @override

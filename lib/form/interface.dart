@@ -10,7 +10,7 @@ abstract class DraftModeFormStateI implements DraftModeFormDependencyContext {
     String? debugName,
   });
 
-  void updateProperty<T>(DraftModeEntityAttributeI attribute, T? value);
+  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value);
 
   void registerField(
     DraftModeEntityAttributeI attribute,

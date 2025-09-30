@@ -53,25 +53,69 @@ class _DraftModeFormDropDownState<
   ElementType
 >
     extends State<DraftModeFormDropDown<ItemType, ElementType>> {
-  final _fieldKey = GlobalKey<FormFieldState<ItemType>>();
+  final _fieldKey = GlobalKey<FormFieldState<ElementType>>();
+  DraftModeFormState? _form;
+  bool _fieldRegistered = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final form = DraftModeFormState.of(context);
-      form?.registerField(widget.attribute, _fieldKey);
+      if (!mounted) return;
+      _syncFormAssociation();
     });
+  }
+
+  void _syncFormAssociation() {
+    final candidate = DraftModeFormState.of(context);
+    if (!identical(candidate, _form)) {
+      _detachFromForm();
+      _form = candidate;
+    }
+    final form = _form;
+    if (form != null && !_fieldRegistered) {
+      form.registerField(widget.attribute, _fieldKey);
+      _fieldRegistered = true;
+    }
+  }
+
+  void _detachFromForm({DraftModeEntityAttribute<ElementType>? attribute}) {
+    if (_form == null || !_fieldRegistered) return;
+    _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
+    _fieldRegistered = false;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncFormAssociation();
+  }
+
+  @override
+  void didUpdateWidget(
+    covariant DraftModeFormDropDown<ItemType, ElementType> oldWidget,
+  ) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.attribute, widget.attribute)) {
+      _detachFromForm(attribute: oldWidget.attribute);
+      _syncFormAssociation();
+    }
+  }
+
+  @override
+  void dispose() {
+    _detachFromForm();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final form = DraftModeFormState.of(context);
-    form?.registerProperty(widget.attribute);
+    _syncFormAssociation();
+    _form?.registerProperty(widget.attribute);
     final items = widget.items;
     final selectedId = widget.attribute.value;
 
-    Future<void> selectItem(FormFieldState<ItemType> field) async {
+    Future<void> selectItem(FormFieldState<ElementType> field) async {
       final screen = DraftModeFormDropDownScreen<ItemType, ElementType>(
         selectionTitle:
             widget.selectionTitle ?? widget.label ?? widget.placeholder,
@@ -86,32 +130,34 @@ class _DraftModeFormDropDownState<
       );
       if (item == null) return;
 
-      field.didChange(item);
-      form?.updateProperty(widget.attribute, item.getId());
+      final id = item.getId();
+      field.didChange(id);
+      _form?.updateProperty(widget.attribute, id);
       field.validate();
     }
 
-    return FormField<ItemType>(
+    return FormField<ElementType>(
       key: _fieldKey,
-      initialValue: items.getById(selectedId),
+      initialValue: selectedId,
       autovalidateMode: AutovalidateMode.disabled,
       onSaved: (value) {
-        final id = value?.getId();
-        widget.attribute.value = id;
-        widget.onSaved?.call(id);
+        widget.attribute.value = value;
+        widget.onSaved?.call(value);
       },
-      validator: (value) =>
-          widget.attribute.validate(context, form, value?.getId()),
+      validator: (value) => widget.attribute.validate(context, _form, value),
       builder: (field) {
-        final enableValidation = form?.enableValidation ?? false;
+        final enableValidation = _form?.enableValidation ?? false;
         final showError = enableValidation && field.hasError;
+        final selectedItem = field.value != null
+            ? items.getById(field.value)
+            : null;
 
         final content = Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: field.value != null
-                  ? widget.renderItem(field.value as ItemType)
+              child: selectedItem != null
+                  ? widget.renderItem(selectedItem)
                   : Text(widget.placeholder),
             ),
             Icon(

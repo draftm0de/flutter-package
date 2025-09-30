@@ -22,10 +22,29 @@ class _FakeAttribute<T> implements DraftModeEntityAttributeI<T> {
   @override
   String? error;
 
+  final List<T Function(T value)> _mappers = <T Function(T value)>[];
+
   @override
   void addValidator(DraftModeEntityValidator validator) {
     // Not needed for tests.
     throw UnimplementedError();
+  }
+
+  @override
+  void addValueMapper(T Function(T value) mapper) {
+    _mappers.add(mapper);
+  }
+
+  @override
+  T? mapValue(T? v) {
+    if (v == null || _mappers.isEmpty) {
+      return v;
+    }
+    var result = v;
+    for (final mapper in _mappers) {
+      result = mapper(result);
+    }
+    return result;
   }
 
   @override
@@ -48,7 +67,7 @@ class _FakeFormState implements DraftModeFormStateI {
   }
 
   @override
-  void updateProperty<T>(DraftModeEntityAttributeI attribute, T? value) {
+  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
     throw UnimplementedError();
   }
 

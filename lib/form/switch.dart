@@ -36,31 +36,61 @@ class DraftModeFormSwitch extends StatefulWidget {
 class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
   final _fieldKey = GlobalKey<FormFieldState<bool>>();
   DraftModeFormState? _form;
+  bool _fieldRegistered = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _form?.registerField(widget.attribute, _fieldKey);
+      if (!mounted) return;
+      _syncFormAssociation();
     });
+  }
+
+  void _syncFormAssociation() {
+    final candidate = DraftModeFormState.of(context);
+    if (!identical(candidate, _form)) {
+      _detachFromForm();
+      _form = candidate;
+    }
+    final form = _form;
+    if (form != null && !_fieldRegistered) {
+      form.registerField(widget.attribute, _fieldKey);
+      _fieldRegistered = true;
+    }
+  }
+
+  void _detachFromForm({DraftModeEntityAttribute<bool>? attribute}) {
+    if (_form == null || !_fieldRegistered) return;
+    _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
+    _fieldRegistered = false;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _form = DraftModeFormState.of(context);
+    _syncFormAssociation();
+  }
+
+  @override
+  void didUpdateWidget(covariant DraftModeFormSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.attribute, widget.attribute)) {
+      _detachFromForm(attribute: oldWidget.attribute);
+      _syncFormAssociation();
+    }
   }
 
   @override
   void dispose() {
-    _form?.unregisterField(widget.attribute, _fieldKey);
+    _detachFromForm();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final form = _form ?? DraftModeFormState.of(context);
-    form?.registerProperty(widget.attribute);
+    _syncFormAssociation();
+    _form?.registerProperty(widget.attribute);
 
     return FormField<bool>(
       key: _fieldKey,
@@ -69,14 +99,14 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
       autovalidateMode: widget.autovalidateMode,
       validator:
           widget.validator ??
-          (v) => widget.attribute.validate(context, form, v),
+          (v) => widget.attribute.validate(context, _form, v),
       onSaved: (value) {
         final nextValue = value ?? false;
         widget.attribute.value = nextValue;
         widget.onSaved?.call(nextValue);
       },
       builder: (field) {
-        final enableValidation = form?.enableValidation ?? false;
+        final enableValidation = _form?.enableValidation ?? false;
         final showError = enableValidation && field.hasError;
 
         return Column(
@@ -90,7 +120,7 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
                     ? (bool? value) {
                         final resolved = value ?? false;
                         field.didChange(resolved);
-                        (form ?? DraftModeFormState.of(context))
+                        (_form ?? DraftModeFormState.of(context))
                             ?.updateProperty(widget.attribute, resolved);
                         widget.onChanged?.call(resolved);
                       }
