@@ -203,6 +203,13 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.attribute, widget.attribute)) {
       _detachFromForm(attribute: oldWidget.attribute);
+      widget.attribute.addValueMapper(_normalize);
+      final initial = widget.attribute.value ?? _selected;
+      final normalized = widget.attribute.mapValue(initial) ?? initial;
+      setState(() {
+        _selected = normalized;
+      });
+      widget.attribute.value = normalized;
       _syncFormAssociation();
     }
   }

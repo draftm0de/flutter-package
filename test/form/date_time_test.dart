@@ -1,6 +1,7 @@
 import 'package:draftmode/entity/attribute.dart';
 import 'package:draftmode/form/date_time.dart';
 import 'package:draftmode/form/form.dart';
+import 'package:draftmode/form/interface.dart';
 import 'package:draftmode/ui/date_time.dart';
 import 'package:draftmode/utils/formatter.dart';
 import 'package:flutter/cupertino.dart';
@@ -458,6 +459,105 @@ void main() {
       expect(decorationFor(endDateLabel()), TextDecoration.lineThrough);
       expect(decorationFor(endTimeLabel()), TextDecoration.lineThrough);
       expect(endFormFieldState.hasError, isTrue);
+    },
+  );
+
+  testWidgets(
+    'DraftModeFormDateTime toggles month/year view and closes on outside tap',
+    (tester) async {
+      final attribute = DraftModeEntityAttribute<DateTime>(
+        value: DateTime(2050, 1, 1, 10, 12),
+      );
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: Padding(
+            padding: const EdgeInsets.all(24),
+            child: DraftModeForm(
+              child: DraftModeFormDateTime(
+                attribute: attribute,
+                label: 'Start',
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final localeTag = tester.binding.platformDispatcher.locale
+          .toLanguageTag();
+      final normalized = _normalize(attribute.value!);
+      final dateLabel = DraftModeDateTime.yMMdd(localeTag).format(normalized);
+
+      await tester.tap(find.text(dateLabel));
+      await tester.pumpAndSettle(const Duration(milliseconds: 250));
+
+      DraftModeUIDateTimeField field = tester.widget<DraftModeUIDateTimeField>(
+        find.byType(DraftModeUIDateTimeField),
+      );
+      expect(field.pickerMode, DraftModeFormCalendarPickerMode.day);
+
+      field.onToggleMonthYear();
+      await tester.pump();
+
+      field = tester.widget<DraftModeUIDateTimeField>(
+        find.byType(DraftModeUIDateTimeField),
+      );
+      expect(field.pickerMode, DraftModeFormCalendarPickerMode.monthYear);
+
+      final rect = tester.getRect(find.byType(DraftModeFormDateTime));
+      await tester.tapAt(rect.topLeft - const Offset(10, 10));
+      await tester.pumpAndSettle(const Duration(milliseconds: 250));
+
+      field = tester.widget<DraftModeUIDateTimeField>(
+        find.byType(DraftModeUIDateTimeField),
+      );
+      expect(field.pickerMode, DraftModeFormCalendarPickerMode.closed);
+    },
+  );
+
+  testWidgets(
+    'DraftModeFormDateTime re-associates when attribute instance changes',
+    (tester) async {
+      final attributeA = DraftModeEntityAttribute<DateTime>(
+        value: DateTime(2024, 1, 1, 9, 3),
+      );
+      final attributeB = DraftModeEntityAttribute<DateTime>(
+        value: DateTime(2024, 2, 2, 14, 7),
+      );
+
+      Future<void> pumpWith(
+        DraftModeEntityAttribute<DateTime> attribute,
+      ) async {
+        await tester.pumpWidget(
+          CupertinoApp(
+            home: DraftModeForm(
+              child: DraftModeFormDateTime(
+                key: const ValueKey('date-field'),
+                attribute: attribute,
+                label: 'Start',
+              ),
+            ),
+          ),
+        );
+      }
+
+      final expectedA = _normalize(attributeA.value!);
+      await pumpWith(attributeA);
+      await tester.pump();
+
+      expect(attributeA.value, expectedA);
+
+      final expectedB = _normalize(attributeB.value!);
+      await pumpWith(attributeB);
+      await tester.pump();
+
+      expect(attributeB.value, expectedB);
+
+      final formState = tester.state<DraftModeFormState>(
+        find.byType(DraftModeForm),
+      );
+      final draftValue = formState.read<DateTime>(attributeB);
+      expect(draftValue, equals(expectedB));
     },
   );
 }
