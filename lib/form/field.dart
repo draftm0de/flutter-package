@@ -61,10 +61,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     _controller = TextEditingController();
     _controller.text = widget.attribute.value?.toString() ?? '';
     _obscureOn = widget.obscureText;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final form = DraftModeFormState.of(context);
-      form?.registerField(widget.attribute, _fieldKey);
-    });
+    _form = DraftModeFormState.of(context);
+    _form?.registerField(widget.attribute, _fieldKey);
   }
 
   @override
@@ -83,20 +81,18 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final form = DraftModeFormState.of(context);
-    _form = form ?? _form;
-    form?.registerProperty(widget.attribute);
+    _form?.registerProperty(widget.attribute);
     return FormField<T>(
       key: _fieldKey,
       initialValue: widget.attribute.value,
       autovalidateMode: AutovalidateMode.disabled,
-      validator: (value) => widget.attribute.validate(context, form, value),
+      validator: (value) => widget.attribute.validate(context, _form, value),
       onSaved: (value) {
         widget.attribute.value = value;
         widget.onSaved?.call(value);
       },
       builder: (field) {
-        final bool enableValidation = form?.enableValidation ?? false;
+        final bool enableValidation = _form?.enableValidation ?? false;
         final bool showError =
             field.hasError &&
             !_focusNode.hasFocus &&
@@ -143,7 +139,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
               // inference stable when callers opt into a concrete type.
               // ignore: unnecessary_cast
               field.didChange(val as T);
-              form?.updateProperty(widget.attribute, val);
+              _form?.updateProperty(widget.attribute, val);
             },
             decoration: null,
           ),

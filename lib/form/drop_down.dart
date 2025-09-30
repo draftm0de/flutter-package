@@ -54,20 +54,30 @@ class _DraftModeFormDropDownState<
 >
     extends State<DraftModeFormDropDown<ItemType, ElementType>> {
   final _fieldKey = GlobalKey<FormFieldState<ItemType>>();
+  late DraftModeFormState? _form;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final form = DraftModeFormState.of(context);
-      form?.registerField(widget.attribute, _fieldKey);
-    });
+    _form = DraftModeFormState.of(context);
+    _form?.registerField(widget.attribute, _fieldKey);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _form = DraftModeFormState.of(context);
+  }
+
+  @override
+  void dispose() {
+    _form?.unregisterField(widget.attribute, _fieldKey);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final form = DraftModeFormState.of(context);
-    form?.registerProperty(widget.attribute);
+    _form?.registerProperty(widget.attribute);
     final items = widget.items;
     final selectedId = widget.attribute.value;
 
@@ -87,7 +97,7 @@ class _DraftModeFormDropDownState<
       if (item == null) return;
 
       field.didChange(item);
-      form?.updateProperty(widget.attribute, item.getId());
+      _form?.updateProperty(widget.attribute, item.getId());
       field.validate();
     }
 
@@ -101,9 +111,9 @@ class _DraftModeFormDropDownState<
         widget.onSaved?.call(id);
       },
       validator: (value) =>
-          widget.attribute.validate(context, form, value?.getId()),
+          widget.attribute.validate(context, _form, value?.getId()),
       builder: (field) {
-        final enableValidation = form?.enableValidation ?? false;
+        final enableValidation = _form?.enableValidation ?? false;
         final showError = enableValidation && field.hasError;
 
         final content = Row(

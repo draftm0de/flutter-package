@@ -20,7 +20,7 @@ class DraftModeUIDateTimeIOS extends StatelessWidget {
   });
 
   static const double _gridPanelHeight = 6 * 44;
-  static const double _timePanelHeight = 6 * 44;
+  static const double _timePanelHeight = 7 * 44;
 
   @override
   Widget build(BuildContext context) {

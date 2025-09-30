@@ -37,7 +37,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   DraftModeFormCalendarPickerMode _mode =
       DraftModeFormCalendarPickerMode.closed;
   late DateTime _selected;
-  DraftModeFormState? _form;
+  late DraftModeFormState? _form;
   bool _showErrorOnBlur = false;
 
   @override
@@ -45,10 +45,8 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     super.initState();
     _selected = _normalize(widget.attribute.value ?? DateTime.now());
     widget.attribute.value ??= _selected;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final form = DraftModeFormState.of(context);
-      form?.registerField(widget.attribute, _fieldKey);
-    });
+    _form = DraftModeFormState.of(context);
+    _form?.registerField(widget.attribute, _fieldKey);
   }
 
   DateTime _normalize(DateTime value) {
@@ -83,11 +81,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     });
   }
 
-  void _update(
-    DateTime value, {
-    DraftModeFormState? form,
-    required bool hasError,
-  }) {
+  void _update(DateTime value, {required bool hasError}) {
     setState(() {
       _selected = value;
       if (!hasError) {
@@ -96,22 +90,18 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     });
     widget.attribute.value = value;
     widget.onChanged?.call(value);
-    (form ?? DraftModeFormState.of(context))?.updateProperty(
-      widget.attribute,
-      value,
-    );
+    _form?.updateProperty(widget.attribute, value);
   }
 
   @override
   Widget build(BuildContext context) {
-    final form = _form ?? DraftModeFormState.of(context);
-    form?.registerProperty(widget.attribute);
+    _form?.registerProperty(widget.attribute);
 
     return FormField<DateTime>(
       key: _fieldKey,
       initialValue: _selected,
       autovalidateMode: AutovalidateMode.disabled,
-      validator: (value) => widget.attribute.validate(context, form, value),
+      validator: (value) => widget.attribute.validate(context, _form, value),
       onSaved: (value) {
         final resolved = value ?? _selected;
         widget.attribute.value = resolved;
@@ -119,7 +109,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
       },
       builder: (field) {
         final hasFocus = _focusNode.hasFocus;
-        final enableValidation = form?.enableValidation ?? false;
+        final enableValidation = _form?.enableValidation ?? false;
         final showError =
             field.hasError &&
             !hasFocus &&
@@ -155,7 +145,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
                   final resolved = _normalize(value);
                   field.didChange(resolved);
                   final isValid = field.validate();
-                  _update(resolved, form: form, hasError: !isValid);
+                  _update(resolved, hasError: !isValid);
                 },
               ),
               DraftModeUITextError(text: field.errorText, visible: showError),

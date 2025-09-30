@@ -3,6 +3,10 @@
 This file captures conventions and guardrails for automated contributors.
 
 ## Workflow Expectations
+- Agents may modify any source file within this package directory and its
+  subfolders without requesting additional approval. Running tooling such as
+  `dart format`, `dart analyze`, and `flutter test` is always permitted when it
+  helps complete a task.
 - Run `dart format --output=write .` only after `dart analyze` and the test
   suites succeed. After formatting, rerun `flutter test` to confirm nothing
   regressed.

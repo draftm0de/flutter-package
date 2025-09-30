@@ -35,14 +35,13 @@ class DraftModeFormSwitch extends StatefulWidget {
 
 class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
   final _fieldKey = GlobalKey<FormFieldState<bool>>();
-  DraftModeFormState? _form;
+  late DraftModeFormState? _form;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _form?.registerField(widget.attribute, _fieldKey);
-    });
+    _form = DraftModeFormState.of(context);
+    _form?.registerField(widget.attribute, _fieldKey);
   }
 
   @override
@@ -59,8 +58,7 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    final form = _form ?? DraftModeFormState.of(context);
-    form?.registerProperty(widget.attribute);
+    _form?.registerProperty(widget.attribute);
 
     return FormField<bool>(
       key: _fieldKey,
@@ -69,14 +67,14 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
       autovalidateMode: widget.autovalidateMode,
       validator:
           widget.validator ??
-          (v) => widget.attribute.validate(context, form, v),
+          (v) => widget.attribute.validate(context, _form, v),
       onSaved: (value) {
         final nextValue = value ?? false;
         widget.attribute.value = nextValue;
         widget.onSaved?.call(nextValue);
       },
       builder: (field) {
-        final enableValidation = form?.enableValidation ?? false;
+        final enableValidation = _form?.enableValidation ?? false;
         final showError = enableValidation && field.hasError;
 
         return Column(
@@ -90,7 +88,7 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
                     ? (bool? value) {
                         final resolved = value ?? false;
                         field.didChange(resolved);
-                        (form ?? DraftModeFormState.of(context))
+                        (_form ?? DraftModeFormState.of(context))
                             ?.updateProperty(widget.attribute, resolved);
                         widget.onChanged?.call(resolved);
                       }
