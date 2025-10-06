@@ -49,6 +49,8 @@ This file captures conventions and guardrails for automated contributors.
   correct localization delegates.
 - Strive for 100% code coverage; it is an aspirational target even if not a
   hard requirement.
+- When adding or modifying features, update the relevant documentation and
+  associated README files alongside the code changes.
 - When renaming or adding small files, regenerate coverage reports so cached
   artifacts do not point at stale paths before committing.
 
