@@ -43,5 +43,17 @@ void main() {
       expect(DraftModeFormatter.parseInt('foo'), isNull);
       expect(DraftModeFormatter.parseInt(3.14), isNull);
     });
+
+    test('parseBool coerces common truthy and falsy inputs', () {
+      expect(DraftModeFormatter.parseBool(true), isTrue);
+      expect(DraftModeFormatter.parseBool(false), isFalse);
+      expect(DraftModeFormatter.parseBool(1), isTrue);
+      expect(DraftModeFormatter.parseBool(0), isFalse);
+      expect(DraftModeFormatter.parseBool('true'), isTrue);
+      expect(DraftModeFormatter.parseBool('1'), isTrue);
+      expect(DraftModeFormatter.parseBool('false'), isFalse);
+      expect(DraftModeFormatter.parseBool('0'), isFalse);
+      expect(DraftModeFormatter.parseBool(null), isFalse);
+    });
   });
 }

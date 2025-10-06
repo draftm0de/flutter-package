@@ -51,4 +51,12 @@ class DraftModeFormatter {
     if (value is String) return int.tryParse(value.trim());
     return null;
   }
+
+  static bool parseBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is int) return (value == 1);
+    if (value is String && value == "true") return true;
+    if (value is String && value == "1") return true;
+    return false;
+  }
 }
