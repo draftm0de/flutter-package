@@ -14,8 +14,9 @@ Key files:
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding.
 - `list.dart` - scrollable list builder that renders `DraftModeListItem`
-  implementations with `DraftModeFormListItemWidget` subclasses and optional
-  selection handlers while keeping paddings consistent across platforms.
+  implementations with `DraftModeFormListItemWidget` subclasses, optional
+  selection handlers, and an `onReload` callback that enables pull-to-refresh
+  flows while keeping paddings consistent across platforms.
 - `switch.dart` - boolean toggle wired into the draft map and validation flow.
 - `button.dart` / `button_text.dart` - submit buttons that validate associated
   forms before invoking async handlers.

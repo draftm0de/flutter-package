@@ -31,6 +31,8 @@ enum DraftModeFormCalendarPickerMode { closed, day, hourMinute, monthYear }
 
 enum DraftModeFormCalendarDurationMode { none, hours }
 
+enum DraftModeDurationMode { hour_minute }
+
 @Deprecated('Use DraftModeFormCalendarMode instead')
 typedef DraftModeFormCalenderMode = DraftModeFormCalendarMode;
 

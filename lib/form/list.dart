@@ -1,5 +1,12 @@
+import 'dart:async';
+
+import 'package:draftmode/page/spinner.dart';
 import 'package:draftmode/ui.dart';
+import 'package:flutter/material.dart'
+    show MaterialLocalizations, RefreshIndicator;
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    show GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 
 import '../entity/interface.dart';
 import '../platform/styles.dart';
@@ -44,6 +51,7 @@ class DraftModeFormList<
   Identifier
 >
     extends StatelessWidget {
+  final bool isPending;
   final List<ItemType> items;
   final DraftModeFormListItemWidgetBuilder<ItemType> itemBuilder;
   final Identifier? selectedId;
@@ -55,10 +63,13 @@ class DraftModeFormList<
   final ScrollPhysics? physics;
   final ScrollController? controller;
   final bool? primary;
-  final Widget Function(BuildContext context, int index)? separatorBuilder;
+  final Widget? header;
+  final Widget? separator;
+  final Future<void> Function()? onReload;
 
   const DraftModeFormList({
     super.key,
+    this.isPending = false,
     required this.items,
     required this.itemBuilder,
     this.selectedId,
@@ -70,42 +81,78 @@ class DraftModeFormList<
     this.physics,
     this.controller,
     this.primary,
-    this.separatorBuilder,
+    this.header,
+    this.separator,
+    this.onReload,
   });
 
   @override
   Widget build(BuildContext context) {
+    Widget content;
+
     if (items.isEmpty) {
-      return (emptyPlaceholder == null)
+      final placeholder = (emptyPlaceholder == null)
           ? const SizedBox.shrink()
           : DraftModeUIRow(child: Text(emptyPlaceholder!));
+      content = _maybeWrapPlaceholder(context, placeholder);
+    } else {
+      final resolvedPadding = padding ?? _defaultPadding(context);
+      final resolvedPhysics = _resolvePhysics();
+
+      if (separator != null) {
+        Widget list = ListView.separated(
+          controller: controller,
+          primary: primary,
+          shrinkWrap: shrinkWrap,
+          physics: resolvedPhysics,
+          padding: resolvedPadding,
+          itemBuilder: (context, index) => _buildItem(context, items[index]),
+          separatorBuilder: (context, index) => separator!,
+          itemCount: items.length,
+        );
+        list = _wrapWithRefreshIndicator(context, list);
+        content = (header != null)
+            ? Column(children: [header!, separator!, list])
+            : list;
+      } else {
+        Widget list = ListView.builder(
+          controller: controller,
+          primary: primary,
+          shrinkWrap: shrinkWrap,
+          physics: resolvedPhysics,
+          padding: resolvedPadding,
+          itemCount: items.length,
+          itemBuilder: (context, index) => _buildItem(context, items[index]),
+        );
+        list = _wrapWithRefreshIndicator(context, list);
+        content = (header != null) ? Column(children: [header!, list]) : list;
+      }
     }
 
-    final resolvedPadding = padding ?? _defaultPadding(context);
-    final resolvedPhysics =
-        physics ?? (shrinkWrap ? const NeverScrollableScrollPhysics() : null);
-
-    if (separatorBuilder != null) {
-      return ListView.separated(
-        controller: controller,
-        primary: primary,
-        shrinkWrap: shrinkWrap,
-        physics: resolvedPhysics,
-        padding: resolvedPadding,
-        itemBuilder: (context, index) => _buildItem(context, items[index]),
-        separatorBuilder: (context, index) => separatorBuilder!(context, index),
-        itemCount: items.length,
-      );
+    if (!isPending) {
+      return content;
     }
 
-    return ListView.builder(
-      controller: controller,
-      primary: primary,
-      shrinkWrap: shrinkWrap,
-      physics: resolvedPhysics,
-      padding: resolvedPadding,
-      itemCount: items.length,
-      itemBuilder: (context, index) => _buildItem(context, items[index]),
+    return Stack(
+      children: [
+        content,
+        Positioned.fill(
+          child: IgnorePointer(
+            ignoring: true,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: SafeArea(
+                top: true,
+                bottom: false,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: DraftModeUIRow(child: const DraftModePageSpinner()),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -130,6 +177,72 @@ class DraftModeFormList<
     if (onSelected != null && !isSelected) {
       onSelected!(item);
     }
+  }
+
+  Widget _maybeWrapPlaceholder(BuildContext context, Widget child) {
+    if (onReload == null) {
+      return child;
+    }
+
+    final resolvedPadding = padding ?? _defaultPadding(context);
+    final physics = _resolvePhysics() ?? const AlwaysScrollableScrollPhysics();
+    final list = ListView(
+      controller: controller,
+      primary: primary,
+      shrinkWrap: shrinkWrap,
+      physics: physics,
+      padding: resolvedPadding,
+      children: [child],
+    );
+
+    return _wrapWithRefreshIndicator(context, list);
+  }
+
+  ScrollPhysics? _resolvePhysics() {
+    final basePhysics =
+        physics ?? (shrinkWrap ? const NeverScrollableScrollPhysics() : null);
+
+    if (onReload == null) {
+      return basePhysics;
+    }
+
+    if (basePhysics == null) {
+      return const AlwaysScrollableScrollPhysics();
+    }
+
+    if (basePhysics is NeverScrollableScrollPhysics) {
+      return const AlwaysScrollableScrollPhysics();
+    }
+
+    return AlwaysScrollableScrollPhysics(parent: basePhysics);
+  }
+
+  Widget _wrapWithRefreshIndicator(BuildContext context, Widget child) {
+    if (onReload == null) {
+      return child;
+    }
+
+    Widget indicator = RefreshIndicator.adaptive(
+      onRefresh: () => Future.sync(onReload!),
+      child: child,
+    );
+
+    if (Localizations.of<MaterialLocalizations>(
+          context,
+          MaterialLocalizations,
+        ) !=
+        null) {
+      return indicator;
+    }
+
+    return Localizations.override(
+      context: context,
+      delegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      child: indicator,
+    );
   }
 
   EdgeInsetsGeometry _defaultPadding(BuildContext context) {

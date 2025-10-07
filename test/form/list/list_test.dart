@@ -1,5 +1,6 @@
 import 'package:draftmode/entity.dart';
 import 'package:draftmode/form.dart';
+import 'package:draftmode/page/spinner.dart';
 import 'package:draftmode/platform/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +127,7 @@ void main() {
     expect(find.text('Nothing here'), findsOneWidget);
   });
 
-  testWidgets('builds separators when separatorBuilder supplied', (
+  testWidgets('builds separators when separator widget supplied', (
     tester,
   ) async {
     final items = [_ListItem('a', 'Alpha'), _ListItem('b', 'Beta')];
@@ -137,8 +138,8 @@ void main() {
           items: items,
           itemBuilder: (context, item, isSelected) =>
               _SimpleTile(item: item, isSelected: isSelected),
-          separatorBuilder: (context, index) => Container(
-            key: ValueKey('separator-$index'),
+          separator: Container(
+            key: const ValueKey('separator'),
             height: 1,
             color: const Color(0xFFCCCCCC),
           ),
@@ -146,6 +147,100 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const ValueKey('separator-0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('separator')), findsNWidgets(1));
+  });
+
+  testWidgets('invokes onReload when pulled down', (tester) async {
+    int reloadCount = 0;
+    final items = [_ListItem('a', 'Alpha'), _ListItem('b', 'Beta')];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DraftModeFormList<_ListItem, String>(
+            items: items,
+            shrinkWrap: false,
+            itemBuilder: (context, item, isSelected) =>
+                _SimpleTile(item: item, isSelected: isSelected),
+            onReload: () async {
+              reloadCount += 1;
+            },
+          ),
+        ),
+      ),
+    );
+
+    final refreshFinder = find.byType(RefreshIndicator);
+
+    await tester.drag(refreshFinder, const Offset(0, 250));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(reloadCount, 1);
+  });
+
+  testWidgets('adds material localizations automatically in cupertino apps', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeFormList<_ListItem, String>(
+          items: [_ListItem('a', 'Alpha')],
+          shrinkWrap: false,
+          itemBuilder: (context, item, isSelected) =>
+              _SimpleTile(item: item, isSelected: isSelected),
+          onReload: () async {},
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(RefreshIndicator), findsOneWidget);
+  });
+
+  testWidgets('pending spinner remains pinned while content scrolls', (
+    tester,
+  ) async {
+    final items = List.generate(
+      20,
+      (index) => _ListItem('$index', 'Item $index'),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DraftModeFormList<_ListItem, String>(
+            items: items,
+            shrinkWrap: false,
+            itemBuilder: (context, item, isSelected) =>
+                _SimpleTile(item: item, isSelected: isSelected),
+            onReload: () async {},
+            isPending: true,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    final spinnerFinder = find.byType(DraftModePageSpinner);
+    final listFinder = find.byType(ListView);
+
+    expect(spinnerFinder, findsOneWidget);
+    expect(
+      find.ancestor(of: spinnerFinder, matching: find.byType(Stack)),
+      findsOneWidget,
+    );
+
+    final initialTop = tester.getTopLeft(spinnerFinder);
+
+    await tester.drag(listFinder, const Offset(0, 200));
+    await tester.pump();
+
+    final afterDragTop = tester.getTopLeft(spinnerFinder);
+
+    expect(afterDragTop, initialTop);
   });
 }

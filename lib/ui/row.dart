@@ -11,6 +11,7 @@ class DraftModeUIRow extends StatelessWidget {
   final String? label;
   final AlignmentGeometry alignment;
   final bool verticalDoubled;
+
   const DraftModeUIRow({
     super.key,
     required this.child,
@@ -37,6 +38,7 @@ class DraftModeUIRow extends StatelessWidget {
       child: hasLabel
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
                   width: PlatformStyles.labelWidth,
