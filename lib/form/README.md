@@ -13,14 +13,17 @@ Key files:
   attribute syncing.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding.
+- `list.dart` - scrollable list builder that renders `DraftModeListItem`
+  implementations with `DraftModeFormListItemWidget` subclasses and optional
+  selection handlers while keeping paddings consistent across platforms.
 - `switch.dart` - boolean toggle wired into the draft map and validation flow.
 - `button.dart` / `button_text.dart` - submit buttons that validate associated
   forms before invoking async handlers.
 - `date_time.dart` - slim single-attribute picker that wraps the inline iOS
-  calendar/time controls without range or duration features. The widget hooks a
-  `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (e.g. round
-  to five-minute increments) so any caller that updates the attribute—UI or
-  form state—sees consistent values.
+  calendar and time controls without range or duration features. The widget
+  hooks a `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (for
+  example round to five-minute increments) so any caller that updates the
+  attribute or the form state sees consistent values.
 - `interface.dart` - shared form interfaces and enums, including the date-time
   picker mode types (`DraftModeFormCalendar*`) that expose the available
   segments.
