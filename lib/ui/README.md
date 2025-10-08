@@ -16,6 +16,8 @@ entity logic:
   emitting output directly.
 - `date_time.dart` – date/time field layout with platform toggles consumed by
   form components.
+- `date_time/week_day.dart` – week-at-a-glance day picker used when forms need
+  a single-day selection surface.
 - `button.dart` – reusable platform-aware button used by higher-level widgets
   such as form actions.
 
