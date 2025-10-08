@@ -153,99 +153,113 @@ class DraftModeUIDateTimeMonthGrid extends StatelessWidget {
               final totalCells = daysInMonth + shift;
               final rows = (totalCells / 7).ceil();
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: List.generate(7, (index) {
-                          return Expanded(
-                            child: Center(
-                              child: Text(
-                                weekdays[index],
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: CupertinoColors.secondaryLabel,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final rowHeight = constraints.maxHeight / rows;
-                          final dayDiameter = math.max(28.0, rowHeight - 8);
+              return Column(
+                children: [
+                  Row(
+                    children: List.generate(7, (index) {
+                      return Expanded(
+                        child: Text(
+                          weekdays[index],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: DraftModeStyleFontSize.tertiary,
+                            fontWeight: DraftModeStyleFontWeight.primary,
+                            color: DraftModeStyleColor.primary.text,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final rowHeight = constraints.maxHeight / rows;
+                        final dayDiameter = math.max(28.0, rowHeight - 8);
 
-                          return Column(
-                            children: List.generate(rows, (row) {
-                              return SizedBox(
-                                height: rowHeight,
-                                child: Row(
-                                  children: List.generate(7, (col) {
-                                    final index = row * 7 + col;
-                                    final dayNumber = index - shift + 1;
-                                    if (dayNumber < 1 ||
-                                        dayNumber > daysInMonth) {
-                                      return const Expanded(child: SizedBox());
-                                    }
+                        return Column(
+                          children: List.generate(rows, (row) {
+                            return SizedBox(
+                              height: rowHeight,
+                              child: Row(
+                                children: List.generate(7, (col) {
+                                  final index = row * 7 + col;
+                                  final dayNumber = index - shift + 1;
+                                  if (dayNumber < 1 ||
+                                      dayNumber > daysInMonth) {
+                                    return const Expanded(child: SizedBox());
+                                  }
 
-                                    final day = DateTime(
-                                      year,
-                                      month,
-                                      dayNumber,
-                                    );
-                                    final isSelected =
-                                        day.year == dateTime.year &&
-                                        day.month == dateTime.month &&
-                                        day.day == dateTime.day;
+                                  final day = DateTime(year, month, dayNumber);
+                                  final isSelected =
+                                      day.year == dateTime.year &&
+                                      day.month == dateTime.month &&
+                                      day.day == dateTime.day;
+                                  final isToday = DraftModeDateTime.isSameDate(
+                                    day,
+                                    DateTime.now(),
+                                  );
+                                  final isSelectedToday = isSelected && isToday;
 
-                                    return Expanded(
-                                      child: CupertinoButton(
-                                        padding: EdgeInsets.zero,
-                                        onPressed: () => onSelect(day),
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          height: dayDiameter,
-                                          width: dayDiameter,
-                                          decoration: isSelected
-                                              ? const BoxDecoration(
-                                                  color: CupertinoColors
-                                                      .activeBlue,
-                                                  shape: BoxShape.circle,
-                                                )
-                                              : null,
-                                          child: Text(
-                                            '$dayNumber',
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: isSelected
-                                                  ? FontWeight.w600
-                                                  : FontWeight.w400,
-                                              color: isSelected
-                                                  ? CupertinoColors.white
-                                                  : CupertinoColors.label,
-                                            ),
+                                  return Expanded(
+                                    child: CupertinoButton(
+                                      padding: EdgeInsets.zero,
+                                      onPressed: () => onSelect(day),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: dayDiameter,
+                                        width: dayDiameter,
+                                        decoration: isSelected
+                                            ? BoxDecoration(
+                                                color: isSelectedToday
+                                                    ? DraftModeStyleColorActive
+                                                          .secondary
+                                                          .background
+                                                    : DraftModeStyleColorActive
+                                                          .tertiary
+                                                          .background,
+                                                shape: BoxShape.circle,
+                                              )
+                                            : null,
+                                        child: Text(
+                                          '$dayNumber',
+                                          style: TextStyle(
+                                            fontSize:
+                                                DraftModeStyleFontSize.primary,
+                                            fontWeight: isSelected
+                                                ? DraftModeStyleFontWeight
+                                                      .secondary
+                                                : DraftModeStyleFontWeight
+                                                      .primary,
+                                            color: isSelected
+                                                ? (isSelectedToday
+                                                      ? DraftModeStyleColorActive
+                                                            .secondary
+                                                            .text
+                                                      : DraftModeStyleColorActive
+                                                            .tertiary
+                                                            .text)
+                                                : isToday
+                                                ? DraftModeStyleColorActive
+                                                      .secondary
+                                                      .background
+                                                : DraftModeStyleColor
+                                                      .primary
+                                                      .text,
                                           ),
                                         ),
                                       ),
-                                    );
-                                  }),
-                                ),
-                              );
-                            }),
-                          );
-                        },
-                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            );
+                          }),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),

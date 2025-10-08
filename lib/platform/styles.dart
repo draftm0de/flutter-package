@@ -3,6 +3,66 @@ import 'package:flutter/material.dart';
 
 import 'config.dart';
 
+class DraftModeStyleColorRole {
+  final Color background;
+  final Color text;
+  const DraftModeStyleColorRole({required this.background, required this.text});
+}
+
+class DraftModeStyleColorInverse {
+  final DraftModeStyleColorRole role;
+  const DraftModeStyleColorInverse(this.role);
+  get background => this.role.text;
+  get text => this.role.background;
+}
+
+class DraftModeStyleColor {
+  static DraftModeStyleColorRole get primary => const DraftModeStyleColorRole(
+    background: CupertinoColors.systemBackground,
+    text: CupertinoColors.black,
+  );
+}
+
+class DraftModeStyleColorActive {
+  static DraftModeStyleColorRole get primary => const DraftModeStyleColorRole(
+    background: CupertinoColors.systemBlue,
+    text: CupertinoColors.white,
+  );
+  static DraftModeStyleColorRole get secondary => const DraftModeStyleColorRole(
+    background: CupertinoColors.systemRed,
+    text: CupertinoColors.white,
+  );
+  static DraftModeStyleColorRole get tertiary => const DraftModeStyleColorRole(
+    background: CupertinoColors.black,
+    text: CupertinoColors.white,
+  );
+}
+
+class DraftModeStyleText {
+  static TextStyle get primary => TextStyle(
+    color: DraftModeStyleColor.primary.text,
+    fontSize: DraftModeStyleFontSize.primary,
+  );
+}
+
+class DraftModeStyleFontSize {
+  static double get primary => 17;
+  static double get secondary => 14;
+  static double get tertiary => 12;
+}
+
+class DraftModeStyleFontWeight {
+  static FontWeight get primary => FontWeight.normal;
+  static FontWeight get secondary => FontWeight.w500;
+  static FontWeight get tertiary => FontWeight.bold;
+}
+
+class DraftModeStylePadding {
+  static double get primary => 16;
+  static double get secondary => 14;
+  static double get tertiary => 2;
+}
+
 /// Shared layout constants and typography helpers used across DraftMode widgets.
 class PlatformStyles {
   /// Default width reserved for labels in form rows.

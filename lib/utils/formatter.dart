@@ -31,6 +31,9 @@ extension DraftModeDateTime on DateFormat {
     return beginningNextMonth.subtract(const Duration(days: 1)).day;
   }
 
+  static bool isSameDate(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
   /// Returns a `hh:mm` duration string representing the difference between [from]
   /// and [to]. Negative durations are normalised to their absolute value.
   static String getDurationHourMinutes(DateTime from, DateTime to) {

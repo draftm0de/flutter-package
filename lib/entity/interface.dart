@@ -7,6 +7,10 @@ abstract class DraftModeFormContext {
   V? read<V>(dynamic attribute);
 }
 
+abstract class DraftModeListItem<T> {
+  T getId();
+}
+
 /// Extended form context that tracks cross-field dependencies during
 /// validation so linked attributes can re-validate when their source changes.
 abstract class DraftModeFormDependencyContext extends DraftModeFormContext {

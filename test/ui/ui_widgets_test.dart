@@ -1,4 +1,5 @@
 import 'package:draftmode/platform/config.dart';
+import 'package:draftmode/platform/styles.dart';
 import 'package:draftmode/ui/button.dart';
 import 'package:draftmode/ui/confirm.dart';
 import 'package:draftmode/ui/row.dart';
@@ -33,7 +34,10 @@ void main() {
       final padding = tester.widget<Padding>(find.byType(Padding));
       expect(
         padding.padding,
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        EdgeInsets.symmetric(
+          horizontal: DraftModeStylePadding.primary,
+          vertical: DraftModeStylePadding.primary,
+        ),
       );
     });
 
@@ -48,7 +52,10 @@ void main() {
       final padding = tester.widget<Padding>(find.byType(Padding));
       expect(
         padding.padding,
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        EdgeInsets.symmetric(
+          horizontal: DraftModeStylePadding.primary,
+          vertical: DraftModeStylePadding.primary * 2,
+        ),
       );
       expect(find.byType(Row), findsNothing);
     });

@@ -15,7 +15,13 @@ entity logic:
 - `diagnostics.dart` – developer-focused logging surface so other modules avoid
   emitting output directly.
 - `date_time.dart` – date/time field layout with platform toggles consumed by
-  form components.
+  form components. Supports configurable minute steps via
+  `DraftModeFormCalendarHourSteps` so time pickers align with business
+  constraints.
+- `date_time/week_day.dart` – swipeable week-at-a-glance day picker used when
+  forms need a single-day selection surface. Keeps the selected weekday in
+  view while paging through weeks and highlights the active day with the
+  platform red accent.
 - `button.dart` – reusable platform-aware button used by higher-level widgets
   such as form actions.
 

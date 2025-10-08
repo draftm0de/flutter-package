@@ -13,6 +13,7 @@ class DraftModeFormDateTime extends StatefulWidget {
   final DraftModeEntityAttribute<DateTime> attribute;
   final String? label;
   final DraftModeFormCalendarMode mode;
+  final DraftModeFormCalendarHourSteps hourSteps;
   final ValueChanged<DateTime>? onChanged;
   final ValueChanged<DateTime?>? onSaved;
 
@@ -21,6 +22,7 @@ class DraftModeFormDateTime extends StatefulWidget {
     required this.attribute,
     this.label,
     this.mode = DraftModeFormCalendarMode.datetime,
+    this.hourSteps = DraftModeFormCalendarHourSteps.five,
     this.onChanged,
     this.onSaved,
   });
@@ -75,7 +77,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   }
 
   DateTime _normalize(DateTime value) {
-    const step = 5;
+    final step = widget.hourSteps.minutes;
     final remainder = value.minute % step;
     final delta = remainder == 0 ? 0 : -remainder;
     return DateTime(
@@ -172,6 +174,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
                   pickerMode: _mode,
                   value: currentValue,
                   strike: strike,
+                  hourSteps: widget.hourSteps,
                   onToggleMonthYear: _toggleMonthYear,
                   onPickerModeChanged: (mode) {
                     _toggle(mode);
