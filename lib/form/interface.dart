@@ -33,6 +33,23 @@ enum DraftModeFormCalendarDurationMode { none, hours }
 
 enum DraftModeDurationMode { hour_minute }
 
+/// Granularity used by time pickers when rendering minute selections.
+///
+/// Values represent the number of minutes between individual options within
+/// the hour wheel.
+enum DraftModeFormCalendarHourSteps {
+  one(1),
+  five(5),
+  ten(10),
+  fifteen(15),
+  thirty(30);
+
+  const DraftModeFormCalendarHourSteps(this.minutes);
+
+  /// Number of minutes between entries rendered in the picker.
+  final int minutes;
+}
+
 @Deprecated('Use DraftModeFormCalendarMode instead')
 typedef DraftModeFormCalenderMode = DraftModeFormCalendarMode;
 

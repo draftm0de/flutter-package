@@ -27,12 +27,12 @@ class DraftModeUIRow extends StatelessWidget {
     final content = Align(alignment: alignment, child: child);
 
     final paddingVertical = (verticalDoubled)
-        ? PlatformStyles.verticalContainerPadding * 2
-        : PlatformStyles.verticalContainerPadding;
+        ? DraftModeStylePadding.primary * 2
+        : DraftModeStylePadding.primary;
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: PlatformStyles.horizontalContainerPadding,
+        horizontal: DraftModeStylePadding.primary,
         vertical: paddingVertical,
       ),
       child: hasLabel
@@ -42,10 +42,7 @@ class DraftModeUIRow extends StatelessWidget {
               children: [
                 SizedBox(
                   width: PlatformStyles.labelWidth,
-                  child: Text(
-                    label!,
-                    style: PlatformStyles.labelStyle(context),
-                  ),
+                  child: Text(label!, style: DraftModeStyleText.primary),
                 ),
                 Expanded(child: content),
               ],

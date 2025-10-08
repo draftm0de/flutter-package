@@ -66,6 +66,33 @@ void main() {
     expect(find.byType(DraftModeUIDateTimeHourMinute), findsOneWidget);
   });
 
+  testWidgets('DraftModeUIDateTimeIOS respects configured minute steps', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        DraftModeUIDateTimeIOS(
+          mode: DraftModeFormCalendarPickerMode.hourMinute,
+          dateTime: DateTime(2024, 3, 15, 10, 30),
+          hourSteps: DraftModeFormCalendarHourSteps.fifteen,
+          onToggleMonthYear: () {},
+          onChanged: (_) {},
+        ),
+      ),
+    );
+
+    final minutePicker = find
+        .byType(CupertinoPicker)
+        .at(1); // second picker renders minutes
+    final labels = tester.widgetList<Text>(
+      find.descendant(of: minutePicker, matching: find.byType(Text)),
+    );
+    final values = labels.map((text) => text.data).whereType<String>().toSet();
+
+    expect(values.contains('05'), isFalse);
+    expect(values, containsAll(<String>['00', '15', '30', '45']));
+  });
+
   testWidgets('DraftModeUIDateTimeIOS renders empty when closed', (
     tester,
   ) async {

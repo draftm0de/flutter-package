@@ -10,6 +10,7 @@ class DraftModeUIDateTimeIOS extends StatelessWidget {
   final DateTime dateTime;
   final VoidCallback onToggleMonthYear;
   final ValueChanged<DateTime> onChanged;
+  final DraftModeFormCalendarHourSteps hourSteps;
 
   const DraftModeUIDateTimeIOS({
     super.key,
@@ -17,6 +18,7 @@ class DraftModeUIDateTimeIOS extends StatelessWidget {
     required this.dateTime,
     required this.onToggleMonthYear,
     required this.onChanged,
+    this.hourSteps = DraftModeFormCalendarHourSteps.five,
   });
 
   static const double _gridPanelHeight = 6 * 44;
@@ -87,6 +89,7 @@ class DraftModeUIDateTimeIOS extends StatelessWidget {
                 );
               },
               height: _timePanelHeight,
+              hourSteps: hourSteps,
             );
         }
       }(),

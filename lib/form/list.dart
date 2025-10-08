@@ -57,7 +57,10 @@ class DraftModeFormList<
   final Identifier? selectedId;
   final ValueChanged<ItemType>? onTap;
   final ValueChanged<ItemType>? onSelected;
-  final String? emptyPlaceholder;
+
+  /// Optional widget rendered when [items] is empty. Defaults to an empty
+  /// placeholder when omitted.
+  final Widget? emptyPlaceholder;
   final EdgeInsetsGeometry? padding;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
@@ -93,7 +96,7 @@ class DraftModeFormList<
     if (items.isEmpty) {
       final placeholder = (emptyPlaceholder == null)
           ? const SizedBox.shrink()
-          : DraftModeUIRow(child: Text(emptyPlaceholder!));
+          : DraftModeUIRow(child: emptyPlaceholder!);
       content = _maybeWrapPlaceholder(context, placeholder);
     } else {
       final resolvedPadding = padding ?? _defaultPadding(context);

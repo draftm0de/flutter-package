@@ -16,7 +16,9 @@ Key files:
 - `list.dart` - scrollable list builder that renders `DraftModeListItem`
   implementations with `DraftModeFormListItemWidget` subclasses, optional
   selection handlers, and an `onReload` callback that enables pull-to-refresh
-  flows while keeping paddings consistent across platforms.
+  flows while keeping paddings consistent across platforms. Accepts a
+  customizable `emptyPlaceholder` widget for empty states so call sites can
+  render richer guidance than a plain string.
 - `switch.dart` - boolean toggle wired into the draft map and validation flow.
 - `button.dart` / `button_text.dart` - submit buttons that validate associated
   forms before invoking async handlers.
@@ -24,7 +26,9 @@ Key files:
   calendar and time controls without range or duration features. The widget
   hooks a `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (for
   example round to five-minute increments) so any caller that updates the
-  attribute or the form state sees consistent values.
+  attribute or the form state sees consistent values. Configure the minute
+  granularity via `hourSteps` using `DraftModeFormCalendarHourSteps` when flows
+  require something other than the default five-minute interval.
 - `interface.dart` - shared form interfaces and enums, including the date-time
   picker mode types (`DraftModeFormCalendar*`) that expose the available
   segments.

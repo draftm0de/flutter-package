@@ -560,6 +560,33 @@ void main() {
       expect(draftValue, equals(expectedB));
     },
   );
+
+  testWidgets('DraftModeFormDateTime normalizes to configured minute steps', (
+    tester,
+  ) async {
+    final attribute = DraftModeEntityAttribute<DateTime>(
+      value: DateTime(2024, 6, 1, 9, 22),
+    );
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormDateTime(
+            attribute: attribute,
+            hourSteps: DraftModeFormCalendarHourSteps.fifteen,
+          ),
+        ),
+      ),
+    );
+
+    final normalized = attribute.value!;
+    expect(normalized.minute, 15);
+
+    final field = tester.widget<DraftModeUIDateTimeField>(
+      find.byType(DraftModeUIDateTimeField),
+    );
+    expect(field.hourSteps, DraftModeFormCalendarHourSteps.fifteen);
+  });
 }
 
 DateTime _normalize(DateTime value) {

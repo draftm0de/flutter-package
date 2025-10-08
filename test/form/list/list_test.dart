@@ -119,7 +119,7 @@ void main() {
           items: const [],
           itemBuilder: (context, item, isSelected) =>
               _SimpleTile(item: item, isSelected: isSelected),
-          emptyPlaceholder: 'Nothing here',
+          emptyPlaceholder: const Text('Nothing here'),
         ),
       ),
     );

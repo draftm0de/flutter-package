@@ -17,6 +17,7 @@ class DraftModeUIDateTimeField extends StatelessWidget {
   final ValueChanged<DraftModeFormCalendarPickerMode> onPickerModeChanged;
   final ValueChanged<DateTime> onChanged;
   final bool strike;
+  final DraftModeFormCalendarHourSteps hourSteps;
 
   const DraftModeUIDateTimeField({
     super.key,
@@ -26,6 +27,7 @@ class DraftModeUIDateTimeField extends StatelessWidget {
     required this.onToggleMonthYear,
     required this.onPickerModeChanged,
     required this.onChanged,
+    this.hourSteps = DraftModeFormCalendarHourSteps.five,
     this.label,
     this.strike = false,
   });
@@ -107,6 +109,7 @@ class DraftModeUIDateTimeField extends StatelessWidget {
             dateTime: value,
             onToggleMonthYear: onToggleMonthYear,
             onChanged: onChanged,
+            hourSteps: hourSteps,
           ),
       ],
     );
