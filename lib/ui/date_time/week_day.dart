@@ -105,44 +105,41 @@ class _DraftModeUIDateTimeWeekDayState
             onPageChanged: _handlePageChanged,
             itemBuilder: (_, index) {
               final weekStart = _weekStartFromPage(index);
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  children: List.generate(7, (dayIndex) {
-                    final day = weekStart.add(Duration(days: dayIndex));
-                    final isSelected = DraftModeDateTime.isSameDate(
-                      day,
-                      _selectedDay,
-                    );
-                    final isCurrentDate = DraftModeDateTime.isSameDate(
-                      day,
-                      DateTime.now(),
-                    );
-                    return Expanded(
-                      child: CupertinoButton(
-                        key: ValueKey<DateTime>(day),
-                        padding: EdgeInsets.zero,
-                        onPressed: () => _onDaySelected(day),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _WeekdayChip(
-                              label: weekdays[dayIndex],
-                              isSelected: isSelected,
-                              height: weekDayChipHeight,
-                            ),
-                            _WeekdayNumber(
-                              value: day.day,
-                              isSelected: isSelected,
-                              isToday: isCurrentDate,
-                              height: weekDayNumberHeight,
-                            ),
-                          ],
-                        ),
+              return Row(
+                children: List.generate(7, (dayIndex) {
+                  final day = weekStart.add(Duration(days: dayIndex));
+                  final isSelected = DraftModeDateTime.isSameDate(
+                    day,
+                    _selectedDay,
+                  );
+                  final isCurrentDate = DraftModeDateTime.isSameDate(
+                    day,
+                    DateTime.now(),
+                  );
+                  return Expanded(
+                    child: CupertinoButton(
+                      key: ValueKey<DateTime>(day),
+                      padding: EdgeInsets.zero,
+                      onPressed: () => _onDaySelected(day),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _WeekdayChip(
+                            label: weekdays[dayIndex],
+                            isSelected: isSelected,
+                            height: weekDayChipHeight,
+                          ),
+                          _WeekdayNumber(
+                            value: day.day,
+                            isSelected: isSelected,
+                            isToday: isCurrentDate,
+                            height: weekDayNumberHeight,
+                          ),
+                        ],
                       ),
-                    );
-                  }),
-                ),
+                    ),
+                  );
+                }),
               );
             },
           ),

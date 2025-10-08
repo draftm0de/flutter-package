@@ -40,6 +40,13 @@ void main() {
     expect(find.byType(PageView), findsOneWidget);
     expect(find.byType(CupertinoButton), findsNWidgets(7));
 
+    final rowElement = find
+        .descendant(of: find.byType(PageView), matching: find.byType(Row))
+        .evaluate()
+        .first;
+    final rowWidget = rowElement.widget as Row;
+    expect(rowWidget.children.length, 7);
+
     const expectedDays = ['6', '7', '8', '9', '10', '11', '12'];
     for (final day in expectedDays) {
       expect(find.text(day), findsOneWidget);
