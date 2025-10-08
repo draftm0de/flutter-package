@@ -1,4 +1,5 @@
 import 'package:draftmode/form/interface.dart';
+import 'package:draftmode/platform/buttons.dart';
 import 'package:draftmode/platform/styles.dart';
 import 'package:draftmode/ui/date_time/calendar_ios.dart';
 import 'package:draftmode/ui/date_time/hour_minute.dart';
@@ -225,6 +226,32 @@ void main() {
               (container.decoration as BoxDecoration).shape == BoxShape.circle,
         );
     expect(decoratedContainers, isEmpty);
+  });
+
+  testWidgets('Month grid arrows update selection and clamp days', (
+    tester,
+  ) async {
+    DateTime? lastSelected;
+
+    await tester.pumpWidget(
+      _wrap(
+        DraftModeUIDateTimeMonthGrid(
+          dateTime: DateTime(2024, 1, 31, 10, 30),
+          onHeaderTap: () {},
+          onSelect: (value) => lastSelected = value,
+          height: 320,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(PlatformButtons.arrowRight));
+    await tester.pumpAndSettle(const Duration(milliseconds: 350));
+    expect(lastSelected, DateTime(2024, 2, 29, 10, 30));
+
+    await tester.tap(find.byIcon(PlatformButtons.arrowLeft));
+    await tester.pumpAndSettle(const Duration(milliseconds: 350));
+    expect(lastSelected, DateTime(2024, 1, 31, 10, 30));
   });
 
   testWidgets('DraftModeUIDateTimeIOS renders empty when closed', (
