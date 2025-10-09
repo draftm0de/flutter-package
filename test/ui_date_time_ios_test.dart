@@ -1,9 +1,9 @@
 import 'package:draftmode/form/interface.dart';
 import 'package:draftmode/platform/buttons.dart';
 import 'package:draftmode/platform/styles.dart';
+import 'package:draftmode/element/date_time/month_grid.dart';
 import 'package:draftmode/ui/date_time/calendar_ios.dart';
 import 'package:draftmode/ui/date_time/hour_minute.dart';
-import 'package:draftmode/ui/date_time/month_grid.dart';
 import 'package:draftmode/ui/date_time/month_year.dart';
 import 'package:draftmode/utils/formatter.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,7 +32,7 @@ void main() {
       ),
     );
 
-    expect(find.byType(DraftModeUIDateTimeMonthGrid), findsOneWidget);
+    expect(find.byType(DraftModeElementDateTimeMonthGrid), findsOneWidget);
   });
 
   testWidgets('DraftModeUIDateTimeIOS renders month/year picker', (
@@ -103,7 +103,7 @@ void main() {
 
     await tester.pumpWidget(
       _wrap(
-        DraftModeUIDateTimeMonthGrid(
+        DraftModeElementDateTimeMonthGrid(
           dateTime: selected,
           onHeaderTap: () {},
           onSelect: (_) {},
@@ -141,7 +141,7 @@ void main() {
 
     await tester.pumpWidget(
       _wrap(
-        DraftModeUIDateTimeMonthGrid(
+        DraftModeElementDateTimeMonthGrid(
           dateTime: today,
           onHeaderTap: () {},
           onSelect: (_) {},
@@ -185,7 +185,7 @@ void main() {
 
     await tester.pumpWidget(
       _wrap(
-        DraftModeUIDateTimeMonthGrid(
+        DraftModeElementDateTimeMonthGrid(
           dateTime: alternateDay,
           onHeaderTap: () {},
           onSelect: (_) {},
@@ -235,7 +235,7 @@ void main() {
 
     await tester.pumpWidget(
       _wrap(
-        DraftModeUIDateTimeMonthGrid(
+        DraftModeElementDateTimeMonthGrid(
           dateTime: DateTime(2024, 1, 31, 10, 30),
           onHeaderTap: () {},
           onSelect: (value) => lastSelected = value,
@@ -270,5 +270,98 @@ void main() {
 
     final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
     expect(sizedBox.height, 0);
+  });
+
+  testWidgets('DraftModeUIDateTimeIOS day mode forwards selection with time', (
+    tester,
+  ) async {
+    DateTime? changed;
+    bool toggled = false;
+    final initial = DateTime(2024, 3, 15, 10, 30);
+
+    await tester.pumpWidget(
+      _wrap(
+        DraftModeUIDateTimeIOS(
+          mode: DraftModeFormCalendarPickerMode.day,
+          dateTime: initial,
+          onToggleMonthYear: () => toggled = true,
+          onChanged: (value) => changed = value,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(CupertinoButton, '16'));
+    await tester.pumpAndSettle();
+
+    expect(changed, DateTime(2024, 3, 16, 10, 30));
+
+    await tester.tap(find.widgetWithText(CupertinoButton, 'March 2024'));
+    await tester.pumpAndSettle();
+    expect(toggled, isTrue);
+  });
+
+  testWidgets('DraftModeUIDateTimeIOS month/year mode emits converted date', (
+    tester,
+  ) async {
+    DateTime? changed;
+    bool toggled = false;
+    final initial = DateTime(2024, 3, 15, 10, 30);
+
+    await tester.pumpWidget(
+      _wrap(
+        DraftModeUIDateTimeIOS(
+          mode: DraftModeFormCalendarPickerMode.monthYear,
+          dateTime: initial,
+          onToggleMonthYear: () => toggled = true,
+          onChanged: (value) => changed = value,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final monthPicker = find.byType(CupertinoPicker).at(0);
+    await tester.drag(monthPicker, const Offset(0, -80));
+    await tester.pumpAndSettle();
+
+    expect(changed, isNotNull);
+    expect(changed?.day, initial.day);
+    expect(changed?.hour, initial.hour);
+    expect(changed?.minute, initial.minute);
+    expect(changed?.month, isNot(initial.month));
+
+    await tester.tap(find.widgetWithText(CupertinoButton, 'March 2024'));
+    await tester.pumpAndSettle();
+    expect(toggled, isTrue);
+  });
+
+  testWidgets('DraftModeUIDateTimeIOS hour/minute mode emits updated time', (
+    tester,
+  ) async {
+    DateTime? changed;
+    final initial = DateTime(2024, 3, 15, 10, 58);
+
+    await tester.pumpWidget(
+      _wrap(
+        DraftModeUIDateTimeIOS(
+          mode: DraftModeFormCalendarPickerMode.hourMinute,
+          dateTime: initial,
+          onToggleMonthYear: () {},
+          onChanged: (value) => changed = value,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final pickers = find.byType(CupertinoPicker);
+    await tester.drag(pickers.at(0), const Offset(0, -80));
+    await tester.pumpAndSettle();
+    await tester.drag(pickers.at(1), const Offset(0, -80));
+    await tester.pumpAndSettle();
+
+    expect(changed, isNotNull);
+    expect(changed?.year, initial.year);
+    expect(changed?.month, initial.month);
+    expect(changed?.day, initial.day);
   });
 }

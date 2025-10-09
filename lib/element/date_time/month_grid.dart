@@ -6,13 +6,15 @@ import 'package:intl/intl.dart';
 import '../../platform/buttons.dart';
 import '../../platform/styles.dart';
 import '../../utils/formatter.dart';
+import '../../ui/grid_text.dart';
 
-class DraftModeUIDateTimeMonthGrid extends StatelessWidget {
+class DraftModeElementDateTimeMonthGrid extends StatelessWidget {
   final DateTime dateTime;
   final VoidCallback onHeaderTap;
   final ValueChanged<DateTime> onSelect;
   final double height;
-  const DraftModeUIDateTimeMonthGrid({
+
+  const DraftModeElementDateTimeMonthGrid({
     super.key,
     required this.dateTime,
     required this.onHeaderTap,
@@ -155,20 +157,13 @@ class DraftModeUIDateTimeMonthGrid extends StatelessWidget {
 
               return Column(
                 children: [
-                  Row(
-                    children: List.generate(7, (index) {
-                      return Expanded(
-                        child: Text(
-                          weekdays[index],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: DraftModeStyleFontSize.tertiary,
-                            fontWeight: DraftModeStyleFontWeight.primary,
-                            color: DraftModeStyleColor.primary.text,
-                          ),
-                        ),
-                      );
-                    }),
+                  DraftModeUIGridText<String>(
+                    values: weekdays,
+                    onPressed: null,
+                    variant: DraftModeUIGridTextVariant.chip,
+                    itemHeight: 20,
+                    itemWidth: 36,
+                    labelBuilder: (value, _) => value,
                   ),
                   const SizedBox(height: 12),
                   Expanded(
@@ -179,79 +174,46 @@ class DraftModeUIDateTimeMonthGrid extends StatelessWidget {
 
                         return Column(
                           children: List.generate(rows, (row) {
+                            final rowValues = List<DateTime?>.generate(7, (
+                              col,
+                            ) {
+                              final index = row * 7 + col;
+                              final dayNumber = index - shift + 1;
+                              if (dayNumber < 1 || dayNumber > daysInMonth) {
+                                return null;
+                              }
+                              return DateTime(year, month, dayNumber);
+                            });
+
                             return SizedBox(
                               height: rowHeight,
-                              child: Row(
-                                children: List.generate(7, (col) {
-                                  final index = row * 7 + col;
-                                  final dayNumber = index - shift + 1;
-                                  if (dayNumber < 1 ||
-                                      dayNumber > daysInMonth) {
-                                    return const Expanded(child: SizedBox());
+                              child: DraftModeUIGridText<DateTime?>(
+                                values: rowValues,
+                                onPressed: (day) {
+                                  if (day != null) {
+                                    onSelect(day);
                                   }
-
-                                  final day = DateTime(year, month, dayNumber);
-                                  final isSelected =
-                                      day.year == dateTime.year &&
-                                      day.month == dateTime.month &&
-                                      day.day == dateTime.day;
-                                  final isToday = DraftModeDateTime.isSameDate(
-                                    day,
-                                    DateTime.now(),
-                                  );
-                                  final isSelectedToday = isSelected && isToday;
-
-                                  return Expanded(
-                                    child: CupertinoButton(
-                                      padding: EdgeInsets.zero,
-                                      onPressed: () => onSelect(day),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        height: dayDiameter,
-                                        width: dayDiameter,
-                                        decoration: isSelected
-                                            ? BoxDecoration(
-                                                color: isSelectedToday
-                                                    ? DraftModeStyleColorActive
-                                                          .secondary
-                                                          .background
-                                                    : DraftModeStyleColorActive
-                                                          .tertiary
-                                                          .background,
-                                                shape: BoxShape.circle,
-                                              )
-                                            : null,
-                                        child: Text(
-                                          '$dayNumber',
-                                          style: TextStyle(
-                                            fontSize:
-                                                DraftModeStyleFontSize.primary,
-                                            fontWeight: isSelected
-                                                ? DraftModeStyleFontWeight
-                                                      .secondary
-                                                : DraftModeStyleFontWeight
-                                                      .primary,
-                                            color: isSelected
-                                                ? (isSelectedToday
-                                                      ? DraftModeStyleColorActive
-                                                            .secondary
-                                                            .text
-                                                      : DraftModeStyleColorActive
-                                                            .tertiary
-                                                            .text)
-                                                : isToday
-                                                ? DraftModeStyleColorActive
-                                                      .secondary
-                                                      .background
-                                                : DraftModeStyleColor
-                                                      .primary
-                                                      .text,
-                                          ),
-                                        ),
-                                      ),
+                                },
+                                variant: DraftModeUIGridTextVariant.calendar,
+                                itemHeight: rowHeight,
+                                itemWidth: dayDiameter,
+                                labelBuilder: (day, _) => '${day!.day}',
+                                isSelected: (day, _) =>
+                                    day != null &&
+                                    day.year == dateTime.year &&
+                                    day.month == dateTime.month &&
+                                    day.day == dateTime.day,
+                                isActive: (day, _) =>
+                                    day != null &&
+                                    DraftModeDateTime.isSameDate(
+                                      day,
+                                      DateTime.now(),
                                     ),
-                                  );
-                                }),
+                                keyBuilder: (day, index) => day == null
+                                    ? ValueKey<String>(
+                                        'calendar-placeholder-$row-$index',
+                                      )
+                                    : ValueKey<DateTime>(day),
                               ),
                             );
                           }),
