@@ -43,7 +43,7 @@ DA:65,5
 DA:66,10
 DA:70,4
 DA:71,4
-DA:188,1
+DA:188,2
 DA:190,1
 DA:192,1
 DA:193,1
@@ -105,7 +105,7 @@ LF:18
 LH:18
 end_of_record
 SF:lib/platform/styles.dart
-DA:9,1
+DA:9,2
 DA:14,0
 DA:15,0
 DA:16,0
