@@ -1,5 +1,6 @@
 import 'package:draftmode/platform/styles.dart';
 import 'package:draftmode/ui/date_time/week_day.dart';
+import 'package:draftmode/ui/grid_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +39,11 @@ void main() {
     expect(header.data, expectedHeader);
 
     expect(find.byType(PageView), findsOneWidget);
-    expect(find.byType(CupertinoButton), findsNWidgets(7));
+    expect(
+      find.byWidgetPredicate((widget) => widget is DraftModeUIGridText),
+      findsNWidgets(2),
+    );
+    expect(find.byType(CupertinoButton), findsNWidgets(14));
 
     final rowElement = find
         .descendant(of: find.byType(PageView), matching: find.byType(Row))
@@ -122,37 +127,25 @@ void main() {
     expect(moText.style?.color, DraftModeStyleColorActive.secondary.text);
     expect(diText.style?.color, DraftModeStyleColor.primary.text);
 
-    final selectedButton = find.byKey(ValueKey<DateTime>(selected));
-    final chipFinder = find.descendant(
-      of: selectedButton,
-      matching: find.byType(Container),
+    final chipContainerFinder = find.ancestor(
+      of: find.text('MO'),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is Container &&
+            widget.decoration is BoxDecoration &&
+            (widget.decoration as BoxDecoration).borderRadius != null,
+      ),
     );
-    final containers = tester.widgetList<Container>(chipFinder).toList();
-    expect(containers, isNotEmpty);
-
-    final chipContainer = containers.firstWhere(
-      (container) =>
-          container.decoration is BoxDecoration &&
-          (container.decoration as BoxDecoration?)?.borderRadius != null,
-      orElse: () => containers.first,
-    );
+    final chipContainer = tester.widget<Container>(chipContainerFinder);
     final chipDecoration = chipContainer.decoration as BoxDecoration?;
     expect(
       chipDecoration?.color,
       DraftModeStyleColorActive.secondary.background,
     );
+    expect(chipDecoration?.shape, BoxShape.rectangle);
 
     final numberText = tester.widget<Text>(find.text('6'));
     expect(numberText.style?.color, DraftModeStyleColor.primary.text);
-
-    final circularDecorations = containers
-        .where(
-          (container) =>
-              container.decoration is BoxDecoration &&
-              (container.decoration as BoxDecoration).shape == BoxShape.circle,
-        )
-        .toList();
-    expect(circularDecorations, isEmpty);
   });
 
   testWidgets('marks today number in red without circle', (tester) async {
