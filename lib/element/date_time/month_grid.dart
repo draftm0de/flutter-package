@@ -115,7 +115,7 @@ class DraftModeElementDateTimeMonthGrid extends StatelessWidget {
                 onPressed: onHeaderTap,
                 child: Row(
                   children: [
-                    Text(monthLabel, style: PlatformStyles.labelStyle(context)),
+                    Text(monthLabel, style: DraftModeStyleText.primary),
                     const SizedBox(width: 6),
                     Icon(
                       PlatformButtons.arrowDown,

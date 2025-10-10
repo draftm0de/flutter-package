@@ -58,7 +58,11 @@ class DraftModeUIDateTimeField extends StatelessWidget {
         child: Text(
           textAlign: TextAlign.center,
           text,
-          style: PlatformStyles.labelStyle(context, strike: strike),
+          style: DraftModeStyleText.primary.copyWith(
+            decoration: strike
+                ? TextDecoration.lineThrough
+                : TextDecoration.none,
+          ),
         ),
       ),
     );

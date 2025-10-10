@@ -22,6 +22,8 @@ entity logic:
   forms need a single-day selection surface. Keeps the selected weekday in
   view while paging through weeks and highlights the active day with the
   platform red accent.
+- `date_time/time_line.dart` – decorative timeline gutter that mirrors the
+  inset grouped lists on iOS so contextual date content has a native anchor.
 - `button.dart` – reusable platform-aware button used by higher-level widgets
   such as form actions.
 

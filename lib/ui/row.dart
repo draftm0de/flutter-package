@@ -4,8 +4,9 @@ import '../platform/styles.dart';
 /// Displays a form row with an optional leading label and adaptive padding.
 ///
 /// When [label] is provided the row renders a fixed-width leading column using
-/// `PlatformConfig.labelWidth` before expanding [child]. Padding respects the
-/// platform-specific constants exposed by [PlatformConfig].
+/// [PlatformStyles.labelWidth] before expanding [child]. Padding follows the
+/// shared spacing constants in [DraftModeStylePadding] so rows visually align
+/// with native grouped lists.
 class DraftModeUIRow extends StatelessWidget {
   final Widget child;
   final String? label;
@@ -27,8 +28,8 @@ class DraftModeUIRow extends StatelessWidget {
     final content = Align(alignment: alignment, child: child);
 
     final paddingVertical = (verticalDoubled)
-        ? DraftModeStylePadding.primary * 2
-        : DraftModeStylePadding.primary;
+        ? DraftModeStylePadding.tertiary * 2
+        : DraftModeStylePadding.tertiary;
 
     return Padding(
       padding: EdgeInsets.symmetric(

@@ -153,28 +153,28 @@ class _GridTextContent extends StatelessWidget {
   }
 
   Widget _buildCalendar() {
-    final bool isSelectedToday = isSelected && isActive;
+    final bool isToday = isActive;
 
-    final BoxDecoration? decoration = isSelected
-        ? BoxDecoration(
-            color: isSelectedToday
-                ? DraftModeStyleColorActive.secondary.background
-                : DraftModeStyleColorActive.tertiary.background,
-            shape: BoxShape.circle,
-          )
+    Color textColor = DraftModeStyleColor.primary.text;
+    Color? backgroundColor;
+    FontWeight fontWeight = DraftModeStyleFontWeight.primary;
+
+    if (isToday && isSelected) {
+      backgroundColor = DraftModeStyleColorActive.quaternary.background;
+      textColor = DraftModeStyleColorActive.quaternary.text;
+      fontWeight = DraftModeStyleFontWeight.secondary;
+    } else if (isToday && !isSelected) {
+      backgroundColor = null;
+      textColor = DraftModeStyleColorActive.secondary.background;
+    } else if (!isToday && isSelected) {
+      backgroundColor = DraftModeStyleColorActive.secondary.background;
+      textColor = DraftModeStyleColorActive.secondary.text;
+      fontWeight = DraftModeStyleFontWeight.secondary;
+    }
+
+    final BoxDecoration? decoration = backgroundColor != null
+        ? BoxDecoration(color: backgroundColor, shape: BoxShape.circle)
         : null;
-
-    final color = isSelected
-        ? (isSelectedToday
-              ? DraftModeStyleColorActive.secondary.text
-              : DraftModeStyleColorActive.tertiary.text)
-        : (isActive
-              ? DraftModeStyleColorActive.secondary.background
-              : DraftModeStyleColor.primary.text);
-
-    final fontWeight = isSelected
-        ? DraftModeStyleFontWeight.secondary
-        : DraftModeStyleFontWeight.primary;
 
     final circleSize = math.min(height, width);
 
@@ -192,7 +192,7 @@ class _GridTextContent extends StatelessWidget {
             style: TextStyle(
               fontSize: DraftModeStyleFontSize.primary,
               fontWeight: fontWeight,
-              color: color,
+              color: textColor,
             ),
           ),
         ),

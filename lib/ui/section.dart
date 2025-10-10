@@ -5,7 +5,7 @@ import '../platform/styles.dart';
 
 /// Groups related form rows into a platform-adaptive container.
 ///
-/// On iOS this uses [CupertinoFormSection.insetGrouped]; on other platforms it
+/// On iOS this uses [CupertinoListSection.insetGrouped]; on other platforms it
 /// wraps content in a `Card`. The [transparent] flag disables the Cupertino
 /// background decoration for sections that should visually blend with their
 /// parents.
@@ -27,12 +27,16 @@ class DraftModeUISection extends StatelessWidget {
 
     return DraftModeSectionScope(
       child: PlatformConfig.isIOS
-          ? CupertinoFormSection.insetGrouped(
+          ? CupertinoListSection.insetGrouped(
+              additionalDividerMargin: 0,
+              margin: EdgeInsets.symmetric(
+                horizontal: DraftModeStylePadding.primary,
+              ),
               decoration: transparent ? BoxDecoration(color: null) : null,
               header: hasHeader
                   ? Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: PlatformStyles.horizontalContainerPadding,
+                        horizontal: DraftModeStylePadding.primary,
                       ),
                       child: Text(header ?? ''),
                     )
