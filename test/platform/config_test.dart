@@ -1,7 +1,6 @@
 import 'package:draftmode/platform/config.dart';
-import 'package:draftmode/platform/styles.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -22,35 +21,14 @@ void main() {
     },
   );
 
-  testWidgets('label styles pick appropriate colours', (tester) async {
-    PlatformConfig.mode = ForcedPlatform.ios;
-    await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
-    final iosStyle = PlatformStyles.labelStyle(
-      tester.element(find.byType(Placeholder)),
-    );
-    expect(iosStyle.color, CupertinoColors.label);
-
+  testWidgets('default mode resets after tests', (tester) async {
     PlatformConfig.mode = ForcedPlatform.android;
-    await tester.pumpWidget(const MaterialApp(home: Placeholder()));
-    final androidStyle = PlatformStyles.labelStyle(
-      tester.element(find.byType(Placeholder)),
-    );
-    expect(androidStyle.color, Colors.grey);
-  });
+    expect(PlatformConfig.isIOS, isFalse);
 
-  testWidgets('placeholder style honours platform defaults', (tester) async {
-    PlatformConfig.mode = ForcedPlatform.ios;
+    PlatformConfig.mode = ForcedPlatform.auto;
     await tester.pumpWidget(const CupertinoApp(home: Placeholder()));
-    final iosStyle = PlatformStyles.placeHolderStyle(
-      tester.element(find.byType(Placeholder)),
-    );
-    expect(iosStyle.color, CupertinoColors.placeholderText);
-
-    PlatformConfig.mode = ForcedPlatform.android;
-    await tester.pumpWidget(const MaterialApp(home: Placeholder()));
-    final androidStyle = PlatformStyles.placeHolderStyle(
-      tester.element(find.byType(Placeholder)),
-    );
-    expect(androidStyle.color, isNotNull);
+    final expectedIOS = defaultTargetPlatform == TargetPlatform.iOS;
+    expect(PlatformConfig.isIOS, expectedIOS);
+    expect(PlatformConfig.target, defaultTargetPlatform);
   });
 }

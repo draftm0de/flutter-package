@@ -117,7 +117,7 @@ void main() {
     final dayText = tester.widget<Text>(
       find.descendant(of: buttonFinder, matching: find.text('15')).first,
     );
-    expect(dayText.style?.color, DraftModeStyleColorActive.tertiary.text);
+    expect(dayText.style?.color, DraftModeStyleColorActive.secondary.text);
 
     final container = tester
         .widgetList<Container>(
@@ -130,7 +130,7 @@ void main() {
                   BoxShape.circle,
         );
     final decoration = container.decoration as BoxDecoration?;
-    expect(decoration?.color, DraftModeStyleColorActive.tertiary.background);
+    expect(decoration?.color, DraftModeStyleColorActive.secondary.background);
   });
 
   testWidgets('Month grid uses red badge when selected day is today', (
@@ -157,7 +157,7 @@ void main() {
           .descendant(of: buttonFinder, matching: find.text('${today.day}'))
           .first,
     );
-    expect(dayText.style?.color, DraftModeStyleColorActive.secondary.text);
+    expect(dayText.style?.color, DraftModeStyleColorActive.quaternary.text);
 
     final container = tester
         .widgetList<Container>(
@@ -170,7 +170,7 @@ void main() {
                   BoxShape.circle,
         );
     final decoration = container.decoration as BoxDecoration?;
-    expect(decoration?.color, DraftModeStyleColorActive.secondary.background);
+    expect(decoration?.color, DraftModeStyleColorActive.quaternary.background);
   });
 
   testWidgets('Month grid marks today in red without selection badge', (

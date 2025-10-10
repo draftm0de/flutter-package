@@ -39,7 +39,7 @@ class DraftModeUIDateTimeMonthYear extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: PlatformStyles.horizontalContainerPadding,
+            horizontal: DraftModeStylePadding.primary,
           ),
           child: Row(
             children: [
@@ -48,10 +48,7 @@ class DraftModeUIDateTimeMonthYear extends StatelessWidget {
                 onPressed: onBackToDay,
                 child: Row(
                   children: [
-                    Text(
-                      label,
-                      style: PlatformStyles.labelStyleActive(context),
-                    ),
+                    Text(label, style: DraftModeStyleText.primary),
                     const SizedBox(width: 6),
                     Icon(
                       PlatformButtons.arrowUp,

@@ -2,12 +2,14 @@ import 'package:draftmode/platform/config.dart';
 import 'package:draftmode/platform/styles.dart';
 import 'package:draftmode/ui/button.dart';
 import 'package:draftmode/ui/confirm.dart';
+import 'package:draftmode/ui/date_time/time_line.dart';
 import 'package:draftmode/ui/row.dart';
 import 'package:draftmode/ui/section.dart';
 import 'package:draftmode/ui/switch.dart';
 import 'package:draftmode/ui/text_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -36,7 +38,7 @@ void main() {
         padding.padding,
         EdgeInsets.symmetric(
           horizontal: DraftModeStylePadding.primary,
-          vertical: DraftModeStylePadding.primary,
+          vertical: DraftModeStylePadding.tertiary,
         ),
       );
     });
@@ -54,10 +56,146 @@ void main() {
         padding.padding,
         EdgeInsets.symmetric(
           horizontal: DraftModeStylePadding.primary,
-          vertical: DraftModeStylePadding.primary * 2,
+          vertical: DraftModeStylePadding.tertiary * 2,
         ),
       );
       expect(find.byType(Row), findsNothing);
+    });
+  });
+
+  group('DraftModeDateTimeline', () {
+    testWidgets('paints with expected gutter width and inherited height', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: UnconstrainedBox(
+            alignment: Alignment.topLeft,
+            child: SizedBox(height: 80, child: DraftModeDateTimeline()),
+          ),
+        ),
+      );
+
+      final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
+      expect(size, const Size(28, 80));
+      expect(
+        find.descendant(
+          of: find.byType(DraftModeDateTimeline),
+          matching: find.byType(CustomPaint),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('allows width customisation', (tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: UnconstrainedBox(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              height: 64,
+              child: DraftModeDateTimeline(width: 32, showCheck: false),
+            ),
+          ),
+        ),
+      );
+
+      final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
+      expect(size, const Size(32, 64));
+      expect(
+        find.descendant(
+          of: find.byType(DraftModeDateTimeline),
+          matching: find.byType(CustomPaint),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('falls back to intrinsic height when unconstrained', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: SizedBox(
+            height: 120,
+            child: ListView(
+              shrinkWrap: true,
+              children: const [DraftModeDateTimeline(showCheck: false)],
+            ),
+          ),
+        ),
+      );
+
+      final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
+      expect(size.height, 40);
+    });
+
+    testWidgets('repaints when configuration changes', (tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: DraftModeDateTimeline(),
+        ),
+      );
+
+      var renderObject = tester.renderObject<RenderCustomPaint>(
+        find.byType(CustomPaint),
+      );
+      final CustomPainter initialPainter = renderObject.painter!;
+      expect(initialPainter.shouldRepaint(initialPainter), isFalse);
+
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: DraftModeDateTimeline(lineColor: CupertinoColors.systemRed),
+        ),
+      );
+
+      renderObject = tester.renderObject<RenderCustomPaint>(
+        find.byType(CustomPaint),
+      );
+      final CustomPainter updatedPainter = renderObject.painter!;
+      expect(updatedPainter.shouldRepaint(initialPainter), isTrue);
+    });
+  });
+
+  group('DraftModeDateTimeline asserts', () {
+    test('throws when width is not positive', () {
+      expect(() => DraftModeDateTimeline(width: 0), throwsAssertionError);
+    });
+
+    test('throws when lineWidth is negative', () {
+      expect(() => DraftModeDateTimeline(lineWidth: -1), throwsAssertionError);
+    });
+
+    test('throws when nodeRadius is non-positive', () {
+      expect(() => DraftModeDateTimeline(nodeRadius: 0), throwsAssertionError);
+    });
+
+    test('throws when nodeStroke is negative', () {
+      expect(
+        () => DraftModeDateTimeline(nodeStroke: -0.5),
+        throwsAssertionError,
+      );
+    });
+
+    test('throws when alignment is outside 0-1', () {
+      expect(
+        () => DraftModeDateTimeline(nodeAlignment: -0.1),
+        throwsAssertionError,
+      );
+      expect(
+        () => DraftModeDateTimeline(nodeAlignment: 1.1),
+        throwsAssertionError,
+      );
+    });
+
+    test('throws when padding is negative', () {
+      expect(() => DraftModeDateTimeline(padTop: -1), throwsAssertionError);
+      expect(() => DraftModeDateTimeline(padBottom: -1), throwsAssertionError);
     });
   });
 
@@ -86,7 +224,7 @@ void main() {
       );
 
       expect(find.text('Details'), findsOneWidget);
-      expect(find.byType(CupertinoFormSection), findsOneWidget);
+      expect(find.byType(CupertinoListSection), findsOneWidget);
       expect(isInside, isTrue);
     });
 

@@ -19,7 +19,11 @@ class DraftModeStyleColorInverse {
 class DraftModeStyleColor {
   static DraftModeStyleColorRole get primary => const DraftModeStyleColorRole(
     background: CupertinoColors.systemBackground,
-    text: CupertinoColors.black,
+    text: CupertinoColors.label,
+  );
+  static DraftModeStyleColorRole get secondary => const DraftModeStyleColorRole(
+    background: CupertinoColors.secondarySystemBackground,
+    text: CupertinoColors.secondaryLabel,
   );
 }
 
@@ -33,9 +37,14 @@ class DraftModeStyleColorActive {
     text: CupertinoColors.white,
   );
   static DraftModeStyleColorRole get tertiary => const DraftModeStyleColorRole(
-    background: CupertinoColors.black,
-    text: CupertinoColors.white,
+    background: CupertinoColors.activeGreen,
+    text: CupertinoColors.black,
   );
+  static DraftModeStyleColorRole get quaternary =>
+      const DraftModeStyleColorRole(
+        background: CupertinoColors.black,
+        text: CupertinoColors.white,
+      );
 }
 
 class DraftModeStyleText {
@@ -43,11 +52,15 @@ class DraftModeStyleText {
     color: DraftModeStyleColor.primary.text,
     fontSize: DraftModeStyleFontSize.primary,
   );
+  static TextStyle get tertiary => TextStyle(
+    color: DraftModeStyleColor.primary.text,
+    fontSize: DraftModeStyleFontSize.tertiary,
+  );
 }
 
 class DraftModeStyleFontSize {
   static double get primary => 17;
-  static double get secondary => 14;
+  static double get secondary => 15;
   static double get tertiary => 12;
 }
 
@@ -60,7 +73,7 @@ class DraftModeStyleFontWeight {
 class DraftModeStylePadding {
   static double get primary => 16;
   static double get secondary => 14;
-  static double get tertiary => 2;
+  static double get tertiary => 10;
 }
 
 /// Shared layout constants and typography helpers used across DraftMode widgets.
@@ -94,55 +107,6 @@ class PlatformStyles {
       PlatformConfig.isIOS
       ? CupertinoColors.systemGroupedBackground
       : Theme.of(context).scaffoldBackgroundColor;
-
-  /// Typography used for secondary labels within forms.
-  static TextStyle labelStyle(BuildContext context, {bool strike = false}) {
-    final base = PlatformConfig.isIOS
-        ? CupertinoTheme.of(context).textTheme.textStyle
-        : (Theme.of(context).textTheme.bodySmall ??
-              DefaultTextStyle.of(context).style);
-
-    final activeColor = PlatformConfig.isIOS
-        ? CupertinoColors.label
-        : Colors.grey;
-
-    return base.copyWith(
-      color: activeColor,
-      decoration: strike ? TextDecoration.lineThrough : TextDecoration.none,
-    );
-  }
-
-  /// Variant of [labelStyle] using the active accent colour.
-  static TextStyle labelStyleActive(
-    BuildContext context, {
-    bool strike = false,
-  }) {
-    final base = PlatformConfig.isIOS
-        ? CupertinoTheme.of(context).textTheme.textStyle
-        : (Theme.of(context).textTheme.bodySmall ??
-              DefaultTextStyle.of(context).style);
-
-    final activeColor = PlatformConfig.isIOS
-        ? CupertinoColors.activeBlue
-        : Colors.blue;
-
-    return base.copyWith(
-      color: activeColor,
-      decoration: strike ? TextDecoration.lineThrough : TextDecoration.none,
-    );
-  }
-
-  /// Typography used for placeholder text in inputs.
-  static TextStyle placeHolderStyle(BuildContext context) {
-    if (PlatformConfig.isIOS) {
-      return CupertinoTheme.of(
-        context,
-      ).textTheme.textStyle.copyWith(color: CupertinoColors.placeholderText);
-    }
-    final hintStyle = Theme.of(context).inputDecorationTheme.hintStyle;
-    if (hintStyle != null) return hintStyle;
-    return Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey);
-  }
 
   /// Platform-specific button text style used across DraftMode components.
   static TextStyle buttonTextStyle(BuildContext context) {
