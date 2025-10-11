@@ -1,12 +1,9 @@
 import 'dart:async';
 
+import 'package:draftmode/element.dart';
 import 'package:draftmode/page/spinner.dart';
 import 'package:draftmode/ui.dart';
-import 'package:flutter/material.dart'
-    show MaterialLocalizations, RefreshIndicator;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'
-    show GlobalMaterialLocalizations, GlobalWidgetsLocalizations;
 
 import '../entity/interface.dart';
 import '../platform/styles.dart';
@@ -68,7 +65,7 @@ class DraftModeFormList<
   final bool? primary;
   final Widget? header;
   final Widget? separator;
-  final Future<void> Function()? onReload;
+  final Future<void> Function()? onRefresh;
 
   const DraftModeFormList({
     super.key,
@@ -86,7 +83,7 @@ class DraftModeFormList<
     this.primary,
     this.header,
     this.separator,
-    this.onReload,
+    this.onRefresh,
   });
 
   @override
@@ -103,7 +100,7 @@ class DraftModeFormList<
       final resolvedPhysics = _resolvePhysics();
 
       if (separator != null) {
-        Widget list = ListView.separated(
+        final listView = ListView.separated(
           controller: controller,
           primary: primary,
           shrinkWrap: shrinkWrap,
@@ -113,12 +110,14 @@ class DraftModeFormList<
           separatorBuilder: (context, index) => separator!,
           itemCount: items.length,
         );
-        list = _wrapWithRefreshIndicator(context, list);
+        final Widget list = (onRefresh != null)
+            ? DraftModeElementRefreshList(list: listView, onRefresh: onRefresh!)
+            : listView;
         content = (header != null)
             ? Column(children: [header!, separator!, list])
             : list;
       } else {
-        Widget list = ListView.builder(
+        final listView = ListView.builder(
           controller: controller,
           primary: primary,
           shrinkWrap: shrinkWrap,
@@ -127,7 +126,9 @@ class DraftModeFormList<
           itemCount: items.length,
           itemBuilder: (context, index) => _buildItem(context, items[index]),
         );
-        list = _wrapWithRefreshIndicator(context, list);
+        final Widget list = (onRefresh != null)
+            ? DraftModeElementRefreshList(list: listView, onRefresh: onRefresh!)
+            : listView;
         content = (header != null) ? Column(children: [header!, list]) : list;
       }
     }
@@ -183,7 +184,7 @@ class DraftModeFormList<
   }
 
   Widget _maybeWrapPlaceholder(BuildContext context, Widget child) {
-    if (onReload == null) {
+    if (onRefresh == null) {
       return child;
     }
 
@@ -198,14 +199,14 @@ class DraftModeFormList<
       children: [child],
     );
 
-    return _wrapWithRefreshIndicator(context, list);
+    return DraftModeElementRefreshList(list: list, onRefresh: onRefresh!);
   }
 
   ScrollPhysics? _resolvePhysics() {
     final basePhysics =
         physics ?? (shrinkWrap ? const NeverScrollableScrollPhysics() : null);
 
-    if (onReload == null) {
+    if (onRefresh == null) {
       return basePhysics;
     }
 
@@ -218,34 +219,6 @@ class DraftModeFormList<
     }
 
     return AlwaysScrollableScrollPhysics(parent: basePhysics);
-  }
-
-  Widget _wrapWithRefreshIndicator(BuildContext context, Widget child) {
-    if (onReload == null) {
-      return child;
-    }
-
-    Widget indicator = RefreshIndicator.adaptive(
-      onRefresh: () => Future.sync(onReload!),
-      child: child,
-    );
-
-    if (Localizations.of<MaterialLocalizations>(
-          context,
-          MaterialLocalizations,
-        ) !=
-        null) {
-      return indicator;
-    }
-
-    return Localizations.override(
-      context: context,
-      delegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-      child: indicator,
-    );
   }
 
   EdgeInsetsGeometry _defaultPadding(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:draftmode/element.dart';
 import 'package:draftmode/entity.dart';
 import 'package:draftmode/form.dart';
 import 'package:draftmode/page/spinner.dart';
@@ -150,7 +151,7 @@ void main() {
     expect(find.byKey(const ValueKey('separator')), findsNWidgets(1));
   });
 
-  testWidgets('invokes onReload when pulled down', (tester) async {
+  testWidgets('invokes onRefresh when pulled down', (tester) async {
     int reloadCount = 0;
     final items = [_ListItem('a', 'Alpha'), _ListItem('b', 'Beta')];
 
@@ -162,7 +163,7 @@ void main() {
             shrinkWrap: false,
             itemBuilder: (context, item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
-            onReload: () async {
+            onRefresh: () async {
               reloadCount += 1;
             },
           ),
@@ -179,9 +180,11 @@ void main() {
     expect(reloadCount, 1);
   });
 
-  testWidgets('adds material localizations automatically in cupertino apps', (
+  testWidgets('renders cupertino refresh control in cupertino apps', (
     tester,
   ) async {
+    PlatformConfig.mode = ForcedPlatform.ios;
+
     await tester.pumpWidget(
       CupertinoApp(
         home: DraftModeFormList<_ListItem, String>(
@@ -189,15 +192,30 @@ void main() {
           shrinkWrap: false,
           itemBuilder: (context, item, isSelected) =>
               _SimpleTile(item: item, isSelected: isSelected),
-          onReload: () async {},
+          onRefresh: () async {},
         ),
       ),
     );
 
     await tester.pump();
 
+    expect(PlatformConfig.isIOS, isTrue);
+    final refreshWrapper = tester.widget<DraftModeElementRefreshList>(
+      find.byType(DraftModeElementRefreshList),
+    );
+    expect(refreshWrapper.list, isA<ListView>());
+    final customScrollView = tester.widget<CustomScrollView>(
+      find.byType(CustomScrollView),
+    );
+    expect(
+      customScrollView.slivers.first,
+      isA<CupertinoSliverRefreshControl>(),
+    );
     expect(tester.takeException(), isNull);
-    expect(find.byType(RefreshIndicator), findsOneWidget);
+    expect(
+      find.byType(CupertinoSliverRefreshControl, skipOffstage: false),
+      findsOneWidget,
+    );
   });
 
   testWidgets('pending spinner remains pinned while content scrolls', (
@@ -216,7 +234,7 @@ void main() {
             shrinkWrap: false,
             itemBuilder: (context, item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
-            onReload: () async {},
+            onRefresh: () async {},
             isPending: true,
           ),
         ),
