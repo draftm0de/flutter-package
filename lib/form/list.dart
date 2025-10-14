@@ -20,6 +20,40 @@ typedef DraftModeFormListItemWidgetBuilder<
       bool isSelected,
     );
 
+typedef DraftModeFormListConfirmDismiss<
+  ItemType extends DraftModeListItem<dynamic>
+> = Future<bool?> Function(ItemType item, DismissDirection direction);
+
+typedef DraftModeFormListDismissedCallback<
+  ItemType extends DraftModeListItem<dynamic>
+> = void Function(ItemType item, DismissDirection direction);
+
+/// Configuration object that controls how list items behave when wrapped in a
+/// [Dismissible]. Most callers should prefer using one of the presets provided
+/// in `package:draftmode/ui.dart` (e.g. [DraftModeUIDismissibleDelete]) instead
+/// of instantiating this class directly.
+class DraftModeFormListDismissible<
+  ItemType extends DraftModeListItem<dynamic>
+> {
+  final DismissDirection direction;
+  final Widget? Function(BuildContext context, ItemType item)?
+  backgroundBuilder;
+  final Widget? Function(BuildContext context, ItemType item)?
+  secondaryBackgroundBuilder;
+  final DraftModeFormListConfirmDismiss<ItemType>? confirmDismiss;
+  final DraftModeFormListDismissedCallback<ItemType>? onDismissed;
+  final Key Function(ItemType item)? keyBuilder;
+
+  const DraftModeFormListDismissible({
+    this.direction = DismissDirection.endToStart,
+    this.backgroundBuilder,
+    this.secondaryBackgroundBuilder,
+    this.confirmDismiss,
+    this.onDismissed,
+    this.keyBuilder,
+  });
+}
+
 /// Base widget that renders an individual item within [DraftModeFormList].
 ///
 /// Consumers should extend this class so the constructor requires both the
@@ -66,6 +100,7 @@ class DraftModeFormList<
   final Widget? header;
   final Widget? separator;
   final Future<void> Function()? onRefresh;
+  final DraftModeFormListDismissible<ItemType>? dismissible;
 
   const DraftModeFormList({
     super.key,
@@ -84,6 +119,7 @@ class DraftModeFormList<
     this.header,
     this.separator,
     this.onRefresh,
+    this.dismissible,
   });
 
   @override
@@ -163,7 +199,8 @@ class DraftModeFormList<
   Widget _buildItem(BuildContext context, ItemType item) {
     final selected = selectedId != null && item.getId() == selectedId;
     final widget = itemBuilder(context, item, selected);
-    final keyed = KeyedSubtree(key: ValueKey(item.getId()), child: widget);
+    final wrapped = _maybeWrapWithDismissible(context, item, widget);
+    final keyed = KeyedSubtree(key: ValueKey(item.getId()), child: wrapped);
 
     if (onTap == null && onSelected == null) {
       return keyed;
@@ -181,6 +218,48 @@ class DraftModeFormList<
     if (onSelected != null && !isSelected) {
       onSelected!(item);
     }
+  }
+
+  Widget _maybeWrapWithDismissible(
+    BuildContext context,
+    ItemType item,
+    Widget child,
+  ) {
+    final config = dismissible;
+    if (config == null) {
+      return child;
+    }
+
+    final key = config.keyBuilder?.call(item) ?? _defaultDismissibleKey(item);
+    final background = config.backgroundBuilder?.call(context, item);
+    final secondaryBackground = config.secondaryBackgroundBuilder?.call(
+      context,
+      item,
+    );
+    final confirm = config.confirmDismiss;
+    final dismissed = config.onDismissed;
+
+    return Dismissible(
+      key: key,
+      direction: config.direction,
+      background: background,
+      secondaryBackground: secondaryBackground,
+      confirmDismiss: (confirm == null)
+          ? null
+          : (direction) => confirm(item, direction),
+      onDismissed: (dismissed == null)
+          ? null
+          : (direction) => dismissed(item, direction),
+      child: child,
+    );
+  }
+
+  Key _defaultDismissibleKey(ItemType item) {
+    final id = item.getId();
+    if (id == null) {
+      return ObjectKey(item);
+    }
+    return ValueKey(id);
   }
 
   Widget _maybeWrapPlaceholder(BuildContext context, Widget child) {

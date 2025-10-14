@@ -17,6 +17,15 @@ class _ListItem extends DraftModeListItem<String> {
   String getId() => id;
 }
 
+class _OptionalListItem extends DraftModeListItem<String?> {
+  final String label;
+
+  _OptionalListItem(this.label);
+
+  @override
+  String? getId() => null;
+}
+
 class _ListTile extends DraftModeFormListItemWidget<_ListItem> {
   const _ListTile({required super.item, required super.isSelected});
 
@@ -28,6 +37,13 @@ class _ListTile extends DraftModeFormListItemWidget<_ListItem> {
 
 class _SimpleTile extends DraftModeFormListItemWidget<_ListItem> {
   const _SimpleTile({required super.item, required super.isSelected});
+
+  @override
+  Widget build(BuildContext context) => Text(item.label);
+}
+
+class _OptionalTile extends DraftModeFormListItemWidget<_OptionalListItem> {
+  const _OptionalTile({required super.item, required super.isSelected});
 
   @override
   Widget build(BuildContext context) => Text(item.label);
@@ -216,6 +232,94 @@ void main() {
       find.byType(CupertinoSliverRefreshControl, skipOffstage: false),
       findsOneWidget,
     );
+  });
+
+  testWidgets('wraps items with dismissible configuration', (tester) async {
+    final items = [_ListItem('a', 'Alpha')];
+    final confirmCalls = <DismissDirection>[];
+    final dismissedCalls = <DismissDirection>[];
+    final confirmedItems = <DraftModeListItem<String>>[];
+    final dismissedItems = <DraftModeListItem<String>>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DraftModeFormList<_ListItem, String>(
+            items: items,
+            itemBuilder: (context, item, isSelected) =>
+                _SimpleTile(item: item, isSelected: isSelected),
+            dismissible: DraftModeFormListDismissible<_ListItem>(
+              backgroundBuilder: (_, __) => const SizedBox.shrink(),
+              secondaryBackgroundBuilder: (_, __) => const SizedBox.shrink(),
+              confirmDismiss: (item, direction) async {
+                confirmedItems.add(item);
+                confirmCalls.add(direction);
+                return true;
+              },
+              onDismissed: (item, direction) {
+                dismissedItems.add(item);
+                dismissedCalls.add(direction);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final dismissibleFinder = find.byType(Dismissible);
+    expect(dismissibleFinder, findsOneWidget);
+
+    await tester.drag(find.text('Alpha'), const Offset(-400, 0));
+    await tester.pumpAndSettle();
+
+    expect(confirmedItems.single, same(items.first));
+    expect(confirmCalls.single, DismissDirection.endToStart);
+    expect(dismissedItems.single, same(items.first));
+    expect(dismissedCalls.single, DismissDirection.endToStart);
+    expect(find.text('Alpha'), findsNothing);
+  });
+
+  testWidgets('uses ValueKey when list items provide an id', (tester) async {
+    final item = _ListItem('a', 'Alpha');
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DraftModeFormList<_ListItem, String>(
+            items: [item],
+            itemBuilder: (context, item, isSelected) =>
+                _SimpleTile(item: item, isSelected: isSelected),
+            dismissible: const DraftModeFormListDismissible<_ListItem>(),
+          ),
+        ),
+      ),
+    );
+
+    final dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
+    expect(dismissible.key, const ValueKey('a'));
+  });
+
+  testWidgets('falls back to ObjectKey when list item id is null', (
+    tester,
+  ) async {
+    final item = _OptionalListItem('Transient');
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DraftModeFormList<_OptionalListItem, String?>(
+            items: [item],
+            itemBuilder: (context, item, isSelected) =>
+                _OptionalTile(item: item, isSelected: isSelected),
+            dismissible:
+                const DraftModeFormListDismissible<_OptionalListItem>(),
+          ),
+        ),
+      ),
+    );
+
+    final dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
+    expect(dismissible.key, ObjectKey(item));
   });
 
   testWidgets('pending spinner remains pinned while content scrolls', (

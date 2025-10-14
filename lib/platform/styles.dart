@@ -27,7 +27,7 @@ class DraftModeStyleColor {
   );
 }
 
-class DraftModeStyleColorActive {
+class DraftModeStyleColorTint {
   static DraftModeStyleColorRole get primary => const DraftModeStyleColorRole(
     background: CupertinoColors.systemBlue,
     text: CupertinoColors.white,
@@ -45,6 +45,25 @@ class DraftModeStyleColorActive {
         background: CupertinoColors.black,
         text: CupertinoColors.white,
       );
+}
+
+class DraftModeStyleColorActive {
+  static DraftModeStyleColorRole get primary => DraftModeStyleColorRole(
+    background: DraftModeStyleColorTint.primary.background,
+    text: DraftModeStyleColorTint.primary.text,
+  );
+  static DraftModeStyleColorRole get secondary => DraftModeStyleColorRole(
+    background: DraftModeStyleColorTint.secondary.background,
+    text: DraftModeStyleColorTint.secondary.text,
+  );
+  static DraftModeStyleColorRole get tertiary => DraftModeStyleColorRole(
+    background: DraftModeStyleColorTint.tertiary.background,
+    text: DraftModeStyleColorTint.tertiary.text,
+  );
+  static DraftModeStyleColorRole get quaternary => DraftModeStyleColorRole(
+    background: DraftModeStyleColorTint.quaternary.background,
+    text: DraftModeStyleColorTint.quaternary.text,
+  );
 }
 
 class DraftModeStyleText {

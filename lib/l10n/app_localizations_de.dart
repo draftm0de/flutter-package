@@ -18,6 +18,9 @@ class DraftModeLocalizationsDe extends DraftModeLocalizations {
   String get navigationBtnCancel => 'Abbrechen';
 
   @override
+  String get dialogBtnDelete => 'Löschen';
+
+  @override
   String get dialogBtnConfirm => 'OK';
 
   @override

@@ -32,7 +32,6 @@ class DraftModeElementRefreshList extends StatelessWidget {
       if (padding != null) {
         sliver = SliverPadding(padding: padding, sliver: sliver);
       }
-      debugPrint("build for IOS");
 
       return CustomScrollView(
         scrollDirection: listView.scrollDirection,
