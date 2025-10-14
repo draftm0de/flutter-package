@@ -119,6 +119,12 @@ abstract class DraftModeLocalizations {
   /// **'Cancel'**
   String get navigationBtnCancel;
 
+  /// No description provided for @dialogBtnDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get dialogBtnDelete;
+
   /// No description provided for @dialogBtnConfirm.
   ///
   /// In en, this message translates to:
