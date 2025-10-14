@@ -167,6 +167,54 @@ void main() {
     expect(find.byKey(const ValueKey('separator')), findsNWidgets(1));
   });
 
+  testWidgets('renders header, separator, and refresh container together', (
+    tester,
+  ) async {
+    int refreshInvocations = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: DraftModeFormList<_ListItem, String>(
+            items: [_ListItem('a', 'Alpha'), _ListItem('b', 'Beta')],
+            itemBuilder: (context, item, isSelected) =>
+                _SimpleTile(item: item, isSelected: isSelected),
+            header: const Text('List Header'),
+            separator: const Divider(),
+            onRefresh: () async {
+              refreshInvocations += 1;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    expect(find.text('List Header'), findsOneWidget);
+    expect(find.byType(DraftModeElementRefreshList), findsOneWidget);
+    expect(find.byType(Column), findsWidgets);
+
+    final column = tester
+        .widgetList<Column>(find.byType(Column))
+        .firstWhere(
+          (widget) =>
+              widget.children.length == 3 &&
+              widget.children.first is Text &&
+              widget.children[1] is Divider,
+          orElse: () => throw StateError('Header column not found'),
+        );
+
+    expect(column.children.last, isA<DraftModeElementRefreshList>());
+
+    // Trigger refresh to ensure the handler is wired up correctly.
+    await tester.drag(find.byType(RefreshIndicator), const Offset(0, 250));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(refreshInvocations, greaterThanOrEqualTo(1));
+  });
+
   testWidgets('invokes onRefresh when pulled down', (tester) async {
     int reloadCount = 0;
     final items = [_ListItem('a', 'Alpha'), _ListItem('b', 'Beta')];
