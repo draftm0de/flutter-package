@@ -108,6 +108,31 @@ void main() {
     expect(find.text('Alpha'), findsNothing);
   });
 
+  testWidgets('rejects swipe when direction is not supported', (tester) async {
+    bool called = false;
+
+    await tester.pumpWidget(
+      _buildApp(
+        dismissible: _buildConfig(
+          onDelete: (item) async {
+            called = true;
+            return true;
+          },
+        ),
+      ),
+    );
+
+    final dismissible = tester.widget<Dismissible>(find.byType(Dismissible));
+    final confirm = dismissible.confirmDismiss;
+
+    expect(confirm, isNotNull);
+
+    final allowed = await confirm!(DismissDirection.startToEnd);
+
+    expect(allowed, isFalse);
+    expect(called, isFalse);
+  });
+
   testWidgets('restores the item when onDelete returns false', (tester) async {
     bool called = false;
 
