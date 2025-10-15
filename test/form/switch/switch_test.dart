@@ -15,7 +15,7 @@ void main() {
   });
 
   testWidgets('toggles attribute when switched', (tester) async {
-    final attribute = DraftModeEntityAttribute<bool>(value: false);
+    final attribute = DraftModeEntityAttribute<bool>(false);
     final formKey = GlobalKey<DraftModeFormState>();
 
     await tester.pumpWidget(
@@ -38,7 +38,7 @@ void main() {
   });
 
   testWidgets('disabled switch does not change value', (tester) async {
-    final attribute = DraftModeEntityAttribute<bool>(value: false);
+    final attribute = DraftModeEntityAttribute<bool>(false);
 
     await tester.pumpWidget(
       CupertinoApp(

@@ -11,7 +11,7 @@ void main() {
 
   testWidgets('updates attribute when selecting a new day', (tester) async {
     final attribute = DraftModeEntityAttribute<DateTime>(
-      value: DateTime(2024, 1, 15, 9, 0),
+      DateTime(2024, 1, 15, 9, 0),
     );
     DateTime? observed;
 
@@ -42,7 +42,7 @@ void main() {
     tester,
   ) async {
     final attribute = DraftModeEntityAttribute<DateTime>(
-      value: DateTime(2024, 1, 15, 9, 0),
+      DateTime(2024, 1, 15, 9, 0),
     );
 
     await tester.pumpWidget(
