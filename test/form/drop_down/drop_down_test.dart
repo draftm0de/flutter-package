@@ -24,7 +24,7 @@ void main() {
   });
 
   testWidgets('shows selection page and updates attribute', (tester) async {
-    final attribute = DraftModeEntityAttribute<String>();
+    final attribute = DraftModeEntityAttribute<String>(null);
     final items = DraftModeEntityCollection<_TestItem>([
       _TestItem('a', 'Alpha'),
       _TestItem('b', 'Beta'),
@@ -62,7 +62,7 @@ void main() {
   });
 
   testWidgets('respects readOnly flag', (tester) async {
-    final attribute = DraftModeEntityAttribute<String>();
+    final attribute = DraftModeEntityAttribute<String>(null);
     final items = DraftModeEntityCollection<_TestItem>([
       _TestItem('a', 'Alpha'),
     ]);

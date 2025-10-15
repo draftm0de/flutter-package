@@ -14,6 +14,7 @@ void main() {
       final context = SimpleContext.lastContext!;
 
       final attribute = DraftModeEntityAttribute<String>(
+        null,
         validator: (ctx, form, value) =>
             value == 'invalid' ? 'primary-error' : null,
       );
@@ -33,6 +34,7 @@ void main() {
       final context = SimpleContext.lastContext!;
 
       final attribute = DraftModeEntityAttribute<String>(
+        null,
         validator: (ctx, form, value) => null,
       );
 
@@ -59,6 +61,7 @@ void main() {
         final context = SimpleContext.lastContext!;
 
         final attribute = DraftModeEntityAttribute<String>(
+          null,
           validators: <DraftModeEntityValidator>[(ctx, form, value) => null],
         )..error = 'stale';
 

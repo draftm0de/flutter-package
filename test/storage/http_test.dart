@@ -1,15 +1,7 @@
-import 'dart:convert';
-
 import 'package:draftmode/storage/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:test/test.dart';
-
-class _MockEntity {
-  const _MockEntity(this.id);
-
-  final int id;
-}
 
 class _TrackingClient extends http.BaseClient {
   bool didClose = false;
@@ -27,164 +19,106 @@ class _TrackingClient extends http.BaseClient {
 
 void main() {
   group('DraftModeStorageHttp.fetchAll', () {
-    test('returns mapped results from a top-level list', () async {
+    test('performs GET with headers and query parameters', () async {
       final client = MockClient((request) async {
-        expect(request.url.toString(), 'https://api.example.com/items');
-        return http.Response(
-          jsonEncode([
-            {'id': 1},
-            {'id': 2},
-          ]),
-          200,
-          headers: const {'content-type': 'application/json'},
-        );
-      });
-      final storage = DraftModeStorageHttp(client: client);
-      addTearDown(storage.close);
-
-      final results = await storage.fetchAll<_MockEntity>(
-        'https://api.example.com/items',
-        fromJson: (json) => _MockEntity(json['id'] as int),
-      );
-
-      expect(results.map((entity) => entity.id), [1, 2]);
-    });
-
-    test('extracts items from the requested node', () async {
-      final client = MockClient((request) async {
-        expect(request.url.queryParameters, {'page': '1'});
+        expect(request.method, 'GET');
+        expect(request.url.toString(), 'https://api.example.com/items?page=1');
         expect(request.headers['x-user'], 'alice');
-        return http.Response(
-          jsonEncode({
-            'data': [
-              {'id': 7},
-            ],
-          }),
-          200,
-          headers: const {'content-type': 'application/json'},
-        );
+        return http.Response('[]', 200);
       });
       final storage = DraftModeStorageHttp(client: client);
       addTearDown(storage.close);
 
-      final results = await storage.fetchAll<_MockEntity>(
+      final response = await storage.fetchAll(
         'https://api.example.com/items',
-        nodeItem: 'data',
         queryParameters: const {'page': '1'},
         headers: const {'x-user': 'alice'},
-        fromJson: (json) => _MockEntity(json['id'] as int),
       );
 
-      expect(results.single.id, 7);
+      expect(response.statusCode, 200);
+      expect(response.body, '[]');
     });
 
-    test('returns empty list when the payload is empty', () async {
+    test('propagates non-success responses unchanged', () async {
       final client = MockClient((request) async {
-        return http.Response('', 200);
+        expect(request.method, 'GET');
+        return http.Response('oops', 503);
       });
       final storage = DraftModeStorageHttp(client: client);
       addTearDown(storage.close);
 
-      final results = await storage.fetchAll<_MockEntity>(
-        'https://api.example.com/items',
-        fromJson: (json) => _MockEntity(json['id'] as int),
-      );
+      final response = await storage.fetchAll('https://api.example.com/items');
 
-      expect(results, isEmpty);
-    });
-
-    test('returns empty list when the requested node is missing', () async {
-      final client = MockClient((request) async {
-        return http.Response(jsonEncode({}), 200);
-      });
-      final storage = DraftModeStorageHttp(client: client);
-      addTearDown(storage.close);
-
-      final results = await storage.fetchAll<_MockEntity>(
-        'https://api.example.com/items',
-        nodeItem: 'data',
-        fromJson: (json) => _MockEntity(json['id'] as int),
-      );
-
-      expect(results, isEmpty);
-    });
-
-    test('converts single objects into a one-item list', () async {
-      final client = MockClient((request) async {
-        return http.Response(
-          jsonEncode({'id': 42}),
-          200,
-          headers: const {'content-type': 'application/json'},
-        );
-      });
-      final storage = DraftModeStorageHttp(client: client);
-      addTearDown(storage.close);
-
-      final results = await storage.fetchAll<_MockEntity>(
-        'https://api.example.com/item',
-        fromJson: (json) => _MockEntity(json['id'] as int),
-      );
-
-      expect(results.map((entity) => entity.id), [42]);
-    });
-
-    test('throws http.ClientException when the response is not successful', () {
-      final client = MockClient((request) async {
-        return http.Response('oops', 404);
-      });
-      final storage = DraftModeStorageHttp(client: client);
-      addTearDown(storage.close);
-
-      expect(
-        storage.fetchAll<_MockEntity>(
-          'https://api.example.com/items',
-          fromJson: (json) => _MockEntity(json['id'] as int),
-        ),
-        throwsA(isA<http.ClientException>()),
-      );
-    });
-
-    test('throws FormatException for unexpected payload shapes', () {
-      final client = MockClient((request) async {
-        return http.Response(jsonEncode({'data': 5}), 200);
-      });
-      final storage = DraftModeStorageHttp(client: client);
-      addTearDown(storage.close);
-
-      expect(
-        storage.fetchAll<_MockEntity>(
-          'https://api.example.com/items',
-          nodeItem: 'data',
-          fromJson: (json) => _MockEntity(json['id'] as int),
-        ),
-        throwsA(isA<FormatException>()),
-      );
+      expect(response.statusCode, 503);
+      expect(response.body, 'oops');
     });
   });
 
   group('DraftModeStorageHttp.delete', () {
-    test('returns true for any 2xx status code', () async {
+    test('performs DELETE request and returns response', () async {
       final client = MockClient((request) async {
+        expect(request.method, 'DELETE');
+        expect(request.url.toString(), 'https://api.example.com/items/1');
+        expect(request.headers['x-api-key'], 'secret');
         return http.Response('', 204);
       });
       final storage = DraftModeStorageHttp(client: client);
       addTearDown(storage.close);
 
-      final result = await storage.delete('https://api.example.com/items/1');
+      final response = await storage.delete(
+        'https://api.example.com/items/1',
+        headers: const {'x-api-key': 'secret'},
+      );
 
-      expect(result, isTrue);
+      expect(response.statusCode, 204);
     });
 
-    test('returns false when the response is not successful', () async {
+    test('propagates non-success responses', () async {
       final client = MockClient((request) async {
+        expect(request.method, 'DELETE');
         return http.Response('', 404);
       });
       final storage = DraftModeStorageHttp(client: client);
       addTearDown(storage.close);
 
-      final result = await storage.delete('https://api.example.com/items/1');
+      final response = await storage.delete('https://api.example.com/items/1');
 
-      expect(result, isFalse);
+      expect(response.statusCode, 404);
+    });
+  });
+
+  group('DraftModeStorageHttp.post', () {
+    test('performs POST request with body and headers', () async {
+      final client = MockClient((request) async {
+        expect(request.method, 'POST');
+        expect(request.url.toString(), 'https://api.example.com/items');
+        expect(request.bodyFields, {'name': 'draft'});
+        expect(request.headers['x-api-key'], 'secret');
+        return http.Response('', 201);
+      });
+      final storage = DraftModeStorageHttp(client: client);
+      addTearDown(storage.close);
+
+      final response = await storage.post(
+        'https://api.example.com/items',
+        body: const {'name': 'draft'},
+        headers: const {'x-api-key': 'secret'},
+      );
+
+      expect(response.statusCode, 201);
+    });
+
+    test('propagates non-success responses', () async {
+      final client = MockClient((request) async {
+        expect(request.method, 'POST');
+        return http.Response('', 409);
+      });
+      final storage = DraftModeStorageHttp(client: client);
+      addTearDown(storage.close);
+
+      final response = await storage.post('https://api.example.com/items');
+
+      expect(response.statusCode, 409);
     });
   });
 

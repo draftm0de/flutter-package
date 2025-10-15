@@ -18,7 +18,7 @@ void main() {
   ) async {
     final cutoff = DateTime(2050, 1, 1);
     final attribute = DraftModeEntityAttribute<DateTime>(
-      value: DateTime(2000, 1, 1),
+      DateTime(2000, 1, 1),
       validator: (context, form, value) {
         if (value == null || value.isBefore(cutoff)) {
           return 'Select a future date';
@@ -49,7 +49,7 @@ void main() {
   testWidgets('DraftModeFormDateTime seeds attribute when missing', (
     tester,
   ) async {
-    final attribute = DraftModeEntityAttribute<DateTime>();
+    final attribute = DraftModeEntityAttribute<DateTime>(null);
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -77,7 +77,7 @@ void main() {
     (tester) async {
       final cutoff = DateTime(2050, 1, 1);
       final attribute = DraftModeEntityAttribute<DateTime>(
-        value: DateTime(2000, 1, 1, 10, 0),
+        DateTime(2000, 1, 1, 10, 0),
         validator: (context, form, value) {
           if (value == null || value.isBefore(cutoff)) {
             return 'Select a future date';
@@ -144,7 +144,7 @@ void main() {
     (tester) async {
       final cutoff = DateTime(2050, 1, 1);
       final attribute = DraftModeEntityAttribute<DateTime>(
-        value: DateTime(2000, 1, 1, 10, 0),
+        DateTime(2000, 1, 1, 10, 0),
         validator: (context, form, value) {
           if (value == null || value.isBefore(cutoff)) {
             return 'Select a future date';
@@ -212,7 +212,7 @@ void main() {
   ) async {
     final formKey = GlobalKey<DraftModeFormState>();
     final attribute = DraftModeEntityAttribute<DateTime>(
-      value: DateTime(2024, 1, 1, 8, 0),
+      DateTime(2024, 1, 1, 8, 0),
     );
 
     await tester.pumpWidget(
@@ -245,7 +245,7 @@ void main() {
 
   testWidgets('DraftModeFormDateTime invokes onSaved callback', (tester) async {
     final attribute = DraftModeEntityAttribute<DateTime>(
-      value: DateTime(2024, 2, 10, 14, 45),
+      DateTime(2024, 2, 10, 14, 45),
     );
     DateTime? savedValue;
 
@@ -280,10 +280,10 @@ void main() {
       if (_skipCoverage) return;
 
       final startAttribute = DraftModeEntityAttribute<DateTime>(
-        value: DateTime(2050, 1, 2, 10, 0),
+        DateTime(2050, 1, 2, 10, 0),
       );
       final endAttribute = DraftModeEntityAttribute<DateTime>(
-        value: DateTime(2050, 1, 2, 12, 0),
+        DateTime(2050, 1, 2, 12, 0),
         validator: (context, form, value) {
           final startValue = form?.read<DateTime>(startAttribute);
           if (value == null || startValue == null) return null;
@@ -351,10 +351,10 @@ void main() {
     'DraftModeFormDateTime re-associates when attribute instance changes',
     (tester) async {
       final attributeA = DraftModeEntityAttribute<DateTime>(
-        value: DateTime(2024, 1, 1, 9, 3),
+        DateTime(2024, 1, 1, 9, 3),
       );
       final attributeB = DraftModeEntityAttribute<DateTime>(
-        value: DateTime(2024, 2, 2, 14, 7),
+        DateTime(2024, 2, 2, 14, 7),
       );
 
       Future<void> pumpWith(
@@ -397,7 +397,7 @@ void main() {
     tester,
   ) async {
     final attribute = DraftModeEntityAttribute<DateTime>(
-      value: DateTime(2024, 6, 1, 9, 22),
+      DateTime(2024, 6, 1, 9, 22),
     );
 
     await tester.pumpWidget(

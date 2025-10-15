@@ -22,9 +22,9 @@ class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
 
   /// Creates a new attribute with an optional [debugName], [value], and
   /// initial [validator] list.
-  DraftModeEntityAttribute({
+  DraftModeEntityAttribute(
+    T? value, {
     this.debugName,
-    T? value,
     this.validator,
     List<DraftModeEntityValidator>? validators,
   }) : validators = validators != null

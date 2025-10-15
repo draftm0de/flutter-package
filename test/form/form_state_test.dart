@@ -6,7 +6,7 @@ import 'package:draftmode/form.dart';
 
 void main() {
   testWidgets('stores drafts and resets cleanly', (tester) async {
-    final attribute = DraftModeEntityAttribute<String>(value: 'saved');
+    final attribute = DraftModeEntityAttribute<String>('saved');
     final formKey = GlobalKey<DraftModeFormState>();
 
     await tester.pumpWidget(
@@ -41,7 +41,7 @@ void main() {
   testWidgets('registering and unregistering fields drives validation', (
     tester,
   ) async {
-    final attribute = DraftModeEntityAttribute<String>();
+    final attribute = DraftModeEntityAttribute<String>(null);
 
     await tester.pumpWidget(
       CupertinoApp(

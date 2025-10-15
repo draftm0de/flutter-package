@@ -16,6 +16,7 @@ void main() {
 
   testWidgets('updates draft values as the user types', (tester) async {
     final attribute = DraftModeEntityAttribute<String>(
+      null,
       validators: [
         (context, form, value) =>
             (value == null || value.isEmpty) ? 'Required' : null,
@@ -54,7 +55,7 @@ void main() {
   });
 
   testWidgets('toggles obscure eye suffix', (tester) async {
-    final attribute = DraftModeEntityAttribute<String>(value: 'secret');
+    final attribute = DraftModeEntityAttribute<String>('secret');
 
     await tester.pumpWidget(
       CupertinoApp(
