@@ -4,6 +4,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _TestEntity {}
 
+class _StoredUser {
+  const _StoredUser(this.id, this.name);
+
+  final int id;
+  final String name;
+
+  static _StoredUser fromJson(Map<String, dynamic> json) =>
+      _StoredUser(json['id'] as int, json['name'] as String);
+
+  static Map<String, dynamic> toJson(_StoredUser user) => <String, dynamic>{
+    'id': user.id,
+    'name': user.name,
+  };
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -31,6 +46,53 @@ void main() {
       await storage.write('payload');
       await storage.delete();
 
+      expect(await storage.read(), isNull);
+    });
+  });
+
+  group('DraftModeStorageEntityShared', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+    });
+
+    test('persists and retrieves typed entities', () async {
+      final storage = DraftModeStorageEntityShared<_StoredUser>(
+        fromJson: _StoredUser.fromJson,
+        toJson: _StoredUser.toJson,
+      );
+
+      const user = _StoredUser(7, 'Alice');
+
+      final didWrite = await storage.writeEntity(user);
+      expect(didWrite, isTrue);
+
+      final restored = await storage.entityRead<_StoredUser>();
+      expect(restored?.id, user.id);
+      expect(restored?.name, user.name);
+    });
+
+    test('returns null when no entity stored', () async {
+      final storage = DraftModeStorageEntityShared<_StoredUser>(
+        fromJson: _StoredUser.fromJson,
+        toJson: _StoredUser.toJson,
+      );
+
+      final restored = await storage.entityRead<_StoredUser>();
+
+      expect(restored, isNull);
+    });
+
+    test('deleteEntity clears persisted value', () async {
+      final storage = DraftModeStorageEntityShared<_StoredUser>(
+        fromJson: _StoredUser.fromJson,
+        toJson: _StoredUser.toJson,
+      );
+
+      const user = _StoredUser(1, 'Bob');
+      await storage.writeEntity(user);
+
+      final didDelete = await storage.deleteEntity();
+      expect(didDelete, isTrue);
       expect(await storage.read(), isNull);
     });
   });
