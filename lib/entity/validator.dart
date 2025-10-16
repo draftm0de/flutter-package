@@ -22,7 +22,9 @@ DraftModeEntityValidator vRequired() {
 
 /// Creates a validator that enforces a value only when [compare] evaluates to
 /// a truthy boolean within the surrounding form state.
-DraftModeEntityValidator vRequiredOn(DraftModeEntityAttributeI compare) {
+DraftModeEntityValidator vRequiredOn(
+  DraftModeEntityAttributeInterface compare,
+) {
   return (BuildContext context, DraftModeFormContext? form, dynamic v) {
     final cv = form!.read(compare);
     bool required = false;
@@ -43,7 +45,7 @@ DraftModeEntityValidator vRequiredOn(DraftModeEntityAttributeI compare) {
 /// comparison.
 DraftModeEntityValidator vGreaterThan(dynamic compare) {
   return (BuildContext context, DraftModeFormContext? form, dynamic v) {
-    final cv = (compare is DraftModeEntityAttributeI)
+    final cv = (compare is DraftModeEntityAttributeInterface)
         ? form!.read(compare)
         : compare;
     if (cv == null) return null;

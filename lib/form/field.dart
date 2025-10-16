@@ -7,11 +7,11 @@ import '../ui/text_error.dart';
 import 'form.dart';
 
 /// Adaptive text entry field wired into the Draftmode form infrastructure. It
-/// keeps the associated [DraftModeEntityAttributeI] in sync with the UI and
+/// keeps the associated [DraftModeEntityAttributeInterface] in sync with the UI and
 /// exposes Draftmode-specific affordances such as optional eye toggles and
 /// validation orchestration.
 class DraftModeFormField<T> extends StatefulWidget {
-  final DraftModeEntityAttributeI<T> attribute;
+  final DraftModeEntityAttributeInterface<T> attribute;
   final String? label;
   final String? placeholder;
   final bool obscureText;
@@ -80,7 +80,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     }
   }
 
-  void _detachFromForm({DraftModeEntityAttributeI? attribute}) {
+  void _detachFromForm({DraftModeEntityAttributeInterface? attribute}) {
     if (_form == null || !_fieldRegistered) return;
     _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
     _fieldRegistered = false;

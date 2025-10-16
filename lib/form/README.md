@@ -13,7 +13,7 @@ Key files:
   attribute syncing.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding.
-- `list.dart` - scrollable list builder that renders `DraftModeListItem`
+- `list.dart` - scrollable list builder that renders `DraftModeEntityInterface`
   implementations with `DraftModeFormListItemWidget` subclasses, optional
   selection handlers, and an `onReload` callback that enables pull-to-refresh
   flows while keeping paddings consistent across platforms. Accepts a

@@ -7,16 +7,12 @@ abstract class DraftModeFormContext {
   V? read<V>(dynamic attribute);
 }
 
-abstract class DraftModeListItem<T> {
-  T getId();
-}
-
 /// Extended form context that tracks cross-field dependencies during
 /// validation so linked attributes can re-validate when their source changes.
 abstract class DraftModeFormDependencyContext extends DraftModeFormContext {
-  void beginAttributeValidation(DraftModeEntityAttributeI attribute);
-  void endAttributeValidation(DraftModeEntityAttributeI attribute);
-  void registerDependency(DraftModeEntityAttributeI dependency);
+  void beginAttributeValidation(DraftModeEntityAttributeInterface attribute);
+  void endAttributeValidation(DraftModeEntityAttributeInterface attribute);
+  void registerDependency(DraftModeEntityAttributeInterface dependency);
 }
 
 /// Signature for entity-level validators that run in the UI layer but should
@@ -29,7 +25,8 @@ typedef DraftModeEntityValidator =
     );
 
 /// Interface for entity attributes that hold state and run validators.
-abstract class DraftModeEntityAttributeI<T> {
+/// Interface for entity attributes that hold state and run validators.
+abstract class DraftModeEntityAttributeInterface<T> {
   T? get value;
   set value(T? v);
 
@@ -48,4 +45,30 @@ abstract class DraftModeEntityAttributeI<T> {
   /// result. Implementations should be null-safe and treat `null` as pass-through.
   T? mapValue(T? value);
   String? validate(BuildContext context, DraftModeFormContext? form, T? v);
+}
+
+/// Contract for domain objects that expose a stable identifier used by form and
+/// list widgets to track selection state.
+abstract class DraftModeEntityInterface<T> {
+  T getId();
+}
+
+abstract class DraftModeStorageEntityInterface<T> {
+  List<String> get keys;
+  Map<String, dynamic> toJson(T entity, bool? keyLess);
+  Map<String, dynamic> toJsonKeyless(
+    Map<String, dynamic> data,
+    List<String> keys,
+  );
+  T fromJson(Map<String, dynamic> json);
+}
+
+class DraftModeStorageEntity {
+  Map<String, dynamic> toJsonKeyless(
+    Map<String, dynamic> data,
+    List<String> keys,
+  ) {
+    data.removeWhere((key, value) => keys.contains(key));
+    return data;
+  }
 }

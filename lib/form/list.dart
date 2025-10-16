@@ -12,7 +12,7 @@ import '../platform/styles.dart';
 /// expose the underlying list [item] and whether it is currently selected so
 /// parent widgets can remain stateless.
 typedef DraftModeFormListItemWidgetBuilder<
-  ItemType extends DraftModeListItem<dynamic>
+  ItemType extends DraftModeEntityInterface<dynamic>
 > =
     DraftModeFormListItemWidget<ItemType> Function(
       BuildContext context,
@@ -21,11 +21,11 @@ typedef DraftModeFormListItemWidgetBuilder<
     );
 
 typedef DraftModeFormListConfirmDismiss<
-  ItemType extends DraftModeListItem<dynamic>
+  ItemType extends DraftModeEntityInterface<dynamic>
 > = Future<bool?> Function(ItemType item, DismissDirection direction);
 
 typedef DraftModeFormListDismissedCallback<
-  ItemType extends DraftModeListItem<dynamic>
+  ItemType extends DraftModeEntityInterface<dynamic>
 > = void Function(ItemType item, DismissDirection direction);
 
 /// Configuration object that controls how list items behave when wrapped in a
@@ -33,7 +33,7 @@ typedef DraftModeFormListDismissedCallback<
 /// in `package:draftmode/ui.dart` (e.g. [DraftModeUIDismissibleDelete]) instead
 /// of instantiating this class directly.
 class DraftModeFormListDismissible<
-  ItemType extends DraftModeListItem<dynamic>
+  ItemType extends DraftModeEntityInterface<dynamic>
 > {
   final DismissDirection direction;
   final Widget? Function(BuildContext context, ItemType item)?
@@ -59,7 +59,7 @@ class DraftModeFormListDismissible<
 /// Consumers should extend this class so the constructor requires both the
 /// [item] and [isSelected] flag.
 abstract class DraftModeFormListItemWidget<
-  ItemType extends DraftModeListItem<dynamic>
+  ItemType extends DraftModeEntityInterface<dynamic>
 >
     extends StatelessWidget {
   final ItemType item;
@@ -78,7 +78,7 @@ abstract class DraftModeFormListItemWidget<
 /// another scroll view. Provide a controller or disable [shrinkWrap] to let it
 /// scroll independently.
 class DraftModeFormList<
-  ItemType extends DraftModeListItem<Identifier>,
+  ItemType extends DraftModeEntityInterface<Identifier>,
   Identifier
 >
     extends StatelessWidget {

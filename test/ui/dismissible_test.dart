@@ -5,7 +5,7 @@ import 'package:draftmode/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _ListItem extends DraftModeListItem<String> {
+class _ListItem extends DraftModeEntityInterface<String> {
   _ListItem(this.id, this.label);
 
   final String id;

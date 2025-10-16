@@ -2,10 +2,11 @@ import 'package:flutter/widgets.dart';
 
 import 'interface.dart';
 
-/// Mutable implementation of [DraftModeEntityAttributeI] used to back simple
+/// Mutable implementation of [DraftModeEntityAttributeInterface] used to back simple
 /// form fields. A single optional [validator] runs before any validators added
 /// at runtime, and errors are stored directly on the attribute instance.
-class DraftModeEntityAttribute<T> implements DraftModeEntityAttributeI<T> {
+class DraftModeEntityAttribute<T>
+    implements DraftModeEntityAttributeInterface<T> {
   @override
   final String? debugName;
 

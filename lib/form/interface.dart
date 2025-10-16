@@ -6,23 +6,26 @@ import '../entity/interface.dart';
 /// interact with it without creating tight coupling.
 abstract class DraftModeFormStateI implements DraftModeFormDependencyContext {
   void registerProperty(
-    DraftModeEntityAttributeI attribute, {
+    DraftModeEntityAttributeInterface attribute, {
     String? debugName,
   });
 
-  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value);
+  void updateProperty<T>(
+    DraftModeEntityAttributeInterface<T> attribute,
+    T? value,
+  );
 
   void registerField(
-    DraftModeEntityAttributeI attribute,
+    DraftModeEntityAttributeInterface attribute,
     GlobalKey<FormFieldState> key,
   );
 
   void unregisterField(
-    DraftModeEntityAttributeI attribute,
+    DraftModeEntityAttributeInterface attribute,
     GlobalKey<FormFieldState> key,
   );
 
-  void validateAttribute(DraftModeEntityAttributeI attribute);
+  void validateAttribute(DraftModeEntityAttributeInterface attribute);
 }
 
 enum DraftModeFormCalendarMode { date, time, datetime }
@@ -49,12 +52,3 @@ enum DraftModeFormCalendarHourSteps {
   /// Number of minutes between entries rendered in the picker.
   final int minutes;
 }
-
-@Deprecated('Use DraftModeFormCalendarMode instead')
-typedef DraftModeFormCalenderMode = DraftModeFormCalendarMode;
-
-@Deprecated('Use DraftModeFormCalendarPickerMode instead')
-typedef DraftModeFormCalenderPickerMode = DraftModeFormCalendarPickerMode;
-
-@Deprecated('Use DraftModeFormCalendarDurationMode instead')
-typedef DraftModeFormCalenderDurationMode = DraftModeFormCalendarDurationMode;

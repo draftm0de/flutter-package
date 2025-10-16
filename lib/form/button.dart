@@ -15,16 +15,6 @@ typedef DraftModeFormButtonSize = DraftModeUIButtonSize;
 /// variations (e.g. neutral time pickers vs. primary submit buttons).
 typedef DraftModeFormButtonColor = DraftModeUIButtonColor;
 
-/// Legacy alias maintained for backwards compatibility. Prefer
-/// [DraftModeFormButtonSize].
-@Deprecated('Use DraftModeFormButtonSize instead')
-typedef DraftModeFromButtonSize = DraftModeUIButtonSize;
-
-/// Legacy alias maintained for backwards compatibility. Prefer
-/// [DraftModeFormButtonColor].
-@Deprecated('Use DraftModeFormButtonColor instead')
-typedef DraftModeFromButtonColor = DraftModeUIButtonColor;
-
 /// Adaptive form button that understands Draftmode validation semantics. When
 /// provided with a [formKey] it validates and saves before invoking
 /// [onPressed]. Alternatively a modal [loadWidget] can be supplied to gather
@@ -33,10 +23,6 @@ class DraftModeFormButton extends StatefulWidget {
   final Widget content;
   final Widget? loadWidget;
   final Future<void> Function()? onPressed;
-
-  /// Retained for backwards compatibility; no longer used.
-  @Deprecated('No longer has any effect')
-  final bool extendIcon;
 
   final GlobalKey<FormState>? formKey;
   final DraftModeFormButtonSize? styleSize;
@@ -48,7 +34,6 @@ class DraftModeFormButton extends StatefulWidget {
     required this.content,
     this.loadWidget,
     this.onPressed,
-    this.extendIcon = false,
     this.formKey,
     this.styleSize,
     this.styleColor,

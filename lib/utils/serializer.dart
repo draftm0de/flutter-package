@@ -5,13 +5,17 @@ class DraftModeSerializer {
   const DraftModeSerializer();
 
   /// Parses [jsonString] and invokes [fromJson] when the payload is a
-  /// JSON object. Throws a [FormatException] when the input is not a JSON
-  /// object or when parsing fails.
-  T decodeObject<T>(
-    String jsonString,
+  /// JSON object. Returns `null` for blank payloads and throws a
+  /// [FormatException] when the input is not a JSON object or when parsing
+  /// fails.
+  T? decodeObject<T>(
+    String? jsonString,
     T Function(Map<String, dynamic>) fromJson,
   ) {
     try {
+      if (jsonString == null || jsonString.isEmpty) {
+        return null;
+      }
       final dynamic decoded = jsonDecode(jsonString);
       if (decoded is! Map<String, dynamic>) {
         throw const FormatException('Expected a JSON object.');

@@ -58,7 +58,7 @@ class DraftModePageNavigationItem extends StatelessWidget {
     } else if (text?.isNotEmpty == true) {
       child = Padding(
         padding: const EdgeInsets.only(right: 5),
-        child: Text(text!),
+        child: Text(text!, style: TextStyle(color: iconColor)),
       );
     } else {
       child = const SizedBox();
