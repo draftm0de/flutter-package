@@ -28,7 +28,7 @@ class DraftModeStorageEntityShared<T> extends DraftModeStorageShared {
     return await super.write(jsonString);
   }
 
-  Future<void> deleteEntity() async => await super.delete();
+  Future<bool> deleteEntity() async => await super.delete();
 }
 
 /// [DraftModeStorage] backed by `SharedPreferences`, primarily for
@@ -50,9 +50,9 @@ class DraftModeStorageShared {
     return await prefs.setString(_key, value);
   }
 
-  Future<void> delete() async {
+  Future<bool> delete() async {
     final prefs = await _prefs();
-    await prefs.remove(_key);
+    return await prefs.remove(_key);
   }
 
   Future<String?> read() async {
