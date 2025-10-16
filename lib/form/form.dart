@@ -33,8 +33,8 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   bool get enableValidation => _enableValidation;
 
   final Map<int, Object?> _drafts = <int, Object?>{};
-  final Map<int, DraftModeEntityAttributeI> _attributes =
-      <int, DraftModeEntityAttributeI>{};
+  final Map<int, DraftModeEntityAttributeInterface> _attributes =
+      <int, DraftModeEntityAttributeInterface>{};
   final Map<int, Set<GlobalKey<FormFieldState>>> _fields =
       <int, Set<GlobalKey<FormFieldState>>>{};
   final Map<int, Set<int>> _dependents = <int, Set<int>>{};
@@ -49,7 +49,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
 
   @override
   void registerProperty(
-    DraftModeEntityAttributeI attribute, {
+    DraftModeEntityAttributeInterface attribute, {
     String? debugName,
   }) {
     final key = identityHashCode(attribute);
@@ -64,7 +64,10 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
+  void updateProperty<T>(
+    DraftModeEntityAttributeInterface<T> attribute,
+    T? value,
+  ) {
     final key = identityHashCode(attribute);
     if (!_drafts.containsKey(key)) {
       _log(
@@ -82,7 +85,10 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
     _triggerDependentValidation(key);
   }
 
-  void _setProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
+  void _setProperty<T>(
+    DraftModeEntityAttributeInterface<T> attribute,
+    T? value,
+  ) {
     final key = identityHashCode(attribute);
     _log('setProperty ${attribute.debugName ?? '-'} value: $value #$key');
     final fields = _fields[key];
@@ -98,7 +104,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
 
   @override
   void registerField(
-    DraftModeEntityAttributeI attribute,
+    DraftModeEntityAttributeInterface attribute,
     GlobalKey<FormFieldState> key,
   ) {
     final attributeKey = identityHashCode(attribute);
@@ -110,7 +116,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
 
   @override
   void unregisterField(
-    DraftModeEntityAttributeI attribute,
+    DraftModeEntityAttributeInterface attribute,
     GlobalKey<FormFieldState> key,
   ) {
     final attributeKey = identityHashCode(attribute);
@@ -122,7 +128,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void validateAttribute(DraftModeEntityAttributeI attribute) {
+  void validateAttribute(DraftModeEntityAttributeInterface attribute) {
     final attributeKey = identityHashCode(attribute);
     final fields = _fields[attributeKey];
     if (fields == null) {
@@ -139,7 +145,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
 
   @override
   V? read<V>(dynamic attribute) {
-    if (attribute is! DraftModeEntityAttributeI) {
+    if (attribute is! DraftModeEntityAttributeInterface) {
       _log('read dynamic value (not attribute)');
       return attribute as V?;
     }
@@ -191,7 +197,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void beginAttributeValidation(DraftModeEntityAttributeI attribute) {
+  void beginAttributeValidation(DraftModeEntityAttributeInterface attribute) {
     final key = identityHashCode(attribute);
     if (_validationStack.isEmpty || _validationStack.last != key) {
       _validationStack.add(key);
@@ -200,7 +206,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void endAttributeValidation(DraftModeEntityAttributeI attribute) {
+  void endAttributeValidation(DraftModeEntityAttributeInterface attribute) {
     final key = identityHashCode(attribute);
     if (_validationStack.isNotEmpty && _validationStack.last == key) {
       _validationStack.removeLast();
@@ -210,7 +216,7 @@ class DraftModeFormState extends FormState implements DraftModeFormStateI {
   }
 
   @override
-  void registerDependency(DraftModeEntityAttributeI dependency) {
+  void registerDependency(DraftModeEntityAttributeInterface dependency) {
     if (_validationStack.isEmpty) return;
     final dependentKey = _validationStack.last;
     final dependencyKey = identityHashCode(dependency);

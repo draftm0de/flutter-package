@@ -11,7 +11,9 @@ import '../platform/styles.dart';
 /// Callers only need to provide the delete callback – the visual treatment and
 /// interaction wiring are handled internally so feature code can stay focused
 /// on business logic instead of UI plumbing.
-class DraftModeUIDismissibleDelete<ItemType extends DraftModeListItem<dynamic>>
+class DraftModeUIDismissibleDelete<
+  ItemType extends DraftModeEntityInterface<dynamic>
+>
     extends DraftModeFormListDismissible<ItemType> {
   /// [onDelete] should return `true` when the swipe can complete. Returning
   /// `false` restores the item without triggering the dismissal animation.

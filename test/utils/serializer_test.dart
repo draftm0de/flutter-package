@@ -17,8 +17,8 @@ void main() {
       final serializer = DraftModeSerializer();
       final user = serializer.decodeObject(json, _User.fromJson);
 
-      expect(user.id, 7);
-      expect(user.name, 'Alice');
+      expect(user?.id, 7);
+      expect(user?.name, 'Alice');
     });
 
     test('throws FormatException for invalid JSON object', () {

@@ -10,7 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../test_utils.dart';
 
-class _FakeAttribute<T> implements DraftModeEntityAttributeI<T> {
+class _FakeAttribute<T> implements DraftModeEntityAttributeInterface<T> {
   _FakeAttribute({this.debugName});
 
   @override
@@ -60,20 +60,23 @@ class _FakeFormState implements DraftModeFormStateI {
 
   @override
   void registerProperty(
-    DraftModeEntityAttributeI attribute, {
+    DraftModeEntityAttributeInterface attribute, {
     String? debugName,
   }) {
     throw UnimplementedError();
   }
 
   @override
-  void updateProperty<T>(DraftModeEntityAttributeI<T> attribute, T? value) {
+  void updateProperty<T>(
+    DraftModeEntityAttributeInterface<T> attribute,
+    T? value,
+  ) {
     throw UnimplementedError();
   }
 
   @override
   void registerField(
-    DraftModeEntityAttributeI attribute,
+    DraftModeEntityAttributeInterface attribute,
     GlobalKey<FormFieldState> key,
   ) {
     throw UnimplementedError();
@@ -81,14 +84,14 @@ class _FakeFormState implements DraftModeFormStateI {
 
   @override
   void unregisterField(
-    DraftModeEntityAttributeI attribute,
+    DraftModeEntityAttributeInterface attribute,
     GlobalKey<FormFieldState> key,
   ) {
     throw UnimplementedError();
   }
 
   @override
-  void validateAttribute(DraftModeEntityAttributeI attribute) {
+  void validateAttribute(DraftModeEntityAttributeInterface attribute) {
     throw UnimplementedError();
   }
 
@@ -98,13 +101,13 @@ class _FakeFormState implements DraftModeFormStateI {
   }
 
   @override
-  void beginAttributeValidation(DraftModeEntityAttributeI attribute) {}
+  void beginAttributeValidation(DraftModeEntityAttributeInterface attribute) {}
 
   @override
-  void endAttributeValidation(DraftModeEntityAttributeI attribute) {}
+  void endAttributeValidation(DraftModeEntityAttributeInterface attribute) {}
 
   @override
-  void registerDependency(DraftModeEntityAttributeI dependency) {}
+  void registerDependency(DraftModeEntityAttributeInterface dependency) {}
 }
 
 void main() {

@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _ListItem extends DraftModeListItem<String> {
+class _ListItem extends DraftModeEntityInterface<String> {
   final String id;
   final String label;
 
@@ -17,7 +17,7 @@ class _ListItem extends DraftModeListItem<String> {
   String getId() => id;
 }
 
-class _OptionalListItem extends DraftModeListItem<String?> {
+class _OptionalListItem extends DraftModeEntityInterface<String?> {
   final String label;
 
   _OptionalListItem(this.label);
@@ -286,8 +286,8 @@ void main() {
     final items = [_ListItem('a', 'Alpha')];
     final confirmCalls = <DismissDirection>[];
     final dismissedCalls = <DismissDirection>[];
-    final confirmedItems = <DraftModeListItem<String>>[];
-    final dismissedItems = <DraftModeListItem<String>>[];
+    final confirmedItems = <DraftModeEntityInterface<String>>[];
+    final dismissedItems = <DraftModeEntityInterface<String>>[];
 
     await tester.pumpWidget(
       MaterialApp(

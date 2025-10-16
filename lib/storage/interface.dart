@@ -3,10 +3,10 @@
 /// Implementations are expected to store values under a stable [key] derived
 /// from the entity type and operate asynchronously so they can be swapped for
 /// different backends in tests.
-abstract class DraftModeStorage {
+abstract class DraftModeStorage<T> {
   /// Reads the raw JSON string for the repository or returns `null` when no
   /// value is present.
-  Future<String?> read();
+  Future<T?> read();
 
   /// Persists the provided encoded JSON payload.
   Future<void> write(String value);
@@ -17,3 +17,5 @@ abstract class DraftModeStorage {
   /// Unique identifier used by the backing store for this repository.
   String get key;
 }
+
+abstract class DraftModeStorageInterface {}
