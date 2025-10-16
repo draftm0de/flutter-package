@@ -7,10 +7,6 @@ abstract class DraftModeFormContext {
   V? read<V>(dynamic attribute);
 }
 
-abstract class DraftModeListItem<T> {
-  T getId();
-}
-
 /// Extended form context that tracks cross-field dependencies during
 /// validation so linked attributes can re-validate when their source changes.
 abstract class DraftModeFormDependencyContext extends DraftModeFormContext {
@@ -28,6 +24,7 @@ typedef DraftModeEntityValidator =
       dynamic value,
     );
 
+/// Interface for entity attributes that hold state and run validators.
 /// Interface for entity attributes that hold state and run validators.
 abstract class DraftModeEntityAttributeInterface<T> {
   T? get value;
@@ -50,6 +47,8 @@ abstract class DraftModeEntityAttributeInterface<T> {
   String? validate(BuildContext context, DraftModeFormContext? form, T? v);
 }
 
+/// Contract for domain objects that expose a stable identifier used by form and
+/// list widgets to track selection state.
 abstract class DraftModeEntityInterface<T> {
   T getId();
 }

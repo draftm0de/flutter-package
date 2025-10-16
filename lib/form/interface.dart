@@ -52,12 +52,3 @@ enum DraftModeFormCalendarHourSteps {
   /// Number of minutes between entries rendered in the picker.
   final int minutes;
 }
-
-@Deprecated('Use DraftModeFormCalendarMode instead')
-typedef DraftModeFormCalenderMode = DraftModeFormCalendarMode;
-
-@Deprecated('Use DraftModeFormCalendarPickerMode instead')
-typedef DraftModeFormCalenderPickerMode = DraftModeFormCalendarPickerMode;
-
-@Deprecated('Use DraftModeFormCalendarDurationMode instead')
-typedef DraftModeFormCalenderDurationMode = DraftModeFormCalendarDurationMode;

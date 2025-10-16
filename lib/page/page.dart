@@ -35,6 +35,8 @@ class DraftModePage extends StatelessWidget {
   /// Widgets anchored to the left side of the bottom bar.
   final List<DraftModePageNavigationBottomItem>? bottomLeading;
 
+  final DraftModePageNavigationBottomItem? bottomCenter;
+
   /// Widgets anchored to the right side of the bottom bar.
   final List<DraftModePageNavigationBottomItem>? bottomTrailing;
 
@@ -62,6 +64,7 @@ class DraftModePage extends StatelessWidget {
     this.topLeading = defaultLeading,
     this.topTrailing,
     this.bottomLeading,
+    this.bottomCenter,
     this.bottomTrailing,
     this.onSavePressed,
     this.horizontalContainerPadding,
@@ -119,9 +122,11 @@ class DraftModePage extends StatelessWidget {
 
     final navigationBottom =
         (bottomLeading?.isNotEmpty == true ||
-            bottomTrailing?.isNotEmpty == true)
+            bottomTrailing?.isNotEmpty == true ||
+            bottomCenter != null)
         ? DraftModePageNavigationBottom(
             leading: bottomLeading,
+            primary: bottomCenter,
             trailing: bottomTrailing,
           )
         : null;
