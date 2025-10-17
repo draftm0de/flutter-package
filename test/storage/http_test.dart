@@ -122,6 +122,48 @@ void main() {
     });
   });
 
+  group('DraftModeStorageHttp.put', () {
+    test(
+      'performs PUT request with body, headers, and query parameters',
+      () async {
+        final client = MockClient((request) async {
+          expect(request.method, 'PUT');
+          expect(
+            request.url.toString(),
+            'https://api.example.com/items/1?refresh=true',
+          );
+          expect(request.body, '{"name":"draft"}');
+          expect(request.headers['x-api-key'], 'secret');
+          return http.Response('', 200);
+        });
+        final storage = DraftModeStorageHttp(client: client);
+        addTearDown(storage.close);
+
+        final response = await storage.put(
+          'https://api.example.com/items/1',
+          queryParameters: const {'refresh': 'true'},
+          body: '{"name":"draft"}',
+          headers: const {'x-api-key': 'secret'},
+        );
+
+        expect(response.statusCode, 200);
+      },
+    );
+
+    test('propagates non-success responses', () async {
+      final client = MockClient((request) async {
+        expect(request.method, 'PUT');
+        return http.Response('', 409);
+      });
+      final storage = DraftModeStorageHttp(client: client);
+      addTearDown(storage.close);
+
+      final response = await storage.put('https://api.example.com/items/1');
+
+      expect(response.statusCode, 409);
+    });
+  });
+
   group('DraftModeStorageHttp.close', () {
     test('disposes the owned client', () {
       final storage = DraftModeStorageHttp();

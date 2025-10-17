@@ -52,6 +52,23 @@ class DraftModeStorageHttp {
     return await _client.post(uri, headers: headers, body: body);
   }
 
+  /// Issues an HTTP PUT request and returns the raw [http.Response].
+  ///
+  /// The provided [body] and [headers] are passed directly to
+  /// [http.Client.put], allowing callers to control serialization and
+  /// content-type headers explicitly. Optional [queryParameters] are appended
+  /// to the request URL before dispatch.
+  Future<http.Response> put(
+    String url, {
+    Map<String, dynamic>? queryParameters,
+    Object? body,
+    Map<String, String>? headers,
+  }) async {
+    final uri = Uri.parse(url).replace(queryParameters: queryParameters);
+
+    return await _client.put(uri, headers: headers, body: body);
+  }
+
   /// Closes the underlying [http.Client]. Call when the instance is no longer
   /// needed to dispose of network resources.
   void close() {
