@@ -22,8 +22,8 @@ class DraftModePage extends StatelessWidget {
   /// Title displayed in the navigation bar.
   final String? navigationTitle;
 
-  /// Fallback label for the back button on iOS when [topLeading] is not
-  /// provided.
+  /// Optional label rendered next to the platform back icon when [topLeading]
+  /// is not provided. When `null`, the control renders icon-only.
   final String? topLeadingText;
 
   /// Custom leading widget; falls back to a platform back button.
@@ -89,11 +89,7 @@ class DraftModePage extends StatelessWidget {
     Widget? topLeadingElement;
     if (topLeading == defaultLeading) {
       topLeadingElement = DraftModePageNavigationTopItem(
-        text: PlatformConfig.isIOS
-            ? (topLeadingText ??
-                  DraftModeLocalizations.of(context)?.navigationBtnBack ??
-                  'Back')
-            : null,
+        text: topLeadingText,
         icon: PlatformButtons.back,
         onTap: btnBackPressed,
       );

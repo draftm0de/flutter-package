@@ -53,4 +53,7 @@ class PlatformButtons {
 
   static IconData get eyeSlash =>
       PlatformConfig.isIOS ? CupertinoIcons.eye_slash : Icons.visibility_off;
+
+  static IconData get trash =>
+      PlatformConfig.isIOS ? CupertinoIcons.delete : Icons.delete;
 }

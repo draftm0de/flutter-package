@@ -82,6 +82,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Body'), findsOneWidget);
+      expect(find.text('Back'), findsNothing);
     });
 
     testWidgets('invokes save callback and pops when true', (tester) async {
