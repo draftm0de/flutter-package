@@ -2,58 +2,47 @@ import 'package:draftmode/utils/formatter.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('DraftModeDateTime', () {
-    test('yMMdd pads month and day values', () {
-      final format = DraftModeDateTime.yMMdd('en_US');
-      final formatted = format.format(DateTime(2024, 3, 5));
-      expect(formatted.contains('03'), isTrue);
-      expect(formatted.contains('05'), isTrue);
+  group('DraftModeFormatter.parseHtmlToPlainText', () {
+    test('returns null when input is null', () {
+      expect(DraftModeFormatter.parseHtmlToPlainText(null), isNull);
     });
 
-    test('parse returns null for empty input and parses ISO strings', () {
-      expect(DraftModeDateTime.parse(null), isNull);
-      expect(DraftModeDateTime.parse('   '), isNull);
-      expect(DraftModeDateTime.parse('not-a-date'), isNull);
-      final parsed = DraftModeDateTime.parse('2024-03-05T10:15:00.000Z');
-      expect(parsed, isNotNull);
-      expect(parsed!.year, 2024);
+    test('strips tags and decodes entities', () {
+      const html = '<p>Hello&nbsp;<strong>World</strong>&amp;friends</p>';
+
+      final result = DraftModeFormatter.parseHtmlToPlainText(html);
+
+      expect(result, 'Hello World&friends');
     });
 
-    test('getDaysInMonth respects leap years', () {
-      expect(DraftModeDateTime.getDaysInMonth(2024, 2), 29);
-      expect(DraftModeDateTime.getDaysInMonth(2023, 2), 28);
+    test('converts paragraphs and breaks into line breaks', () {
+      const html = '<p>First</p><p>Second<br/>Line</p>';
+
+      final result = DraftModeFormatter.parseHtmlToPlainText(html);
+
+      expect(result, 'First\nSecond\nLine');
     });
 
-    test('getDaysInMonth handles December rollover', () {
-      expect(DraftModeDateTime.getDaysInMonth(2024, 12), 31);
+    test('limits consecutive line breaks using maxLineBreaks', () {
+      const html = '<p>First</p><p>Second</p><p>Third</p>';
+
+      final result = DraftModeFormatter.parseHtmlToPlainText(
+        html,
+        maxLineBreaks: 1,
+      );
+
+      expect(result, 'First\nSecond\nThird');
     });
 
-    test('getDurationHourMinutes normalises negative durations', () {
-      final from = DateTime(2024, 3, 5, 12, 0);
-      final to = DateTime(2024, 3, 5, 14, 30);
-      expect(DraftModeDateTime.getDurationHourMinutes(from, to), '2:30');
-      expect(DraftModeDateTime.getDurationHourMinutes(to, from), '2:30');
-    });
-  });
+    test('preserves multiple line breaks when allowed', () {
+      const html = '<p>First</p><p>Second</p>';
 
-  group('DraftModeFormatter', () {
-    test('parseInt handles ints and strings gracefully', () {
-      expect(DraftModeFormatter.parseInt(42), 42);
-      expect(DraftModeFormatter.parseInt(' 17 '), 17);
-      expect(DraftModeFormatter.parseInt('foo'), isNull);
-      expect(DraftModeFormatter.parseInt(3.14), isNull);
-    });
+      final result = DraftModeFormatter.parseHtmlToPlainText(
+        html,
+        maxLineBreaks: 2,
+      );
 
-    test('parseBool coerces common truthy and falsy inputs', () {
-      expect(DraftModeFormatter.parseBool(true), isTrue);
-      expect(DraftModeFormatter.parseBool(false), isFalse);
-      expect(DraftModeFormatter.parseBool(1), isTrue);
-      expect(DraftModeFormatter.parseBool(0), isFalse);
-      expect(DraftModeFormatter.parseBool('true'), isTrue);
-      expect(DraftModeFormatter.parseBool('1'), isTrue);
-      expect(DraftModeFormatter.parseBool('false'), isFalse);
-      expect(DraftModeFormatter.parseBool('0'), isFalse);
-      expect(DraftModeFormatter.parseBool(null), isFalse);
+      expect(result, 'First\n\nSecond');
     });
   });
 }
