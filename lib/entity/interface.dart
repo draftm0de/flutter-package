@@ -24,6 +24,22 @@ typedef DraftModeEntityValidator =
       dynamic value,
     );
 
+/// Enumerates the known validator families supported by DraftMode.
+enum DraftModeValidatorType {
+  requiredValue,
+  maxLength,
+  requiredOn,
+  greaterThan,
+}
+
+/// Validator wrapper that exposes metadata while remaining callable.
+abstract class DraftModeEntityTypedValidator {
+  DraftModeValidatorType get type;
+  Object? get payload;
+
+  String? call(BuildContext context, DraftModeFormContext? form, dynamic value);
+}
+
 /// Interface for entity attributes that hold state and run validators.
 /// Interface for entity attributes that hold state and run validators.
 abstract class DraftModeEntityAttributeInterface<T> {
@@ -45,6 +61,18 @@ abstract class DraftModeEntityAttributeInterface<T> {
   /// result. Implementations should be null-safe and treat `null` as pass-through.
   T? mapValue(T? value);
   String? validate(BuildContext context, DraftModeFormContext? form, T? v);
+
+  /// Returns the first validator matching [type], or `null` when not present.
+  ///
+  /// The returned instance implements [DraftModeEntityTypedValidator] so callers
+  /// can read metadata (for example, the `vMaxLen` payload) without knowing how
+  /// the validator was constructed.
+  DraftModeEntityTypedValidator? validatorByType(DraftModeValidatorType type);
+
+  /// Returns all validators matching [type], allowing repeated constraints.
+  Iterable<DraftModeEntityTypedValidator> validatorsByType(
+    DraftModeValidatorType type,
+  );
 }
 
 /// Contract for domain objects that expose a stable identifier used by form and

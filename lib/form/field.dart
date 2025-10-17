@@ -150,6 +150,12 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
         final int? lineCount = widget.lines;
         final int? minLines = obscured ? 1 : lineCount;
         final int? maxLines = obscured ? 1 : lineCount;
+        final maxLengthValidator = widget.attribute.validatorByType(
+          DraftModeValidatorType.maxLength,
+        );
+        final int? maxLength = maxLengthValidator?.payload is int
+            ? maxLengthValidator?.payload as int
+            : null;
 
         Widget child = Focus(
           focusNode: _focusNode,
@@ -173,6 +179,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             autocorrect: widget.autocorrect,
             minLines: minLines,
             maxLines: maxLines,
+            maxLength: maxLength,
             suffix: suffix,
             onChanged: (val) {
               // `T` defaults to `dynamic`, but explicit cast keeps type

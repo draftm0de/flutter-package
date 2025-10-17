@@ -51,6 +51,16 @@ class _FakeAttribute<T> implements DraftModeEntityAttributeInterface<T> {
   String? validate(BuildContext context, DraftModeFormContext? form, T? v) {
     throw UnimplementedError();
   }
+
+  @override
+  DraftModeEntityTypedValidator? validatorByType(DraftModeValidatorType type) {
+    return null;
+  }
+
+  @override
+  Iterable<DraftModeEntityTypedValidator> validatorsByType(
+    DraftModeValidatorType type,
+  ) => const <DraftModeEntityTypedValidator>[];
 }
 
 class _FakeFormState implements DraftModeFormStateI {

@@ -9,8 +9,11 @@ Key files:
 - `form.dart` - extends `FormState` with draft tracking so widgets can read
   unsaved changes via `DraftModeFormState.read` and validate individual
   attributes.
-- `field.dart` - text entry control with optional eye toggle and automatic
-  attribute syncing.
+- `field.dart` - text entry control with optional eye toggle, automatic
+  attribute syncing, and support for validator-aware affordances. When an
+  attached attribute registers `vMaxLen`, the field clamps `CupertinoTextField`
+  input via the validator's payload so UI limits stay in sync with backend
+  rules.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding.
 - `list.dart` - scrollable list builder that renders `DraftModeEntityInterface`

@@ -60,4 +60,9 @@ class DraftModeLocalizationsEn extends DraftModeLocalizations {
   String validationFormat({required Object expected}) {
     return 'Ungültiges Format ($expected)';
   }
+
+  @override
+  String validationMaxLen({required Object expected}) {
+    return 'Maximum length $expected reached';
+  }
 }
