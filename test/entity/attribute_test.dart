@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:draftmode/entity/attribute.dart';
 import 'package:draftmode/entity/interface.dart';
+import 'package:draftmode/entity/validator.dart';
 
 import '../test_utils.dart';
 
@@ -71,5 +72,35 @@ void main() {
         expect(attribute.error, isNull);
       },
     );
+  });
+
+  group('DraftModeEntityAttribute.validatorByType', () {
+    testWidgets('returns primary validator when matching type', (tester) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+
+      final attribute = DraftModeEntityAttribute<String>(
+        null,
+        validator: vMaxLen(5),
+      );
+
+      final typed = attribute.validatorByType(DraftModeValidatorType.maxLength);
+
+      expect(typed, isNotNull);
+      expect(typed!.payload, 5);
+    });
+
+    testWidgets('returns added validator when matching type', (tester) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+
+      final attribute = DraftModeEntityAttribute<String>(null);
+      attribute.addValidator(vMaxLen(7));
+
+      final typed = attribute.validatorByType(DraftModeValidatorType.maxLength);
+
+      expect(typed, isNotNull);
+      expect(typed!.payload, 7);
+    });
   });
 }

@@ -74,4 +74,29 @@ void main() {
     await tester.pump();
     expect(find.byIcon(CupertinoIcons.eye), findsOneWidget);
   });
+
+  testWidgets('limits text input length when vMaxLen registered', (
+    tester,
+  ) async {
+    final attribute = DraftModeEntityAttribute<String>(
+      null,
+      validators: <DraftModeEntityValidator>[vMaxLen(8)],
+    );
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeForm(
+          child: DraftModeFormField<String>(
+            attribute: attribute,
+            label: 'Code',
+          ),
+        ),
+      ),
+    );
+
+    final textField = tester.widget<CupertinoTextField>(
+      find.byType(CupertinoTextField),
+    );
+    expect(textField.maxLength, 8);
+  });
 }

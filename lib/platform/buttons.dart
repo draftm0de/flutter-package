@@ -29,6 +29,9 @@ class PlatformButtons {
   static IconData get stop =>
       PlatformConfig.isIOS ? CupertinoIcons.stop_fill : Icons.stop;
 
+  static IconData get edit =>
+      PlatformConfig.isIOS ? CupertinoIcons.pencil : Icons.edit;
+
   static IconData get arrowRight =>
       PlatformConfig.isIOS ? CupertinoIcons.right_chevron : Icons.chevron_right;
 
@@ -50,4 +53,7 @@ class PlatformButtons {
 
   static IconData get eyeSlash =>
       PlatformConfig.isIOS ? CupertinoIcons.eye_slash : Icons.visibility_off;
+
+  static IconData get trash =>
+      PlatformConfig.isIOS ? CupertinoIcons.delete : Icons.delete;
 }

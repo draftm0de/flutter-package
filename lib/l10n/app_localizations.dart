@@ -187,6 +187,12 @@ abstract class DraftModeLocalizations {
   /// In en, this message translates to:
   /// **'Ungültiges Format ({expected})'**
   String validationFormat({required Object expected});
+
+  /// No description provided for @validationMaxLen.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum length {expected} reached'**
+  String validationMaxLen({required Object expected});
 }
 
 class _DraftModeLocalizationsDelegate

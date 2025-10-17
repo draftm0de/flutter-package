@@ -9,6 +9,7 @@ class DraftModePageNavigationTopItem extends StatelessWidget {
   final IconData? icon;
   final bool iconExpanded;
   final Color? iconColor;
+  final double? iconHeight;
   final Future<void> Function()? onTap;
   final Widget? loadWidget;
 
@@ -18,16 +19,19 @@ class DraftModePageNavigationTopItem extends StatelessWidget {
     this.icon,
     this.iconExpanded = false,
     this.iconColor,
+    this.iconHeight,
     this.onTap,
     this.loadWidget,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double useIconHeight =
+        iconHeight ?? DraftModeStyleNavigationBar.top.iconHeight;
     return DraftModePageNavigationItem(
       text: text,
       icon: icon,
-      iconSize: PlatformStyles.topNavigationBarIconHeight,
+      iconSize: useIconHeight,
       iconExpanded: iconExpanded,
       iconColor: iconColor,
       onTap: onTap,

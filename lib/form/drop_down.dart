@@ -243,8 +243,8 @@ class _DraftModeFormDropDownScreenState<
                   itemId == widget.attribute.value;
               final child = CupertinoFormRow(
                 padding: EdgeInsets.symmetric(
-                  vertical: PlatformStyles.verticalContainerPadding / 2,
-                  horizontal: PlatformStyles.horizontalContainerPadding / 2,
+                  vertical: DraftModeStylePadding.primary / 2,
+                  horizontal: DraftModeStylePadding.primary / 2,
                 ),
                 prefix: widget.renderItem(item),
                 helper: null,

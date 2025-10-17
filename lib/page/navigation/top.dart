@@ -11,6 +11,7 @@ class DraftModePageNavigationTop extends StatelessWidget
   final List<Widget>? trailing;
   final bool centerTitle;
   final Color? backgroundColor;
+  final double? containerHeight;
 
   const DraftModePageNavigationTop({
     super.key,
@@ -19,29 +20,32 @@ class DraftModePageNavigationTop extends StatelessWidget
     this.trailing,
     this.centerTitle = true,
     this.backgroundColor,
+    this.containerHeight,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double useContainerHeight =
+        containerHeight ?? DraftModeStyleNavigationBar.top.containerHeight;
     final bool hasTitle = title != null && title!.isNotEmpty;
     if (PlatformConfig.isIOS) {
-      return CupertinoNavigationBar(
-        padding: EdgeInsetsDirectional.zero,
-        middle: hasTitle ? Text(title!) : null,
-        leading: leading,
-        trailing: trailing != null && trailing!.isNotEmpty
-            ? Padding(
-                padding: EdgeInsets.only(
-                  right: PlatformStyles.verticalContainerPadding,
-                ),
-                child: Row(
+      return Container(
+        constraints: BoxConstraints(minHeight: useContainerHeight),
+        child: CupertinoNavigationBar(
+          padding: EdgeInsetsDirectional.symmetric(
+            horizontal: DraftModeStylePadding.tertiary,
+          ),
+          middle: hasTitle ? Text(title!) : null,
+          leading: leading,
+          trailing: trailing != null && trailing!.isNotEmpty
+              ? Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: trailing!.map((widget) => widget).toList(),
-                ),
-              )
-            : null,
-        backgroundColor: backgroundColor,
+                )
+              : null,
+          backgroundColor: backgroundColor,
+        ),
       );
     } else {
       return AppBar(

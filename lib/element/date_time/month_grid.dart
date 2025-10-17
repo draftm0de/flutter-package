@@ -106,7 +106,7 @@ class DraftModeElementDateTimeMonthGrid extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: PlatformStyles.horizontalContainerPadding,
+            horizontal: DraftModeStylePadding.primary,
           ),
           child: Row(
             children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'interface.dart';
+import 'validator.dart';
 
 /// Mutable implementation of [DraftModeEntityAttributeInterface] used to back simple
 /// form fields. A single optional [validator] runs before any validators added
@@ -99,6 +100,43 @@ class DraftModeEntityAttribute<T>
       return null;
     } finally {
       dependencyContext?.endAttributeValidation(this);
+    }
+  }
+
+  @override
+  DraftModeEntityTypedValidator? validatorByType(DraftModeValidatorType type) {
+    final primary = validator;
+    final DraftModeEntityTypedValidator? typedPrimary = primary != null
+        ? lookupTypedValidator(primary)
+        : null;
+    if (typedPrimary != null && typedPrimary.type == type) {
+      return typedPrimary;
+    }
+    for (final candidate in validators) {
+      final typedCandidate = lookupTypedValidator(candidate);
+      if (typedCandidate != null && typedCandidate.type == type) {
+        return typedCandidate;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Iterable<DraftModeEntityTypedValidator> validatorsByType(
+    DraftModeValidatorType type,
+  ) sync* {
+    final primary = validator;
+    final DraftModeEntityTypedValidator? typedPrimary = primary != null
+        ? lookupTypedValidator(primary)
+        : null;
+    if (typedPrimary != null && typedPrimary.type == type) {
+      yield typedPrimary;
+    }
+    for (final candidate in validators) {
+      final typedCandidate = lookupTypedValidator(candidate);
+      if (typedCandidate != null && typedCandidate.type == type) {
+        yield typedCandidate;
+      }
     }
   }
 }

@@ -5,14 +5,8 @@ import '../platform/styles.dart';
 class DraftModeUITextError extends StatelessWidget {
   final String? text;
   final bool visible;
-  final double spacing;
 
-  const DraftModeUITextError({
-    super.key,
-    this.text,
-    this.visible = false,
-    this.spacing = 4,
-  });
+  const DraftModeUITextError({super.key, this.text, this.visible = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +19,12 @@ class DraftModeUITextError extends StatelessWidget {
     );
     return Padding(
       padding: EdgeInsets.only(
-        left: PlatformStyles.horizontalContainerPadding,
-        right: PlatformStyles.horizontalContainerPadding,
-        bottom: PlatformStyles.verticalContainerPadding,
-        top: spacing,
+        left: DraftModeStylePadding.primary,
+        right: DraftModeStylePadding.primary,
+        bottom: DraftModeStylePadding.tertiary,
+        top: DraftModeStylePadding.tertiary,
       ),
-      child: content,
+      child: SizedBox(width: double.infinity, child: content),
     );
   }
 }
