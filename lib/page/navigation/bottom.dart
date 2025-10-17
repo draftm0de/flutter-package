@@ -8,6 +8,7 @@ class DraftModePageNavigationBottom extends StatelessWidget {
   final List<Widget>? trailing;
   final bool centerTitle;
   final Color? backgroundColor;
+  final double? containerHeight;
 
   const DraftModePageNavigationBottom({
     super.key,
@@ -16,21 +17,22 @@ class DraftModePageNavigationBottom extends StatelessWidget {
     this.trailing,
     this.centerTitle = true,
     this.backgroundColor,
+    this.containerHeight,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double useContainerHeight =
+        containerHeight ?? DraftModeStyleNavigationBar.top.containerHeight;
     final content = SafeArea(
       top: false,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: PlatformStyles.bottomNavigationBarContainerHeight,
-        ),
+        constraints: BoxConstraints(minHeight: useContainerHeight),
         padding: EdgeInsets.symmetric(
-          horizontal: PlatformStyles.verticalContainerPadding,
+          horizontal: DraftModeStylePadding.secondary,
         ),
         child: SizedBox(
-          height: PlatformStyles.bottomNavigationBarItemHeight,
+          height: useContainerHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

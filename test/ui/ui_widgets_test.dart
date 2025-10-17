@@ -471,13 +471,13 @@ void main() {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.ltr,
-          child: DraftModeUITextError(text: 'error', visible: true, spacing: 6),
+          child: DraftModeUITextError(text: 'error', visible: true),
         ),
       );
 
       final padding = tester.widget<Padding>(find.byType(Padding));
       final resolved = padding.padding.resolve(TextDirection.ltr);
-      expect(resolved.top, 6);
+      expect(resolved.top, DraftModeStylePadding.tertiary);
       expect(find.text('error'), findsOneWidget);
     });
   });

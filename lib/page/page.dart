@@ -89,7 +89,7 @@ class DraftModePage extends StatelessWidget {
     Widget? topLeadingElement;
     if (topLeading == defaultLeading) {
       topLeadingElement = DraftModePageNavigationTopItem(
-        text: (PlatformConfig.isIOS)
+        text: PlatformConfig.isIOS
             ? (topLeadingText ??
                   DraftModeLocalizations.of(context)?.navigationBtnBack ??
                   'Back')

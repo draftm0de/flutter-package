@@ -29,6 +29,9 @@ class PlatformButtons {
   static IconData get stop =>
       PlatformConfig.isIOS ? CupertinoIcons.stop_fill : Icons.stop;
 
+  static IconData get edit =>
+      PlatformConfig.isIOS ? CupertinoIcons.pencil : Icons.edit;
+
   static IconData get arrowRight =>
       PlatformConfig.isIOS ? CupertinoIcons.right_chevron : Icons.chevron_right;
 

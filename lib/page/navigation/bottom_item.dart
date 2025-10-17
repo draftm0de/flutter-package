@@ -7,6 +7,7 @@ import '../../platform/styles.dart';
 class DraftModePageNavigationBottomItem extends StatelessWidget {
   final String? text;
   final IconData? icon;
+  final double? iconHeight;
   final Color? iconColor;
   final bool iconExpanded;
   final Future<void> Function()? onTap;
@@ -17,6 +18,7 @@ class DraftModePageNavigationBottomItem extends StatelessWidget {
     this.text,
     this.icon,
     this.iconColor,
+    this.iconHeight,
     this.iconExpanded = false,
     this.onTap,
     this.loadWidget,
@@ -24,10 +26,12 @@ class DraftModePageNavigationBottomItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double useIconHeight =
+        iconHeight ?? DraftModeStyleNavigationBar.bottom.iconHeight;
     return DraftModePageNavigationItem(
       text: text,
       icon: icon,
-      iconSize: PlatformStyles.bottomNavigationBarIconHeight,
+      iconSize: useIconHeight,
       iconExpanded: iconExpanded,
       iconColor: iconColor,
       onTap: onTap,

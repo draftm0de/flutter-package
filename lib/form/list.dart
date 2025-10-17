@@ -306,8 +306,8 @@ class DraftModeFormList<
     }
 
     return EdgeInsets.symmetric(
-      horizontal: PlatformStyles.horizontalContainerPadding,
-      vertical: PlatformStyles.verticalContainerPadding,
+      horizontal: DraftModeStylePadding.primary,
+      vertical: DraftModeStylePadding.primary,
     );
   }
 }

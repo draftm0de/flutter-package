@@ -23,6 +23,7 @@ class DraftModeFormField<T> extends StatefulWidget {
   final Widget? suffix;
   final bool enabled;
   final bool autocorrect;
+  final int? lines;
 
   const DraftModeFormField({
     super.key,
@@ -38,6 +39,7 @@ class DraftModeFormField<T> extends StatefulWidget {
     this.enabled = true,
     this.onSaved,
     this.autocorrect = false,
+    this.lines,
   });
 
   @override
@@ -144,6 +146,11 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
               )
             : widget.suffix;
 
+        final bool obscured = _obscureOn;
+        final int? lineCount = widget.lines;
+        final int? minLines = obscured ? 1 : lineCount;
+        final int? maxLines = obscured ? 1 : lineCount;
+
         Widget child = Focus(
           focusNode: _focusNode,
           onFocusChange: (hasFocus) {
@@ -159,11 +166,13 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             controller: _controller,
             enabled: widget.enabled,
             placeholder: widget.placeholder,
-            obscureText: _obscureOn,
+            obscureText: obscured,
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
             prefix: widget.prefix,
             autocorrect: widget.autocorrect,
+            minLines: minLines,
+            maxLines: maxLines,
             suffix: suffix,
             onChanged: (val) {
               // `T` defaults to `dynamic`, but explicit cast keeps type
