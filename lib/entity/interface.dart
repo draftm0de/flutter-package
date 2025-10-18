@@ -91,6 +91,10 @@ abstract class DraftModeStorageEntityInterface<T> {
   T fromJson(Map<String, dynamic> json);
 }
 
+abstract class DraftModeStorageEntityListInterface<T> {
+  List<T> fromJsonList(dynamic jsonList);
+}
+
 class DraftModeStorageEntity {
   Map<String, dynamic> toJsonKeyless(
     Map<String, dynamic> data,

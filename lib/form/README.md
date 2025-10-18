@@ -15,7 +15,9 @@ Key files:
   input via the validator's payload so UI limits stay in sync with backend
   rules.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
-  list using `DraftModePage` scaffolding.
+  list using `DraftModePage` scaffolding. Accepts a plain `List` of
+  `DraftModeEntityInterface` items so apps can source options from existing
+  collections without wrapping them in `DraftModeEntityCollection` first.
 - `list.dart` - scrollable list builder that renders `DraftModeEntityInterface`
   implementations with `DraftModeFormListItemWidget` subclasses, optional
   selection handlers, and an `onReload` callback that enables pull-to-refresh
@@ -29,9 +31,15 @@ Key files:
   calendar and time controls without range or duration features. The widget
   hooks a `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (for
   example round to five-minute increments) so any caller that updates the
-  attribute or the form state sees consistent values. Configure the minute
+  attribute or the form state sees consistent values. Attributes remain
+  untouched until `FormState.save` runs so flows can distinguish between
+  persisted values and draft edits. Configure the minute
   granularity via `hourSteps` using `DraftModeFormCalendarHourSteps` when flows
   require something other than the default five-minute interval.
+- `calendar.dart` - couples two date/time pickers for start/end flows. The
+  widget seeds missing start values, forwards change handlers for each side,
+  and keeps both pickers aligned with the shared `mode` and `hourSteps`
+  configuration.
 - `interface.dart` - shared form interfaces and enums, including the date-time
   picker mode types (`DraftModeFormCalendar*`) that expose the available
   segments.

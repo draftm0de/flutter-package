@@ -1,29 +1,27 @@
+import 'package:draftmode/platform.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../entity/attribute.dart';
-import '../entity/collection.dart';
 import '../l10n/app_localizations.dart';
 import '../page/navigation/top_item.dart';
 import '../page/page.dart';
-import '../platform/config.dart';
-import '../platform/styles.dart';
 import '../ui/row.dart';
 import '../ui/section.dart';
 import '../ui/text_error.dart';
+import '../entity/interface.dart';
 import 'form.dart';
 
 /// Draftmode-aware dropdown field that navigates to a platform-appropriate
 /// selection screen. Values propagate through the associated
-/// [DraftModeEntityAttribute] so validators and persistence behave the same as
+/// [DraftModeEntityAttributeInterface] so validators and persistence behave the same as
 /// other form controls.
 class DraftModeFormDropDown<
-  ItemType extends DraftModeEntityCollectionItem<ElementType>,
+  ItemType extends DraftModeEntityInterface<ElementType>,
   ElementType
 >
     extends StatefulWidget {
-  final DraftModeEntityCollection<ItemType> items;
-  final DraftModeEntityAttribute<ElementType> attribute;
+  final List<ItemType> items;
+  final DraftModeEntityAttributeInterface<ElementType> attribute;
   final String placeholder;
   final Widget Function(ItemType) renderItem;
   final bool readOnly;
@@ -49,7 +47,7 @@ class DraftModeFormDropDown<
 }
 
 class _DraftModeFormDropDownState<
-  ItemType extends DraftModeEntityCollectionItem<ElementType>,
+  ItemType extends DraftModeEntityInterface<ElementType>,
   ElementType
 >
     extends State<DraftModeFormDropDown<ItemType, ElementType>> {
@@ -79,7 +77,9 @@ class _DraftModeFormDropDownState<
     }
   }
 
-  void _detachFromForm({DraftModeEntityAttribute<ElementType>? attribute}) {
+  void _detachFromForm({
+    DraftModeEntityAttributeInterface<ElementType>? attribute,
+  }) {
     if (_form == null || !_fieldRegistered) return;
     _form?.unregisterField(attribute ?? widget.attribute, _fieldKey);
     _fieldRegistered = false;
@@ -136,6 +136,14 @@ class _DraftModeFormDropDownState<
       field.validate();
     }
 
+    ItemType? getItemById(ElementType? key) {
+      if (key == null) return null;
+      for (final item in items) {
+        if (item.getId() == key) return item;
+      }
+      return null;
+    }
+
     return FormField<ElementType>(
       key: _fieldKey,
       initialValue: selectedId,
@@ -148,9 +156,7 @@ class _DraftModeFormDropDownState<
       builder: (field) {
         final enableValidation = _form?.enableValidation ?? false;
         final showError = enableValidation && field.hasError;
-        final selectedItem = field.value != null
-            ? items.getById(field.value)
-            : null;
+        final selectedItem = getItemById(field.value);
 
         final content = Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,13 +197,13 @@ class _DraftModeFormDropDownState<
 /// Selection sheet pushed by [DraftModeFormDropDown]. Extracted so navigation
 /// follows the existing Draftmode page scaffolding and localisation helpers.
 class DraftModeFormDropDownScreen<
-  ItemType extends DraftModeEntityCollectionItem<ElementType>,
+  ItemType extends DraftModeEntityInterface<ElementType>,
   ElementType
 >
     extends StatefulWidget {
   final String selectionTitle;
-  final DraftModeEntityCollection<ItemType> items;
-  final DraftModeEntityAttribute<ElementType> attribute;
+  final List<ItemType> items;
+  final DraftModeEntityAttributeInterface<ElementType> attribute;
   final DraftModePageNavigationTopItem? trailing;
   final Widget Function(ItemType) renderItem;
 
@@ -221,7 +227,7 @@ class DraftModeFormDropDownScreen<
 }
 
 class _DraftModeFormDropDownScreenState<
-  ItemType extends DraftModeEntityCollectionItem<ElementType>,
+  ItemType extends DraftModeEntityInterface<ElementType>,
   ElementType
 >
     extends State<DraftModeFormDropDownScreen<ItemType, ElementType>> {
@@ -236,7 +242,7 @@ class _DraftModeFormDropDownScreenState<
       body: ListView(
         children: [
           DraftModeUISection(
-            children: items.items.map((item) {
+            children: items.map((item) {
               final itemId = item.getId();
               final isSelected =
                   widget.attribute.value != null &&
@@ -249,10 +255,10 @@ class _DraftModeFormDropDownScreenState<
                 prefix: widget.renderItem(item),
                 helper: null,
                 child: isSelected
-                    ? const Icon(
-                        CupertinoIcons.check_mark,
+                    ? Icon(
+                        PlatformButtons.save,
                         size: 22,
-                        color: CupertinoColors.activeBlue,
+                        color: DraftModeStyleColorTint.primary.background,
                       )
                     : const SizedBox.shrink(),
               );

@@ -2,7 +2,9 @@
 
 Utilities in this folder power Draftmode's entity abstraction layer:
 
-- `interface.dart` declares the shared attribute/validator contracts consumed by both form and entity layers.
+- `interface.dart` declares the shared attribute/validator contracts consumed
+  by both form and entity layers, including the storage list interface used to
+  deserialize API payloads into strongly typed collections.
 - `attribute.dart` defines `DraftModeEntityAttribute`, which stores values,
   orchestrates validation, exposes `validatorByType` / `validatorsByType`, and
   supports `addValueMapper` so callers can register normalization functions

@@ -46,25 +46,40 @@ void main() {
     expect(find.text('Select a future date'), findsOneWidget);
   });
 
-  testWidgets('DraftModeFormDateTime seeds attribute when missing', (
-    tester,
-  ) async {
-    final attribute = DraftModeEntityAttribute<DateTime>(null);
+  testWidgets(
+    'DraftModeFormDateTime exposes default selection without mutating attribute',
+    (tester) async {
+      final attribute = DraftModeEntityAttribute<DateTime>(null);
 
-    await tester.pumpWidget(
-      CupertinoApp(
-        home: DraftModeForm(
-          child: DraftModeFormDateTime(attribute: attribute, label: 'Start'),
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: DraftModeForm(
+            child: DraftModeFormDateTime(attribute: attribute, label: 'Start'),
+          ),
         ),
-      ),
-    );
+      );
 
-    expect(attribute.value, isNotNull);
+      expect(attribute.value, isNull);
 
-    final element = tester.element(find.byType(DraftModeFormDateTime));
-    final formState = DraftModeFormState.of(element)!;
-    expect(formState.read<DateTime>(attribute), attribute.value);
-  });
+      final field = tester.widget<DraftModeUIDateTimeField>(
+        find.byType(DraftModeUIDateTimeField),
+      );
+      final DateTime initialValue = field.value;
+      expect(initialValue, isNotNull);
+
+      final formState = tester.state<DraftModeFormState>(
+        find.byType(DraftModeForm),
+      );
+      expect(formState.read<DateTime>(attribute), isNull);
+
+      formState.save();
+      await tester.pump();
+
+      final savedValue = attribute.value;
+      expect(savedValue, isNotNull);
+      expect(savedValue, equals(initialValue));
+    },
+  );
 
   testWidgets(
     'DraftModeFormDateTime opens and closes picker on user tap',
@@ -188,7 +203,7 @@ void main() {
 
       expect(find.text('Select a future date'), findsNothing);
 
-      final updatedDate = _normalize(attribute.value!);
+      final updatedDate = formState.read<DateTime>(attribute)!;
       final updatedDateLabel = DraftModeDateTime.yMMdd(
         localeTag,
       ).format(updatedDate);
@@ -373,23 +388,37 @@ void main() {
         );
       }
 
-      final expectedA = _normalize(attributeA.value!);
+      final originalA = attributeA.value!;
+      final expectedA = _normalize(originalA);
       await pumpWith(attributeA);
       await tester.pump();
 
-      expect(attributeA.value, expectedA);
+      final firstField = tester.widget<DraftModeUIDateTimeField>(
+        find.byType(DraftModeUIDateTimeField),
+      );
+      expect(firstField.value, expectedA);
+      expect(attributeA.value, originalA);
 
-      final expectedB = _normalize(attributeB.value!);
       await pumpWith(attributeB);
       await tester.pump();
 
-      expect(attributeB.value, expectedB);
+      final fields = tester
+          .widgetList<DraftModeUIDateTimeField>(
+            find.byType(DraftModeUIDateTimeField),
+          )
+          .toList();
+      expect(fields, isNotEmpty);
+
+      final newValue = DateTime(2024, 3, 3, 16, 45);
+      fields.last.onChanged(newValue);
+      await tester.pump();
 
       final formState = tester.state<DraftModeFormState>(
         find.byType(DraftModeForm),
       );
-      final draftValue = formState.read<DateTime>(attributeB);
-      expect(draftValue, equals(expectedB));
+      expect(formState.read<DateTime>(attributeB), newValue);
+      expect(attributeA.value, originalA);
+      expect(attributeB.value, isNotNull);
     },
   );
 
@@ -411,13 +440,22 @@ void main() {
       ),
     );
 
-    final normalized = attribute.value!;
-    expect(normalized.minute, 15);
-
     final field = tester.widget<DraftModeUIDateTimeField>(
       find.byType(DraftModeUIDateTimeField),
     );
+    expect(field.value.minute % 15, 0);
     expect(field.hourSteps, DraftModeFormCalendarHourSteps.fifteen);
+
+    expect(attribute.value, DateTime(2024, 6, 1, 9, 22));
+
+    final formState = tester.state<DraftModeFormState>(
+      find.byType(DraftModeForm),
+    );
+    formState.save();
+    await tester.pump();
+
+    final saved = attribute.value!;
+    expect(saved.minute % 15, 0);
   });
 }
 
