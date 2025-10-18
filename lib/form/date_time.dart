@@ -33,6 +33,7 @@ class DraftModeFormDateTime extends StatefulWidget {
 
 class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   final _fieldKey = GlobalKey<FormFieldState<DateTime>>();
+
   late final FocusNode _focusNode = FocusNode(
     debugLabel: 'DraftModeFormDateTime',
   );
@@ -50,7 +51,6 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     final initial = widget.attribute.value ?? DateTime.now();
     final normalized = widget.attribute.mapValue(initial) ?? initial;
     _selected = normalized;
-    widget.attribute.value = normalized;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _syncFormAssociation();
@@ -106,7 +106,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     });
   }
 
-  void _update(DateTime value, {required bool hasError}) {
+  void _onChanged(DateTime value, {required bool hasError}) {
     final normalized = widget.attribute.mapValue(value) ?? value;
     setState(() {
       _selected = normalized;
@@ -114,7 +114,6 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
         _showErrorOnBlur = false;
       }
     });
-    widget.attribute.value = normalized;
     widget.onChanged?.call(normalized);
     _form?.updateProperty(widget.attribute, normalized);
   }
@@ -183,7 +182,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
                     final resolved = widget.attribute.mapValue(value) ?? value;
                     field.didChange(resolved);
                     final isValid = field.validate();
-                    _update(resolved, hasError: !isValid);
+                    _onChanged(resolved, hasError: !isValid);
                   },
                 ),
                 DraftModeUITextError(text: field.errorText, visible: showError),

@@ -22,7 +22,11 @@ void main() {
     test('performs GET with headers and query parameters', () async {
       final client = MockClient((request) async {
         expect(request.method, 'GET');
-        expect(request.url.toString(), 'https://api.example.com/items?page=1');
+        expect(request.url.queryParameters, {
+          'page': '1',
+          'tags': 'a,b',
+          'empty': '',
+        });
         expect(request.headers['x-user'], 'alice');
         return http.Response('[]', 200);
       });
@@ -31,7 +35,11 @@ void main() {
 
       final response = await storage.fetchAll(
         'https://api.example.com/items',
-        queryParameters: const {'page': '1'},
+        queryParameters: {
+          'page': 1,
+          'tags': ['a', 'b'],
+          'empty': null,
+        },
         headers: const {'x-user': 'alice'},
       );
 

@@ -34,7 +34,7 @@ void main() {
     await tester.tap(find.text('16'));
     await tester.pumpAndSettle();
 
-    expect(attribute.value, DateTime(2024, 1, 16, 9, 0));
+    expect(attribute.value, DateTime(2024, 1, 15, 9, 0));
     expect(observed, DateTime(2024, 1, 16, 9, 0));
   });
 

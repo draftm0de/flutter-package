@@ -5,7 +5,7 @@ import 'package:draftmode/entity.dart';
 import 'package:draftmode/form.dart';
 import 'package:draftmode/platform/config.dart';
 
-class _TestItem extends DraftModeEntityCollectionItem<String> {
+class _TestItem extends DraftModeEntityInterface<String> {
   final String id;
   final String label;
   _TestItem(this.id, this.label);
@@ -25,10 +25,7 @@ void main() {
 
   testWidgets('shows selection page and updates attribute', (tester) async {
     final attribute = DraftModeEntityAttribute<String>(null);
-    final items = DraftModeEntityCollection<_TestItem>([
-      _TestItem('a', 'Alpha'),
-      _TestItem('b', 'Beta'),
-    ]);
+    final items = <_TestItem>[_TestItem('a', 'Alpha'), _TestItem('b', 'Beta')];
 
     await tester.pumpWidget(
       CupertinoApp(
@@ -63,9 +60,7 @@ void main() {
 
   testWidgets('respects readOnly flag', (tester) async {
     final attribute = DraftModeEntityAttribute<String>(null);
-    final items = DraftModeEntityCollection<_TestItem>([
-      _TestItem('a', 'Alpha'),
-    ]);
+    final items = <_TestItem>[_TestItem('a', 'Alpha')];
 
     await tester.pumpWidget(
       CupertinoApp(

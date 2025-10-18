@@ -21,7 +21,9 @@ class DraftModeStorageHttp {
     Map<String, dynamic>? queryParameters,
     Map<String, String>? headers,
   }) async {
-    final uri = Uri.parse(url).replace(queryParameters: queryParameters);
+    final uri = Uri.parse(
+      url,
+    ).replace(queryParameters: _toQueryParameters(queryParameters));
 
     return await _client.get(uri, headers: headers);
   }
@@ -32,7 +34,9 @@ class DraftModeStorageHttp {
     Map<String, dynamic>? queryParameters,
     Map<String, String>? headers,
   }) async {
-    final uri = Uri.parse(url).replace(queryParameters: queryParameters);
+    final uri = Uri.parse(
+      url,
+    ).replace(queryParameters: _toQueryParameters(queryParameters));
 
     return await _client.delete(uri, headers: headers);
   }
@@ -64,7 +68,9 @@ class DraftModeStorageHttp {
     Object? body,
     Map<String, String>? headers,
   }) async {
-    final uri = Uri.parse(url).replace(queryParameters: queryParameters);
+    final uri = Uri.parse(
+      url,
+    ).replace(queryParameters: _toQueryParameters(queryParameters));
 
     return await _client.put(uri, headers: headers, body: body);
   }
@@ -75,5 +81,23 @@ class DraftModeStorageHttp {
     if (_ownsClient) {
       _client.close();
     }
+  }
+
+  Map<String, String>? _toQueryParameters(Map<String, dynamic>? source) {
+    if (source == null || source.isEmpty) {
+      return null;
+    }
+
+    final resolved = <String, String>{};
+    source.forEach((key, value) {
+      if (value == null) {
+        resolved[key] = '';
+      } else if (value is List) {
+        resolved[key] = value.join(',');
+      } else {
+        resolved[key] = value.toString();
+      }
+    });
+    return resolved;
   }
 }
