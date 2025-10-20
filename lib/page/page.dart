@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //
-import '../l10n/app_localizations.dart';
 import '../platform/buttons.dart';
 import '../platform/config.dart';
 import '../platform/styles.dart';
@@ -124,7 +123,7 @@ class DraftModePage extends StatelessWidget {
         : null;
 
     final Widget content = (navigationBottom == null)
-        ? body
+        ? SafeArea(top: false, child: body)
         : Column(
             children: [
               Expanded(child: SafeArea(top: false, bottom: false, child: body)),

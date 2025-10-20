@@ -48,6 +48,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Choose option'), findsOneWidget);
+    expect(find.byIcon(CupertinoIcons.back), findsOneWidget);
     await tester.tap(find.text('Beta'));
     await tester.pumpAndSettle();
 

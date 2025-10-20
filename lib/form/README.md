@@ -17,7 +17,10 @@ Key files:
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding. Accepts a plain `List` of
   `DraftModeEntityInterface` items so apps can source options from existing
-  collections without wrapping them in `DraftModeEntityCollection` first.
+  collections without wrapping them in `DraftModeEntityCollection` first. The
+  modal now relies on the default icon-only back affordance from
+  `DraftModePage`, keeping selection flows visually consistent with the rest of
+  the package.
 - `list.dart` - scrollable list builder that renders `DraftModeEntityInterface`
   implementations with `DraftModeFormListItemWidget` subclasses, optional
   selection handlers, and an `onReload` callback that enables pull-to-refresh

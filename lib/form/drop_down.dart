@@ -2,7 +2,6 @@ import 'package:draftmode/platform.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../l10n/app_localizations.dart';
 import '../page/navigation/top_item.dart';
 import '../page/page.dart';
 import '../ui/row.dart';
@@ -236,8 +235,6 @@ class _DraftModeFormDropDownScreenState<
     final items = widget.items;
     return DraftModePage(
       navigationTitle: widget.selectionTitle,
-      topLeadingText:
-          DraftModeLocalizations.of(context)?.navigationBtnCancel ?? 'Cancel',
       topTrailing: widget.trailing != null ? [widget.trailing!] : null,
       body: ListView(
         children: [
