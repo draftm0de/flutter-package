@@ -40,6 +40,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
   DraftModeFormCalendarPickerMode _mode =
       DraftModeFormCalendarPickerMode.closed;
   late DateTime _selected;
+  late DateTime? _approved;
   DraftModeFormState? _form;
   bool _fieldRegistered = false;
   bool _showErrorOnBlur = false;
@@ -51,6 +52,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
     final initial = widget.attribute.value ?? DateTime.now();
     final normalized = widget.attribute.mapValue(initial) ?? initial;
     _selected = normalized;
+    _approved = widget.attribute.value ?? normalized;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _syncFormAssociation();
@@ -114,6 +116,9 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
         _showErrorOnBlur = false;
       }
     });
+    if (!hasError) {
+      _approved = normalized;
+    }
     widget.onChanged?.call(normalized);
     _form?.updateProperty(widget.attribute, normalized);
   }
@@ -129,7 +134,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
       autovalidateMode: AutovalidateMode.disabled,
       validator: (value) => widget.attribute.validate(context, _form, value),
       onSaved: (value) {
-        final resolved = value ?? _selected;
+        final resolved = _approved ?? value ?? _selected;
         widget.attribute.value = resolved;
         widget.onSaved?.call(resolved);
       },

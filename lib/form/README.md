@@ -17,7 +17,10 @@ Key files:
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding. Accepts a plain `List` of
   `DraftModeEntityInterface` items so apps can source options from existing
-  collections without wrapping them in `DraftModeEntityCollection` first.
+  collections without wrapping them in `DraftModeEntityCollection` first. The
+  modal now relies on the default icon-only back affordance from
+  `DraftModePage`, keeping selection flows visually consistent with the rest of
+  the package.
 - `list.dart` - scrollable list builder that renders `DraftModeEntityInterface`
   implementations with `DraftModeFormListItemWidget` subclasses, optional
   selection handlers, and an `onReload` callback that enables pull-to-refresh
@@ -31,9 +34,10 @@ Key files:
   calendar and time controls without range or duration features. The widget
   hooks a `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (for
   example round to five-minute increments) so any caller that updates the
-  attribute or the form state sees consistent values. Attributes remain
-  untouched until `FormState.save` runs so flows can distinguish between
-  persisted values and draft edits. Configure the minute
+  attribute or the form state sees consistent values. It tracks the latest
+  validated selection so `FormState.save` persists either the untouched initial
+  value or the most recent change that cleared validation, preventing partially
+  edited timestamps from overwriting the attribute. Configure the minute
   granularity via `hourSteps` using `DraftModeFormCalendarHourSteps` when flows
   require something other than the default five-minute interval.
 - `calendar.dart` - couples two date/time pickers for start/end flows. The

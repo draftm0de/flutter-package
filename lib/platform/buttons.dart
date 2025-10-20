@@ -12,7 +12,7 @@ class PlatformButtons {
       PlatformConfig.isIOS ? CupertinoIcons.clear : Icons.close;
 
   static IconData get cancel =>
-      PlatformConfig.isIOS ? CupertinoIcons.clear_circled : Icons.circle;
+      PlatformConfig.isIOS ? CupertinoIcons.multiply_circle : Icons.circle;
 
   static IconData get settings =>
       PlatformConfig.isIOS ? CupertinoIcons.settings : Icons.settings;
@@ -20,17 +20,23 @@ class PlatformButtons {
   static IconData get save =>
       PlatformConfig.isIOS ? CupertinoIcons.check_mark : Icons.check;
 
+  static IconData get checkSecondary =>
+      PlatformConfig.isIOS ? CupertinoIcons.checkmark_alt : Icons.check;
+
   static IconData get logout =>
       PlatformConfig.isIOS ? CupertinoIcons.square_arrow_right : Icons.logout;
 
   static IconData get start =>
-      PlatformConfig.isIOS ? CupertinoIcons.play_arrow_solid : Icons.play_arrow;
+      PlatformConfig.isIOS ? CupertinoIcons.play_circle : Icons.play_arrow;
 
   static IconData get stop =>
       PlatformConfig.isIOS ? CupertinoIcons.stop_fill : Icons.stop;
 
   static IconData get edit =>
-      PlatformConfig.isIOS ? CupertinoIcons.pencil : Icons.edit;
+      PlatformConfig.isIOS ? CupertinoIcons.square_pencil : Icons.edit_square;
+
+  static IconData get plus =>
+      PlatformConfig.isIOS ? CupertinoIcons.plus : Icons.plus_one_rounded;
 
   static IconData get arrowRight =>
       PlatformConfig.isIOS ? CupertinoIcons.right_chevron : Icons.chevron_right;

@@ -115,7 +115,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Ready'));
+      final saveButton = find.byIcon(CupertinoIcons.check_mark);
+      expect(saveButton, findsOneWidget);
+      await tester.tap(saveButton);
       await tester.pumpAndSettle();
 
       expect(called, isTrue);
@@ -133,6 +135,28 @@ void main() {
 
       expect(find.byType(Scaffold), findsOneWidget);
       expect(find.text('Body'), findsOneWidget);
+    });
+
+    testWidgets('wraps body in SafeArea when no bottom navigation', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
+      await tester.pumpWidget(
+        _cupertinoShell(
+          DraftModePage(navigationTitle: 'Title', body: const Text('Body')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final safeAreaFinder = find.ancestor(
+        of: find.text('Body'),
+        matching: find.byType(SafeArea),
+      );
+      expect(safeAreaFinder, findsOneWidget);
+      final safeArea = tester.widget<SafeArea>(safeAreaFinder);
+      expect(safeArea.top, isFalse);
+      expect(safeArea.bottom, isTrue);
     });
 
     testWidgets('renders bottom navigation when provided', (tester) async {
@@ -241,8 +265,11 @@ void main() {
 
       final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
       expect(scaffold.backgroundColor, const Color(0xFFABCDEF));
+      final safeArea = scaffold.body! as SafeArea;
+      expect(safeArea.top, isFalse);
+      expect(safeArea.bottom, isTrue);
       expect(
-        scaffold.body,
+        safeArea.child,
         isA<Text>().having((text) => text.data, 'body text', 'Body'),
       );
     });

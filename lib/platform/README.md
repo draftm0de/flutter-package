@@ -5,7 +5,10 @@ Helpers for platform-aware theming and localisation:
 - `config.dart` – toggles the effective target platform (useful in tests).
 - `styles.dart` – centralises padding, typography, and colours derived from the
   active platform.
-- `buttons.dart` – returns platform-appropriate icons for common actions.
+- `buttons.dart` – returns platform-appropriate icons for common actions,
+  mirroring the latest platform glyph choices (for example
+  `CupertinoIcons.multiply_circle` for cancel, `CupertinoIcons.play_circle` for
+  start, and `CupertinoIcons.square_pencil` for edit).
 - `localization.dart` – wraps `DraftModeLocalizations` with a lightweight API
   and an English fallback.
 
