@@ -100,11 +100,7 @@ class DraftModePage extends StatelessWidget {
     final List<Widget> automaticTrailing = onSavePressed != null
         ? [
             DraftModePageNavigationTopItem(
-              text: PlatformConfig.isIOS
-                  ? (DraftModeLocalizations.of(context)?.navigationBtnSave ??
-                        'Ready')
-                  : null,
-              icon: PlatformConfig.isIOS ? null : PlatformButtons.save,
+              icon: PlatformButtons.save,
               onTap: handleSavePressed,
             ),
           ]
@@ -129,10 +125,10 @@ class DraftModePage extends StatelessWidget {
 
     final Widget content = (navigationBottom == null)
         ? body
-        : Stack(
+        : Column(
             children: [
-              Positioned.fill(child: body),
-              Align(alignment: Alignment.bottomCenter, child: navigationBottom),
+              Expanded(child: SafeArea(top: false, bottom: false, child: body)),
+              navigationBottom,
             ],
           );
 
@@ -144,7 +140,7 @@ class DraftModePage extends StatelessWidget {
         ? CupertinoPageScaffold(
             backgroundColor: background,
             navigationBar: navigationTop,
-            child: SafeArea(top: false, child: content),
+            child: content,
           )
         : Scaffold(
             appBar: navigationTop,

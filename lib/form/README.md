@@ -31,9 +31,10 @@ Key files:
   calendar and time controls without range or duration features. The widget
   hooks a `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (for
   example round to five-minute increments) so any caller that updates the
-  attribute or the form state sees consistent values. Attributes remain
-  untouched until `FormState.save` runs so flows can distinguish between
-  persisted values and draft edits. Configure the minute
+  attribute or the form state sees consistent values. It tracks the latest
+  validated selection so `FormState.save` persists either the untouched initial
+  value or the most recent change that cleared validation, preventing partially
+  edited timestamps from overwriting the attribute. Configure the minute
   granularity via `hourSteps` using `DraftModeFormCalendarHourSteps` when flows
   require something other than the default five-minute interval.
 - `calendar.dart` - couples two date/time pickers for start/end flows. The

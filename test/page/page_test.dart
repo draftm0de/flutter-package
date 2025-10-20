@@ -115,7 +115,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Ready'));
+      final saveButton = find.byIcon(CupertinoIcons.check_mark);
+      expect(saveButton, findsOneWidget);
+      await tester.tap(saveButton);
       await tester.pumpAndSettle();
 
       expect(called, isTrue);
