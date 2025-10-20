@@ -8,4 +8,5 @@ export 'ui/date_time/week_day.dart';
 export 'ui/date_time/time_line.dart';
 export 'ui/button.dart';
 export 'ui/grid_text.dart';
+export 'ui/icon_filled.dart';
 export 'ui/dismissible.dart';

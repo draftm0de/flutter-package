@@ -20,6 +20,9 @@ class PlatformButtons {
   static IconData get save =>
       PlatformConfig.isIOS ? CupertinoIcons.check_mark : Icons.check;
 
+  static IconData get checkSecondary =>
+      PlatformConfig.isIOS ? CupertinoIcons.checkmark_alt : Icons.check;
+
   static IconData get logout =>
       PlatformConfig.isIOS ? CupertinoIcons.square_arrow_right : Icons.logout;
 
@@ -31,6 +34,9 @@ class PlatformButtons {
 
   static IconData get edit =>
       PlatformConfig.isIOS ? CupertinoIcons.square_pencil : Icons.edit_square;
+
+  static IconData get plus =>
+      PlatformConfig.isIOS ? CupertinoIcons.plus : Icons.plus_one_rounded;
 
   static IconData get arrowRight =>
       PlatformConfig.isIOS ? CupertinoIcons.right_chevron : Icons.chevron_right;

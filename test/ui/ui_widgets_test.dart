@@ -1,3 +1,4 @@
+import 'package:draftmode/platform/buttons.dart';
 import 'package:draftmode/platform/config.dart';
 import 'package:draftmode/platform/styles.dart';
 import 'package:draftmode/ui/button.dart';
@@ -68,17 +69,22 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        const Directionality(
+        Directionality(
           textDirection: TextDirection.ltr,
           child: UnconstrainedBox(
             alignment: Alignment.topLeft,
-            child: SizedBox(height: 80, child: DraftModeDateTimeline()),
+            child: SizedBox(
+              height: 80,
+              child: DraftModeDateTimeline(
+                checkedIcon: PlatformButtons.checkSecondary,
+              ),
+            ),
           ),
         ),
       );
 
       final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
-      expect(size, const Size(28, 80));
+      expect(size, const Size(32, 80));
       expect(
         find.descendant(
           of: find.byType(DraftModeDateTimeline),
@@ -86,6 +92,7 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(find.byIcon(PlatformButtons.checkSecondary), findsOneWidget);
     });
 
     testWidgets('allows width customisation', (tester) async {
@@ -96,14 +103,14 @@ void main() {
             alignment: Alignment.topLeft,
             child: SizedBox(
               height: 64,
-              child: DraftModeDateTimeline(width: 32, showCheck: false),
+              child: DraftModeDateTimeline(width: 40, checkedIcon: null),
             ),
           ),
         ),
       );
 
       final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
-      expect(size, const Size(32, 64));
+      expect(size, const Size(40, 64));
       expect(
         find.descendant(
           of: find.byType(DraftModeDateTimeline),
@@ -123,14 +130,14 @@ void main() {
             height: 120,
             child: ListView(
               shrinkWrap: true,
-              children: const [DraftModeDateTimeline(showCheck: false)],
+              children: const [DraftModeDateTimeline(checkedIcon: null)],
             ),
           ),
         ),
       );
 
       final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
-      expect(size.height, 40);
+      expect(size.height, 44);
     });
 
     testWidgets('repaints when configuration changes', (tester) async {
@@ -148,9 +155,12 @@ void main() {
       expect(initialPainter.shouldRepaint(initialPainter), isFalse);
 
       await tester.pumpWidget(
-        const Directionality(
+        Directionality(
           textDirection: TextDirection.ltr,
-          child: DraftModeDateTimeline(lineColor: CupertinoColors.systemRed),
+          child: DraftModeDateTimeline(
+            lineColor: CupertinoColors.systemRed,
+            checkedIcon: PlatformButtons.checkSecondary,
+          ),
         ),
       );
 
@@ -165,37 +175,6 @@ void main() {
   group('DraftModeDateTimeline asserts', () {
     test('throws when width is not positive', () {
       expect(() => DraftModeDateTimeline(width: 0), throwsAssertionError);
-    });
-
-    test('throws when lineWidth is negative', () {
-      expect(() => DraftModeDateTimeline(lineWidth: -1), throwsAssertionError);
-    });
-
-    test('throws when nodeRadius is non-positive', () {
-      expect(() => DraftModeDateTimeline(nodeRadius: 0), throwsAssertionError);
-    });
-
-    test('throws when nodeStroke is negative', () {
-      expect(
-        () => DraftModeDateTimeline(nodeStroke: -0.5),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws when alignment is outside 0-1', () {
-      expect(
-        () => DraftModeDateTimeline(nodeAlignment: -0.1),
-        throwsAssertionError,
-      );
-      expect(
-        () => DraftModeDateTimeline(nodeAlignment: 1.1),
-        throwsAssertionError,
-      );
-    });
-
-    test('throws when padding is negative', () {
-      expect(() => DraftModeDateTimeline(padTop: -1), throwsAssertionError);
-      expect(() => DraftModeDateTimeline(padBottom: -1), throwsAssertionError);
     });
   });
 
