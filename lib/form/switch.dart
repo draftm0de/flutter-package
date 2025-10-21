@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../entity/attribute.dart';
 import '../ui/row.dart';
 import '../ui/switch.dart';
-import '../ui/text_error.dart';
+import '../ui/error_text.dart';
 import 'form.dart';
 
 /// Toggle control bound to a [DraftModeEntityAttribute]. Mirrors the behaviour
@@ -127,7 +127,7 @@ class _DraftModeFormSwitchState extends State<DraftModeFormSwitch> {
                     : null,
               ),
             ),
-            DraftModeUITextError(text: field.errorText, visible: showError),
+            DraftModeUIErrorText(text: field.errorText, visible: showError),
           ],
         );
       },

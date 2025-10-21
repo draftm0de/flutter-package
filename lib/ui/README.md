@@ -10,8 +10,10 @@ entity logic:
 - `section.dart` – groups rows into platform-appropriate sections and exposes an
   inherited scope for descendants.
 - `switch.dart` – adaptive boolean toggle that mirrors the native widget.
-- `text_error.dart` – consistent error text styling and spacing for validation
+- `error_text.dart` – consistent error text styling and spacing for validation
   messages.
+- `error_dialog.dart` – one-tap Cupertino alert for surfacing blocking errors
+  from form flows.
 - `diagnostics.dart` – developer-focused logging surface so other modules avoid
   emitting output directly.
 - `date_time.dart` – date/time field layout with platform toggles consumed by

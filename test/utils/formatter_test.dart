@@ -2,6 +2,24 @@ import 'package:draftmode/utils/formatter.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('DraftModeDateTime', () {
+    test('beginDay clamps to start of day', () {
+      final original = DateTime(2024, 5, 20, 13, 45, 30);
+
+      final result = DraftModeDateTime.beginDay(original);
+
+      expect(result, DateTime(2024, 5, 20));
+    });
+
+    test('endDay clamps to end of day', () {
+      final original = DateTime(2024, 5, 20, 7, 12, 1);
+
+      final result = DraftModeDateTime.endDay(original);
+
+      expect(result, DateTime(2024, 5, 20, 23, 59, 59));
+    });
+  });
+
   group('DraftModeFormatter.parseHtmlToPlainText', () {
     test('returns null when input is null', () {
       expect(DraftModeFormatter.parseHtmlToPlainText(null), isNull);
