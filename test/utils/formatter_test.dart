@@ -45,4 +45,30 @@ void main() {
       expect(result, 'First\n\nSecond');
     });
   });
+
+  group('DraftModeFormatter.decodedQueryParameters', () {
+    test('coerces primitive types and trims leading question mark', () {
+      final formatter = DraftModeFormatter();
+
+      final result = formatter.decodedQueryParameters(
+        '?count=5&flag=true&price=42.5&name=alice+bob',
+      );
+
+      expect(result['count'], 5);
+      expect(result['flag'], isTrue);
+      expect(result['price'], 42.5);
+      expect(result['name'], 'alice bob');
+    });
+
+    test('returns lists when parameters repeat', () {
+      final formatter = DraftModeFormatter();
+
+      final result = formatter.decodedQueryParameters(
+        'tag=design&tag=ux&empty=',
+      );
+
+      expect(result['tag'], ['design', 'ux']);
+      expect(result['empty'], '');
+    });
+  });
 }
