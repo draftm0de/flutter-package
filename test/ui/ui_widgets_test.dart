@@ -463,7 +463,9 @@ void main() {
   });
 
   group('DraftModeUIErrorDialog', () {
-    testWidgets('presents and dismisses dialog', (tester) async {
+    testWidgets('presents and dismisses dialog on iOS', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
       await tester.pumpWidget(
         CupertinoApp(
           home: Builder(
@@ -487,6 +489,42 @@ void main() {
       await tester.tap(find.text('Trigger'));
       await tester.pumpAndSettle();
 
+      expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+      expect(find.text('Failure'), findsOneWidget);
+      expect(find.text('Something went wrong'), findsOneWidget);
+
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Failure'), findsNothing);
+    });
+
+    testWidgets('renders material alert on Android', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed: () => DraftModeUIErrorDialog(
+                    context,
+                    title: 'Failure',
+                    message: 'Something went wrong',
+                  ),
+                  child: const Text('Trigger'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Trigger'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Failure'), findsOneWidget);
       expect(find.text('Something went wrong'), findsOneWidget);
 

@@ -1,21 +1,40 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as m;
 
-/// Displays a single-action Cupertino error dialog and resolves when dismissed.
+import '../platform/config.dart';
+
+/// Displays a single-action error dialog with platform-specific styling.
 Future<void> DraftModeUIErrorDialog(
   BuildContext context, {
   required String title,
   required String message,
 }) {
-  return showCupertinoDialog<void>(
+  if (PlatformConfig.isIOS) {
+    return showCupertinoDialog<void>(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  return m.showDialog<void>(
     context: context,
-    builder: (_) => CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(message),
+    builder: (_) => m.AlertDialog(
+      title: m.Text(title),
+      content: m.Text(message),
       actions: [
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          child: const Text('OK'),
+        m.TextButton(
           onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+          child: const Text('OK'),
         ),
       ],
     ),

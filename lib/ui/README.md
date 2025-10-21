@@ -12,8 +12,8 @@ entity logic:
 - `switch.dart` – adaptive boolean toggle that mirrors the native widget.
 - `error_text.dart` – consistent error text styling and spacing for validation
   messages.
-- `error_dialog.dart` – one-tap Cupertino alert for surfacing blocking errors
-  from form flows.
+- `error_dialog.dart` – platform-aware single-action alert for surfacing
+  blocking errors from form flows.
 - `diagnostics.dart` – developer-focused logging surface so other modules avoid
   emitting output directly.
 - `date_time.dart` – date/time field layout with platform toggles consumed by
