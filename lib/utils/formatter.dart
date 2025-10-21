@@ -103,4 +103,27 @@ class DraftModeFormatter {
 
     return text.trim();
   }
+
+  Map<String, dynamic> decodedQueryParameters(String qs) {
+    if (qs.startsWith('?')) qs = qs.substring(1);
+    final uri = Uri.parse('scheme://host?$qs');
+    final all = uri.queryParametersAll; // Map<String, List<String>>
+
+    dynamic _parse(String s) {
+      if (s == 'true') return true;
+      if (s == 'false') return false;
+      final i = int.tryParse(s);
+      if (i != null) return i;
+      final d = double.tryParse(s);
+      if (d != null) return d;
+      return s;
+    }
+
+    final out = <String, dynamic>{};
+    all.forEach((k, list) {
+      final parsedList = list.map(_parse).toList();
+      out[k] = parsedList.length == 1 ? parsedList.first : parsedList;
+    });
+    return out;
+  }
 }

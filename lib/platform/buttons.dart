@@ -26,8 +26,9 @@ class PlatformButtons {
   static IconData get logout =>
       PlatformConfig.isIOS ? CupertinoIcons.square_arrow_right : Icons.logout;
 
-  static IconData get start =>
-      PlatformConfig.isIOS ? CupertinoIcons.play_circle : Icons.play_arrow;
+  static IconData get start => PlatformConfig.isIOS
+      ? CupertinoIcons.largecircle_fill_circle
+      : Icons.mode_standby;
 
   static IconData get stop =>
       PlatformConfig.isIOS ? CupertinoIcons.stop_fill : Icons.stop;
