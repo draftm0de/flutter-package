@@ -7,7 +7,8 @@ import 'package:draftmode/ui/date_time/time_line.dart';
 import 'package:draftmode/ui/row.dart';
 import 'package:draftmode/ui/section.dart';
 import 'package:draftmode/ui/switch.dart';
-import 'package:draftmode/ui/text_error.dart';
+import 'package:draftmode/ui/error_dialog.dart';
+import 'package:draftmode/ui/error_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -423,12 +424,12 @@ void main() {
     });
   });
 
-  group('DraftModeUITextError', () {
+  group('DraftModeUIErrorText', () {
     testWidgets('hides when text is null', (tester) async {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.ltr,
-          child: DraftModeUITextError(),
+          child: DraftModeUIErrorText(),
         ),
       );
 
@@ -439,7 +440,7 @@ void main() {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.ltr,
-          child: DraftModeUITextError(text: 'error'),
+          child: DraftModeUIErrorText(text: 'error'),
         ),
       );
 
@@ -450,7 +451,7 @@ void main() {
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.ltr,
-          child: DraftModeUITextError(text: 'error', visible: true),
+          child: DraftModeUIErrorText(text: 'error', visible: true),
         ),
       );
 
@@ -458,6 +459,79 @@ void main() {
       final resolved = padding.padding.resolve(TextDirection.ltr);
       expect(resolved.top, DraftModeStylePadding.tertiary);
       expect(find.text('error'), findsOneWidget);
+    });
+  });
+
+  group('DraftModeUIErrorDialog', () {
+    testWidgets('presents and dismisses dialog on iOS', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: Builder(
+            builder: (context) => CupertinoPageScaffold(
+              navigationBar: const CupertinoNavigationBar(),
+              child: Center(
+                child: CupertinoButton(
+                  onPressed: () => DraftModeUIErrorDialog(
+                    context,
+                    title: 'Failure',
+                    message: 'Something went wrong',
+                  ),
+                  child: const Text('Trigger'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Trigger'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+      expect(find.text('Failure'), findsOneWidget);
+      expect(find.text('Something went wrong'), findsOneWidget);
+
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Failure'), findsNothing);
+    });
+
+    testWidgets('renders material alert on Android', (tester) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed: () => DraftModeUIErrorDialog(
+                    context,
+                    title: 'Failure',
+                    message: 'Something went wrong',
+                  ),
+                  child: const Text('Trigger'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Trigger'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Failure'), findsOneWidget);
+      expect(find.text('Something went wrong'), findsOneWidget);
+
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Failure'), findsNothing);
     });
   });
 

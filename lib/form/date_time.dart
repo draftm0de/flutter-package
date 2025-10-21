@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../entity/attribute.dart';
 import '../ui/date_time.dart';
-import '../ui/text_error.dart';
+import '../ui/error_text.dart';
 import 'interface.dart';
 import 'form.dart';
 
@@ -190,7 +190,7 @@ class _DraftModeFormDateTimeState extends State<DraftModeFormDateTime> {
                     _onChanged(resolved, hasError: !isValid);
                   },
                 ),
-                DraftModeUITextError(text: field.errorText, visible: showError),
+                DraftModeUIErrorText(text: field.errorText, visible: showError),
               ],
             ),
           ),

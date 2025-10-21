@@ -2,8 +2,9 @@
 
 Utility helpers reused across the package:
 
-- `formatter.dart` extends `DateFormat` with padded date patterns and duration
-  helpers, and exposes tolerant coercion utilities such as
+- `formatter.dart` extends `DateFormat` with padded date patterns, start/end of
+  day helpers, and duration helpers, and exposes tolerant coercion utilities
+  such as
   `DraftModeFormatter.parseInt`, `DraftModeFormatter.parseBool`,
   `DraftModeFormatter.parseHtmlToPlainText` for quick-and-dirty HTML cleanup,
   and `DraftModeFormatter().decodedQueryParameters` for typed querystring

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../entity/interface.dart';
 import '../platform/buttons.dart';
 import '../ui/row.dart';
-import '../ui/text_error.dart';
+import '../ui/error_text.dart';
 import 'form.dart';
 
 /// Adaptive text entry field wired into the Draftmode form infrastructure. It
@@ -195,7 +195,7 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
         return Column(
           children: [
             DraftModeUIRow(label: widget.label, child: child),
-            DraftModeUITextError(text: field.errorText, visible: showError),
+            DraftModeUIErrorText(text: field.errorText, visible: showError),
           ],
         );
       },

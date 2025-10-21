@@ -1,6 +1,7 @@
 export 'ui/row.dart';
+export 'ui/error_dialog.dart';
+export 'ui/error_text.dart';
 export 'ui/section.dart';
-export 'ui/text_error.dart';
 export 'ui/confirm.dart';
 export 'ui/diagnostics.dart';
 export 'ui/date_time.dart';

@@ -24,6 +24,16 @@ extension DraftModeDateTime on DateFormat {
     }
   }
 
+  /// Returns [value] coerced to the final moment of its calendar day.
+  static DateTime endDay(DateTime value) {
+    return DateTime(value.year, value.month, value.day, 23, 59, 59);
+  }
+
+  /// Returns [value] truncated to midnight of its calendar day.
+  static DateTime beginDay(DateTime value) {
+    return DateTime(value.year, value.month, value.day, 0, 0, 0);
+  }
+
   /// Returns the number of days in the provided [month] and [year].
   static int getDaysInMonth(int year, int month) {
     final beginningNextMonth = (month < 12)

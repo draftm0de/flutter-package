@@ -6,7 +6,7 @@ import '../page/navigation/top_item.dart';
 import '../page/page.dart';
 import '../ui/row.dart';
 import '../ui/section.dart';
-import '../ui/text_error.dart';
+import '../ui/error_text.dart';
 import '../entity/interface.dart';
 import 'form.dart';
 
@@ -179,7 +179,7 @@ class _DraftModeFormDropDownState<
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DraftModeUIRow(label: widget.label, child: content),
-            DraftModeUITextError(text: field.errorText, visible: showError),
+            DraftModeUIErrorText(text: field.errorText, visible: showError),
           ],
         );
 
