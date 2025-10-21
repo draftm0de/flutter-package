@@ -1,5 +1,5 @@
 SF:lib/page/spinner.dart
-DA:10,2
+DA:10,1
 DA:17,2
 DA:19,2
 DA:20,2
@@ -347,7 +347,7 @@ LF:36
 LH:32
 end_of_record
 SF:lib/platform/styles.dart
-DA:9,7
+DA:9,6
 DA:14,0
 DA:15,0
 DA:16,0
@@ -711,7 +711,7 @@ DA:65,6
 DA:66,12
 DA:70,3
 DA:71,3
-DA:200,2
+DA:200,1
 DA:202,2
 DA:204,2
 DA:205,2
@@ -764,7 +764,7 @@ LF:31
 LH:30
 end_of_record
 SF:lib/form/button_spinner.dart
-DA:9,2
+DA:9,1
 DA:11,2
 DA:13,2
 DA:18,4
@@ -880,7 +880,7 @@ DA:78,2
 DA:81,3
 DA:82,9
 DA:83,6
-DA:84,4
+DA:84,5
 DA:85,3
 DA:86,3
 DA:87,3
