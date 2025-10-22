@@ -65,7 +65,7 @@ void main() {
       CupertinoApp(
         home: DraftModeFormList<_ListItem, String>(
           items: items,
-          selectedId: 'b',
+          selectedItem: items[1],
           itemBuilder: (context, item, isSelected) =>
               _ListTile(item: item, isSelected: isSelected),
         ),
@@ -109,7 +109,7 @@ void main() {
         home: Scaffold(
           body: DraftModeFormList<_ListItem, String>(
             items: items,
-            selectedId: 'a',
+            selectedItem: items.first,
             itemBuilder: (context, item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             onSelected: (item) => selected = item,

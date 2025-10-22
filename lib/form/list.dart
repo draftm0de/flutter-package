@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:draftmode/element.dart';
 import 'package:draftmode/page/spinner.dart';
+import 'package:draftmode/platform.dart';
 import 'package:draftmode/ui.dart';
 import 'package:flutter/widgets.dart';
 
@@ -85,7 +86,7 @@ class DraftModeFormList<
   final bool isPending;
   final List<ItemType> items;
   final DraftModeFormListItemWidgetBuilder<ItemType> itemBuilder;
-  final Identifier? selectedId;
+  final ItemType? selectedItem;
   final ValueChanged<ItemType>? onTap;
   final ValueChanged<ItemType>? onSelected;
 
@@ -107,7 +108,7 @@ class DraftModeFormList<
     this.isPending = false,
     required this.items,
     required this.itemBuilder,
-    this.selectedId,
+    this.selectedItem,
     this.onTap,
     this.onSelected,
     this.emptyPlaceholder,
@@ -197,9 +198,10 @@ class DraftModeFormList<
   }
 
   Widget _buildItem(BuildContext context, ItemType item) {
-    final selected = selectedId != null && item.getId() == selectedId;
+    final selected = _isSelected(item);
     final widget = itemBuilder(context, item, selected);
-    final wrapped = _maybeWrapWithDismissible(context, item, widget);
+    final highlighted = _maybeWrapWithSelectionOverlay(widget, selected);
+    final wrapped = _maybeWrapWithDismissible(context, item, highlighted);
     final keyed = KeyedSubtree(key: ValueKey(item.getId()), child: wrapped);
 
     if (onTap == null && onSelected == null) {
@@ -210,6 +212,34 @@ class DraftModeFormList<
       behavior: HitTestBehavior.opaque,
       onTap: () => _handleTap(item, selected),
       child: keyed,
+    );
+  }
+
+  bool _isSelected(ItemType item) {
+    final selected = selectedItem;
+    if (selected == null) {
+      return false;
+    }
+
+    final selectedIdentifier = selected.getId();
+    final itemIdentifier = item.getId();
+    if (selectedIdentifier != null && itemIdentifier != null) {
+      return selectedIdentifier == itemIdentifier;
+    }
+
+    return identical(selected, item);
+  }
+
+  Widget _maybeWrapWithSelectionOverlay(Widget child, bool isSelected) {
+    if (!isSelected) {
+      return child;
+    }
+
+    return Row(
+      children: [
+        Expanded(child: child),
+        Icon(PlatformButtons.checked),
+      ],
     );
   }
 

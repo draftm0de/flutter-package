@@ -9,6 +9,7 @@ import '../ui/section.dart';
 import '../ui/error_text.dart';
 import '../entity/interface.dart';
 import 'form.dart';
+import 'list.dart';
 
 /// Draftmode-aware dropdown field that navigates to a platform-appropriate
 /// selection screen. Values propagate through the associated
@@ -23,6 +24,7 @@ class DraftModeFormDropDown<
   final DraftModeEntityAttributeInterface<ElementType> attribute;
   final String placeholder;
   final Widget Function(ItemType) renderItem;
+  final DraftModeFormListItemWidgetBuilder<ItemType>? itemBuilder;
   final bool readOnly;
   final String? label;
   final String? selectionTitle;
@@ -34,6 +36,7 @@ class DraftModeFormDropDown<
     required this.attribute,
     required this.placeholder,
     required this.renderItem,
+    this.itemBuilder,
     this.readOnly = false,
     this.label,
     this.selectionTitle,
@@ -119,8 +122,9 @@ class _DraftModeFormDropDownState<
         selectionTitle:
             widget.selectionTitle ?? widget.label ?? widget.placeholder,
         items: widget.items,
-        attribute: widget.attribute,
+        selectedItem: widget.attribute,
         renderItem: widget.renderItem,
+        itemBuilder: widget.itemBuilder,
       );
       final item = await Navigator.of(context).push<ItemType>(
         PlatformConfig.isIOS
@@ -157,24 +161,9 @@ class _DraftModeFormDropDownState<
         final showError = enableValidation && field.hasError;
         final selectedItem = getItemById(field.value);
 
-        final content = Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: selectedItem != null
-                  ? widget.renderItem(selectedItem)
-                  : Text(widget.placeholder),
-            ),
-            Icon(
-              Theme.of(context).platform == TargetPlatform.iOS
-                  ? CupertinoIcons.right_chevron
-                  : Icons.arrow_forward_ios,
-              size: 16,
-              color: CupertinoColors.systemGrey,
-            ),
-          ],
-        );
-
+        final content = selectedItem != null
+            ? widget.renderItem(selectedItem)
+            : Text(widget.placeholder);
         final child = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -202,15 +191,17 @@ class DraftModeFormDropDownScreen<
     extends StatefulWidget {
   final String selectionTitle;
   final List<ItemType> items;
-  final DraftModeEntityAttributeInterface<ElementType> attribute;
+  final DraftModeEntityAttributeInterface<ElementType> selectedItem;
   final DraftModePageNavigationTopItem? trailing;
   final Widget Function(ItemType) renderItem;
+  final DraftModeFormListItemWidgetBuilder<ItemType>? itemBuilder;
 
-  const DraftModeFormDropDownScreen({
+  DraftModeFormDropDownScreen({
     required this.selectionTitle,
     required this.items,
-    required this.attribute,
+    required this.selectedItem,
     required this.renderItem,
+    this.itemBuilder,
     this.trailing,
     super.key,
   });
@@ -233,17 +224,16 @@ class _DraftModeFormDropDownScreenState<
   @override
   Widget build(BuildContext context) {
     final items = widget.items;
-    return DraftModePage(
-      navigationTitle: widget.selectionTitle,
-      topTrailing: widget.trailing != null ? [widget.trailing!] : null,
-      body: ListView(
+
+    Widget buildListView() {
+      return ListView(
         children: [
           DraftModeUISection(
             children: items.map((item) {
               final itemId = item.getId();
               final isSelected =
-                  widget.attribute.value != null &&
-                  itemId == widget.attribute.value;
+                  widget.selectedItem.value != null &&
+                  itemId == widget.selectedItem.value;
               final child = CupertinoFormRow(
                 padding: EdgeInsets.symmetric(
                   vertical: DraftModeStylePadding.primary / 2,
@@ -267,7 +257,39 @@ class _DraftModeFormDropDownScreenState<
             }).toList(),
           ),
         ],
-      ),
+      );
+    }
+
+    ItemType? resolveSelectedItem() {
+      final selectedId = widget.selectedItem.value;
+      if (selectedId == null) return null;
+      for (final item in items) {
+        if (item.getId() == selectedId) {
+          return item;
+        }
+      }
+      return null;
+    }
+
+    Widget buildFormList() {
+      final selectedItem = resolveSelectedItem();
+      return DraftModeFormList<ItemType, ElementType>(
+        isPending: false,
+        items: items,
+        selectedItem: selectedItem,
+        itemBuilder: (context, item, isSelected) =>
+            widget.itemBuilder!(context, item, isSelected),
+        onTap: (item) => widget.setItem(context, item),
+      );
+    }
+
+    final bool hasItemBuilder = widget.itemBuilder != null;
+    final body = hasItemBuilder ? buildFormList() : buildListView();
+
+    return DraftModePage(
+      navigationTitle: widget.selectionTitle,
+      topTrailing: widget.trailing != null ? [widget.trailing!] : null,
+      body: body,
     );
   }
 }

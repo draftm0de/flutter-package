@@ -20,6 +20,9 @@ class PlatformButtons {
   static IconData get save =>
       PlatformConfig.isIOS ? CupertinoIcons.check_mark : Icons.check;
 
+  static IconData get checked =>
+      PlatformConfig.isIOS ? CupertinoIcons.check_mark : Icons.check;
+
   static IconData get checkSecondary =>
       PlatformConfig.isIOS ? CupertinoIcons.checkmark_alt : Icons.check;
 
