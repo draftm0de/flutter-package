@@ -7,7 +7,6 @@ import 'package:draftmode/ui/date_time/time_line.dart';
 import 'package:draftmode/ui/row.dart';
 import 'package:draftmode/ui/section.dart';
 import 'package:draftmode/ui/switch.dart';
-import 'package:draftmode/ui/error_dialog.dart';
 import 'package:draftmode/ui/error_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -371,6 +370,63 @@ void main() {
 
       expect(await future, isFalse);
     });
+
+    testWidgets('omits cancel action when showing error style on iOS', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+      final navigatorKey = GlobalKey<NavigatorState>();
+
+      await tester.pumpWidget(
+        CupertinoApp(navigatorKey: navigatorKey, home: const SizedBox.shrink()),
+      );
+
+      final future = DraftModeUIConfirm.show(
+        context: navigatorKey.currentContext!,
+        title: 'Failure',
+        message: 'Something went wrong',
+        mode: DraftModeUIConfirmStyle.error,
+      );
+
+      await tester.pump();
+      expect(find.text('Cancel'), findsNothing);
+
+      final confirmAction = tester.widget<CupertinoDialogAction>(
+        find.byType(CupertinoDialogAction).first,
+      );
+      expect(confirmAction.isDestructiveAction, isTrue);
+
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(await future, isTrue);
+    });
+
+    testWidgets('omits cancel action when showing error style on Android', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.android;
+      final navigatorKey = GlobalKey<NavigatorState>();
+
+      await tester.pumpWidget(
+        MaterialApp(navigatorKey: navigatorKey, home: const SizedBox.shrink()),
+      );
+
+      final future = DraftModeUIConfirm.show(
+        context: navigatorKey.currentContext!,
+        title: 'Failure',
+        message: 'Something went wrong',
+        mode: DraftModeUIConfirmStyle.error,
+      );
+
+      await tester.pump();
+      expect(find.text('Cancel'), findsNothing);
+
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      expect(await future, isTrue);
+    });
   });
 
   group('DraftModeUIButton', () {
@@ -459,79 +515,6 @@ void main() {
       final resolved = padding.padding.resolve(TextDirection.ltr);
       expect(resolved.top, DraftModeStylePadding.tertiary);
       expect(find.text('error'), findsOneWidget);
-    });
-  });
-
-  group('DraftModeUIErrorDialog', () {
-    testWidgets('presents and dismisses dialog on iOS', (tester) async {
-      PlatformConfig.mode = ForcedPlatform.ios;
-
-      await tester.pumpWidget(
-        CupertinoApp(
-          home: Builder(
-            builder: (context) => CupertinoPageScaffold(
-              navigationBar: const CupertinoNavigationBar(),
-              child: Center(
-                child: CupertinoButton(
-                  onPressed: () => DraftModeUIErrorDialog(
-                    context,
-                    title: 'Failure',
-                    message: 'Something went wrong',
-                  ),
-                  child: const Text('Trigger'),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.text('Trigger'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(CupertinoAlertDialog), findsOneWidget);
-      expect(find.text('Failure'), findsOneWidget);
-      expect(find.text('Something went wrong'), findsOneWidget);
-
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Failure'), findsNothing);
-    });
-
-    testWidgets('renders material alert on Android', (tester) async {
-      PlatformConfig.mode = ForcedPlatform.android;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) => Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () => DraftModeUIErrorDialog(
-                    context,
-                    title: 'Failure',
-                    message: 'Something went wrong',
-                  ),
-                  child: const Text('Trigger'),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.text('Trigger'));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('Failure'), findsOneWidget);
-      expect(find.text('Something went wrong'), findsOneWidget);
-
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Failure'), findsNothing);
     });
   });
 

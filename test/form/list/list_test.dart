@@ -2,6 +2,7 @@ import 'package:draftmode/element.dart';
 import 'package:draftmode/entity.dart';
 import 'package:draftmode/form.dart';
 import 'package:draftmode/page/spinner.dart';
+import 'package:draftmode/platform/buttons.dart';
 import 'package:draftmode/platform/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ void main() {
         home: DraftModeFormList<_ListItem, String>(
           items: items,
           selectedItem: items[1],
-          itemBuilder: (context, item, isSelected) =>
+          renderItem: (item, isSelected) =>
               _ListTile(item: item, isSelected: isSelected),
         ),
       ),
@@ -74,6 +75,24 @@ void main() {
 
     expect(find.text('Alpha'), findsOneWidget);
     expect(find.text('Beta (selected)'), findsOneWidget);
+  });
+
+  testWidgets('shows platform checkmark when using renderItem', (tester) async {
+    PlatformConfig.mode = ForcedPlatform.ios;
+    final items = [_ListItem('a', 'Alpha')];
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: DraftModeFormList<_ListItem, String>(
+          items: items,
+          selectedItem: items.first,
+          renderItem: (item, selected) =>
+              _SimpleTile(item: item, isSelected: selected),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(PlatformButtons.checked), findsOneWidget);
   });
 
   testWidgets('invokes onTap when tapping an item', (tester) async {
@@ -85,7 +104,7 @@ void main() {
         home: Scaffold(
           body: DraftModeFormList<_ListItem, String>(
             items: items,
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             onTap: (item) => tapped = item,
           ),
@@ -110,7 +129,7 @@ void main() {
           body: DraftModeFormList<_ListItem, String>(
             items: items,
             selectedItem: items.first,
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             onSelected: (item) => selected = item,
           ),
@@ -134,7 +153,7 @@ void main() {
       CupertinoApp(
         home: DraftModeFormList<_ListItem, String>(
           items: const [],
-          itemBuilder: (context, item, isSelected) =>
+          renderItem: (item, isSelected) =>
               _SimpleTile(item: item, isSelected: isSelected),
           emptyPlaceholder: const Text('Nothing here'),
         ),
@@ -153,7 +172,7 @@ void main() {
       CupertinoApp(
         home: DraftModeFormList<_ListItem, String>(
           items: items,
-          itemBuilder: (context, item, isSelected) =>
+          renderItem: (item, isSelected) =>
               _SimpleTile(item: item, isSelected: isSelected),
           separator: Container(
             key: const ValueKey('separator'),
@@ -177,7 +196,7 @@ void main() {
         home: Scaffold(
           body: DraftModeFormList<_ListItem, String>(
             items: [_ListItem('a', 'Alpha'), _ListItem('b', 'Beta')],
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             header: const Text('List Header'),
             separator: const Divider(),
@@ -225,7 +244,7 @@ void main() {
           body: DraftModeFormList<_ListItem, String>(
             items: items,
             shrinkWrap: false,
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             onRefresh: () async {
               reloadCount += 1;
@@ -254,7 +273,7 @@ void main() {
         home: DraftModeFormList<_ListItem, String>(
           items: [_ListItem('a', 'Alpha')],
           shrinkWrap: false,
-          itemBuilder: (context, item, isSelected) =>
+          renderItem: (item, isSelected) =>
               _SimpleTile(item: item, isSelected: isSelected),
           onRefresh: () async {},
         ),
@@ -294,7 +313,7 @@ void main() {
         home: Scaffold(
           body: DraftModeFormList<_ListItem, String>(
             items: items,
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             dismissible: DraftModeFormListDismissible<_ListItem>(
               backgroundBuilder: (_, __) => const SizedBox.shrink(),
@@ -335,7 +354,7 @@ void main() {
         home: Scaffold(
           body: DraftModeFormList<_ListItem, String>(
             items: [item],
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             dismissible: const DraftModeFormListDismissible<_ListItem>(),
           ),
@@ -357,7 +376,7 @@ void main() {
         home: Scaffold(
           body: DraftModeFormList<_OptionalListItem, String?>(
             items: [item],
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _OptionalTile(item: item, isSelected: isSelected),
             dismissible:
                 const DraftModeFormListDismissible<_OptionalListItem>(),
@@ -384,7 +403,7 @@ void main() {
           body: DraftModeFormList<_ListItem, String>(
             items: items,
             shrinkWrap: false,
-            itemBuilder: (context, item, isSelected) =>
+            renderItem: (item, isSelected) =>
                 _SimpleTile(item: item, isSelected: isSelected),
             onRefresh: () async {},
             isPending: true,

@@ -15,16 +15,22 @@ Key files:
   input via the validator's payload so UI limits stay in sync with backend
   rules.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
-  list using `DraftModePage` scaffolding. Accepts a plain `List` of
+  list using `DraftModePage` scaffolding. Supply a
+  `DraftModeFormListItemBuilder` so both the field and the pushed selection list
+  render with the same `DraftModeFormListItemWidget` subclass, guaranteeing
+  consistent visuals and selection hints. Accepts a plain `List` of
   `DraftModeEntityInterface` items so apps can source options from existing
   collections without wrapping them in `DraftModeEntityCollection` first. The
   modal now relies on the default icon-only back affordance from
   `DraftModePage`, keeping selection flows visually consistent with the rest of
   the package.
-- `list.dart` - scrollable list builder that renders `DraftModeEntityInterface`
-  implementations with `DraftModeFormListItemWidget` subclasses, optional
-  selection handlers, and an `onReload` callback that enables pull-to-refresh
-  flows while keeping paddings consistent across platforms. Accepts a
+- `list.dart` - scrollable list builder that renders
+  `DraftModeEntityInterface` implementations with `DraftModeFormListItemWidget`
+  subclasses, optional selection handlers, and an `onReload` callback that
+  enables pull-to-refresh flows while keeping paddings consistent across
+  platforms. The required `renderItem` callback returns a
+  `DraftModeFormListItemWidget`, allowing the list to add the platform
+  checkmark indicator automatically when the item is selected. Accepts a
   customizable `emptyPlaceholder` widget for empty states so call sites can
   render richer guidance than a plain string.
 - `switch.dart` - boolean toggle wired into the draft map and validation flow.

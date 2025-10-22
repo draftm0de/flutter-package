@@ -40,7 +40,7 @@ void main() {
       home: Scaffold(
         body: DraftModeFormList<_ListItem, String>(
           items: [_ListItem('a', 'Alpha')],
-          itemBuilder: (context, item, isSelected) =>
+          renderItem: (item, isSelected) =>
               _DismissibleTile(item: item, isSelected: isSelected),
           dismissible: dismissible,
         ),

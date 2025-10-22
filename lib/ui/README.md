@@ -3,8 +3,9 @@
 Reusable presentation widgets that keep layout concerns separate from form and
 entity logic:
 
-- `confirm.dart` – platform-aware confirmation dialog with localization
-  fallbacks and a convenience `show` helper.
+- `confirm.dart` – platform-aware confirmation and error dialogs with
+  localization fallbacks, a convenience `show` helper, and a
+  `DraftModeUIConfirmStyle` toggle for destructive acknowledgements.
 - `row.dart` – labeled form row shell that applies platform padding and label
   styling.
 - `section.dart` – groups rows into platform-appropriate sections and exposes an
@@ -12,8 +13,6 @@ entity logic:
 - `switch.dart` – adaptive boolean toggle that mirrors the native widget.
 - `error_text.dart` – consistent error text styling and spacing for validation
   messages.
-- `error_dialog.dart` – platform-aware single-action alert for surfacing
-  blocking errors from form flows.
 - `diagnostics.dart` – developer-focused logging surface so other modules avoid
   emitting output directly.
 - `date_time.dart` – date/time field layout with platform toggles consumed by
