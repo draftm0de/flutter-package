@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import '../page/navigation/top_item.dart';
 import '../page/page.dart';
 import '../ui/row.dart';
-import '../ui/section.dart';
 import '../ui/error_text.dart';
 import '../entity/interface.dart';
 import 'form.dart';
+import 'interface.dart';
+import 'list.dart';
 
 /// Draftmode-aware dropdown field that navigates to a platform-appropriate
 /// selection screen. Values propagate through the associated
@@ -22,13 +23,13 @@ class DraftModeFormDropDown<
   final List<ItemType> items;
   final DraftModeEntityAttributeInterface<ElementType> attribute;
   final String placeholder;
-  final Widget Function(ItemType) renderItem;
+  final DraftModeFormListItemBuilder<ItemType> renderItem;
   final bool readOnly;
   final String? label;
   final String? selectionTitle;
   final ValueChanged<ElementType?>? onSaved;
 
-  const DraftModeFormDropDown({
+  DraftModeFormDropDown({
     super.key,
     required this.items,
     required this.attribute,
@@ -115,11 +116,12 @@ class _DraftModeFormDropDownState<
     final selectedId = widget.attribute.value;
 
     Future<void> selectItem(FormFieldState<ElementType> field) async {
+      final selectedValue = field.value;
       final screen = DraftModeFormDropDownScreen<ItemType, ElementType>(
         selectionTitle:
             widget.selectionTitle ?? widget.label ?? widget.placeholder,
         items: widget.items,
-        attribute: widget.attribute,
+        selectedItem: selectedValue,
         renderItem: widget.renderItem,
       );
       final item = await Navigator.of(context).push<ItemType>(
@@ -157,24 +159,17 @@ class _DraftModeFormDropDownState<
         final showError = enableValidation && field.hasError;
         final selectedItem = getItemById(field.value);
 
+        final selectedContent = selectedItem != null
+            ? widget.renderItem(selectedItem, true)
+            : Text(widget.placeholder);
+        final arrowColor = _chevronColor(context);
         final content = Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: selectedItem != null
-                  ? widget.renderItem(selectedItem)
-                  : Text(widget.placeholder),
-            ),
-            Icon(
-              Theme.of(context).platform == TargetPlatform.iOS
-                  ? CupertinoIcons.right_chevron
-                  : Icons.arrow_forward_ios,
-              size: 16,
-              color: CupertinoColors.systemGrey,
-            ),
+            Expanded(child: selectedContent),
+            Icon(PlatformButtons.arrowRight, size: 16, color: arrowColor),
           ],
         );
-
         final child = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -191,6 +186,14 @@ class _DraftModeFormDropDownState<
       },
     );
   }
+
+  Color _chevronColor(BuildContext context) {
+    if (PlatformConfig.isIOS) {
+      return CupertinoColors.systemGrey2;
+    }
+    final theme = Theme.of(context);
+    return theme.iconTheme.color ?? theme.colorScheme.outline;
+  }
 }
 
 /// Selection sheet pushed by [DraftModeFormDropDown]. Extracted so navigation
@@ -202,15 +205,15 @@ class DraftModeFormDropDownScreen<
     extends StatefulWidget {
   final String selectionTitle;
   final List<ItemType> items;
-  final DraftModeEntityAttributeInterface<ElementType> attribute;
+  final ElementType? selectedItem;
   final DraftModePageNavigationTopItem? trailing;
-  final Widget Function(ItemType) renderItem;
+  final DraftModeFormListItemBuilder<ItemType> renderItem;
 
-  const DraftModeFormDropDownScreen({
+  DraftModeFormDropDownScreen({
     required this.selectionTitle,
     required this.items,
-    required this.attribute,
     required this.renderItem,
+    this.selectedItem,
     this.trailing,
     super.key,
   });
@@ -233,41 +236,35 @@ class _DraftModeFormDropDownScreenState<
   @override
   Widget build(BuildContext context) {
     final items = widget.items;
+
+    ItemType? resolveSelectedItem() {
+      final selectedId = widget.selectedItem;
+      if (selectedId == null) return null;
+      for (final item in items) {
+        if (item.getId() == selectedId) {
+          return item;
+        }
+      }
+      return null;
+    }
+
+    Widget buildFormList() {
+      final selectedItem = resolveSelectedItem();
+      return DraftModeFormList<ItemType, ElementType>(
+        isPending: false,
+        items: items,
+        selectedItem: selectedItem,
+        renderItem: (item, isSelected) => widget.renderItem(item, isSelected),
+        onTap: (item) => widget.setItem(context, item),
+      );
+    }
+
+    final Widget body = buildFormList();
+
     return DraftModePage(
       navigationTitle: widget.selectionTitle,
       topTrailing: widget.trailing != null ? [widget.trailing!] : null,
-      body: ListView(
-        children: [
-          DraftModeUISection(
-            children: items.map((item) {
-              final itemId = item.getId();
-              final isSelected =
-                  widget.attribute.value != null &&
-                  itemId == widget.attribute.value;
-              final child = CupertinoFormRow(
-                padding: EdgeInsets.symmetric(
-                  vertical: DraftModeStylePadding.primary / 2,
-                  horizontal: DraftModeStylePadding.primary / 2,
-                ),
-                prefix: widget.renderItem(item),
-                helper: null,
-                child: isSelected
-                    ? Icon(
-                        PlatformButtons.save,
-                        size: 22,
-                        color: DraftModeStyleColorTint.primary.background,
-                      )
-                    : const SizedBox.shrink(),
-              );
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => widget.setItem(context, item),
-                child: child,
-              );
-            }).toList(),
-          ),
-        ],
-      ),
+      body: body,
     );
   }
 }

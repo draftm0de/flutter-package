@@ -1,5 +1,4 @@
 export 'ui/row.dart';
-export 'ui/error_dialog.dart';
 export 'ui/error_text.dart';
 export 'ui/section.dart';
 export 'ui/confirm.dart';

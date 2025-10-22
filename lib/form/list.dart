@@ -2,23 +2,12 @@ import 'dart:async';
 
 import 'package:draftmode/element.dart';
 import 'package:draftmode/page/spinner.dart';
+import 'package:draftmode/platform.dart';
 import 'package:draftmode/ui.dart';
 import 'package:flutter/widgets.dart';
 
 import '../entity/interface.dart';
-import '../platform/styles.dart';
-
-/// Signature for widgets rendered by [DraftModeFormList]. Implementations must
-/// expose the underlying list [item] and whether it is currently selected so
-/// parent widgets can remain stateless.
-typedef DraftModeFormListItemWidgetBuilder<
-  ItemType extends DraftModeEntityInterface<dynamic>
-> =
-    DraftModeFormListItemWidget<ItemType> Function(
-      BuildContext context,
-      ItemType item,
-      bool isSelected,
-    );
+import 'interface.dart';
 
 typedef DraftModeFormListConfirmDismiss<
   ItemType extends DraftModeEntityInterface<dynamic>
@@ -54,24 +43,6 @@ class DraftModeFormListDismissible<
   });
 }
 
-/// Base widget that renders an individual item within [DraftModeFormList].
-///
-/// Consumers should extend this class so the constructor requires both the
-/// [item] and [isSelected] flag.
-abstract class DraftModeFormListItemWidget<
-  ItemType extends DraftModeEntityInterface<dynamic>
->
-    extends StatelessWidget {
-  final ItemType item;
-  final bool isSelected;
-
-  const DraftModeFormListItemWidget({
-    super.key,
-    required this.item,
-    required this.isSelected,
-  });
-}
-
 /// Adaptive list view that renders Draftmode entities within form layouts.
 ///
 /// By default the list renders with [shrinkWrap] so callers can embed it within
@@ -84,8 +55,8 @@ class DraftModeFormList<
     extends StatelessWidget {
   final bool isPending;
   final List<ItemType> items;
-  final DraftModeFormListItemWidgetBuilder<ItemType> itemBuilder;
-  final Identifier? selectedId;
+  final DraftModeFormListItemBuilder<ItemType> renderItem;
+  final ItemType? selectedItem;
   final ValueChanged<ItemType>? onTap;
   final ValueChanged<ItemType>? onSelected;
 
@@ -106,8 +77,8 @@ class DraftModeFormList<
     super.key,
     this.isPending = false,
     required this.items,
-    required this.itemBuilder,
-    this.selectedId,
+    required this.renderItem,
+    this.selectedItem,
     this.onTap,
     this.onSelected,
     this.emptyPlaceholder,
@@ -197,10 +168,11 @@ class DraftModeFormList<
   }
 
   Widget _buildItem(BuildContext context, ItemType item) {
-    final selected = selectedId != null && item.getId() == selectedId;
-    final widget = itemBuilder(context, item, selected);
-    final wrapped = _maybeWrapWithDismissible(context, item, widget);
-    final keyed = KeyedSubtree(key: ValueKey(item.getId()), child: wrapped);
+    final selected = _isSelected(item);
+    final widget = renderItem(item, selected);
+    final highlighted = _maybeWrapWithSelectionOverlay(widget, selected);
+    final wrapped = _maybeWrapWithDismissible(context, item, highlighted);
+    final keyed = KeyedSubtree(key: _itemKey(item), child: wrapped);
 
     if (onTap == null && onSelected == null) {
       return keyed;
@@ -210,6 +182,39 @@ class DraftModeFormList<
       behavior: HitTestBehavior.opaque,
       onTap: () => _handleTap(item, selected),
       child: keyed,
+    );
+  }
+
+  bool _isSelected(ItemType item) {
+    final selected = selectedItem;
+    if (selected == null) {
+      return false;
+    }
+
+    final selectedIdentifier = selected.getId();
+    final itemIdentifier = item.getId();
+    if (selectedIdentifier != null && itemIdentifier != null) {
+      return selectedIdentifier == itemIdentifier;
+    }
+
+    return identical(selected, item);
+  }
+
+  Widget _maybeWrapWithSelectionOverlay(Widget child, bool isSelected) {
+    if (!isSelected) {
+      return child;
+    }
+
+    return Row(
+      children: [
+        Expanded(child: child),
+        SizedBox(width: DraftModeStylePadding.tertiary),
+        Icon(
+          PlatformButtons.checked,
+          color: DraftModeStyleColorTint.primary.background,
+          size: 20,
+        ),
+      ],
     );
   }
 
@@ -255,6 +260,14 @@ class DraftModeFormList<
   }
 
   Key _defaultDismissibleKey(ItemType item) {
+    final id = item.getId();
+    if (id == null) {
+      return ObjectKey(item);
+    }
+    return ValueKey(id);
+  }
+
+  Key _itemKey(ItemType item) {
     final id = item.getId();
     if (id == null) {
       return ObjectKey(item);

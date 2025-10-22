@@ -14,6 +14,13 @@ class _TestItem extends DraftModeEntityInterface<String> {
   String getId() => id;
 }
 
+class _Tile extends DraftModeFormListItemWidget<_TestItem> {
+  const _Tile({required super.item, required super.isSelected});
+
+  @override
+  Widget build(BuildContext context) => Text(item.label);
+}
+
 void main() {
   setUp(() {
     PlatformConfig.mode = ForcedPlatform.ios;
@@ -36,7 +43,8 @@ void main() {
             placeholder: 'Pick one',
             label: 'Choice',
             selectionTitle: 'Choose option',
-            renderItem: (item) => Text(item.label),
+            renderItem: (item, selected) =>
+                _Tile(item: item, isSelected: selected),
           ),
         ),
       ),
@@ -72,7 +80,8 @@ void main() {
             placeholder: 'Read only',
             label: 'Choice',
             readOnly: true,
-            renderItem: (item) => Text(item.label),
+            renderItem: (item, selected) =>
+                _Tile(item: item, isSelected: selected),
           ),
         ),
       ),
