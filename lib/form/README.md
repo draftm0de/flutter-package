@@ -13,7 +13,13 @@ Key files:
   attribute syncing, and support for validator-aware affordances. When an
   attached attribute registers `vMaxLen`, the field clamps `CupertinoTextField`
   input via the validator's payload so UI limits stay in sync with backend
-  rules.
+  rules. Keyboard configuration now flows from the attribute kind (phone,
+  email, datetime, numeric) or the field's generic type, while still allowing
+  explicit overrides through the `keyboardType` parameter when needed. Decimal
+  kinds default to the iOS decimal pad, display grouped thousands with a comma
+  decimal separator, and still allow callers to override the keyboard when flows
+  require signed input. Input is coerced back into `int`/`double` values on every
+  change so form consumers never have to strip formatting themselves.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding. Supply a
   `DraftModeFormListItemBuilder` so both the field and the pushed selection list

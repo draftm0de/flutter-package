@@ -7,6 +7,9 @@ with existing projects, from validation and draft handling to secure storage.
 
 ## Highlights
 - Ready-to-use Cupertino form elements with validation and draft state support.
+- Text fields automatically select the matching soft keyboard for email, phone,
+  and numeric attributes, formatting numbers with localized separators while
+  returning typed values (no manual parsing required).
 - Shared entity contracts that insulate domain logic from UI concerns.
 - Pluggable storage backends (shared preferences or secure keychain) behind a
   single interface.

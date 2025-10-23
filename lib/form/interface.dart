@@ -1,5 +1,6 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
+//
 import '../entity/interface.dart';
 
 /// Base widget that renders an individual item within [DraftModeFormList].
@@ -79,4 +80,10 @@ enum DraftModeFormCalendarHourSteps {
 
   /// Number of minutes between entries rendered in the picker.
   final int minutes;
+}
+
+abstract class DraftModerFormFormatterInterface<T> extends TextInputFormatter {
+  T? decode(String? input);
+  String? encode(T? value);
+  TextInputType getTextInputType();
 }
