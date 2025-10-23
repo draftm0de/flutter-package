@@ -152,10 +152,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   Widget build(BuildContext context) {
     _syncFormAssociation();
     _form?.registerProperty(widget.attribute);
-    debugPrint("debugName:${widget.attribute.debugName ?? "-"}");
     final DraftModeEntityAttributeKind attributeKind =
         widget.attribute.kind ?? _typeToAttributeType<T>();
-    debugPrint("kind:${attributeKind.toString()}");
     return FormField<T>(
       key: _fieldKey,
       initialValue: widget.attribute.value,
@@ -197,9 +195,6 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
         final int? maxLength = maxLengthValidator?.payload is int
             ? maxLengthValidator?.payload as int
             : null;
-
-        final DraftModeEntityAttributeKind attributeKind =
-            widget.attribute.kind ?? _typeToAttributeType<T>();
 
         Widget child = Focus(
           focusNode: _focusNode,
