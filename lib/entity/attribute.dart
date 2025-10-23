@@ -10,7 +10,6 @@ class DraftModeEntityAttribute<T>
     implements DraftModeEntityAttributeInterface<T> {
   @override
   final String? debugName;
-
   T? _value;
 
   @override

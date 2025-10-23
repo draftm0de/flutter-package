@@ -41,13 +41,11 @@ abstract class DraftModeEntityTypedValidator {
 }
 
 /// Interface for entity attributes that hold state and run validators.
-/// Interface for entity attributes that hold state and run validators.
 abstract class DraftModeEntityAttributeInterface<T> {
   T? get value;
   set value(T? v);
 
   String? get debugName;
-
   String? get error;
   set error(String? v);
 

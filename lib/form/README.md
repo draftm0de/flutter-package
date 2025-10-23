@@ -13,7 +13,16 @@ Key files:
   attribute syncing, and support for validator-aware affordances. When an
   attached attribute registers `vMaxLen`, the field clamps `CupertinoTextField`
   input via the validator's payload so UI limits stay in sync with backend
-  rules.
+  rules. Keyboard configuration flows from the field's generic type or any
+  explicit `keyboardType` override so call sites stay in control while still
+  getting numeric affordances by default. Callers
+  can also provide a `DraftModerFormFormatterInterface` to opt into localized
+  number formatting (grouped thousands, decimal separators, signed toggles) or
+  inject custom formatters. Input is coerced back into `int`/`double` values on
+  every change so form consumers never have to strip formatting themselves.
+- `formatter/` - numeric input formatters that localize grouping, enforce digit
+  counts, surface signed variants, and expose predictable keyboard
+  recommendations to the text field.
 - `drop_down.dart` - platform-aware selection field that navigates to a modal
   list using `DraftModePage` scaffolding. Supply a
   `DraftModeFormListItemBuilder` so both the field and the pushed selection list
