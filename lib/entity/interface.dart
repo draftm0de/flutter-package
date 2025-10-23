@@ -40,16 +40,12 @@ abstract class DraftModeEntityTypedValidator {
   String? call(BuildContext context, DraftModeFormContext? form, dynamic value);
 }
 
-enum DraftModeEntityAttributeKind { text, int, double, phone, email, datetime }
-
-/// Interface for entity attributes that hold state and run validators.
 /// Interface for entity attributes that hold state and run validators.
 abstract class DraftModeEntityAttributeInterface<T> {
   T? get value;
   set value(T? v);
 
   String? get debugName;
-  DraftModeEntityAttributeKind? get kind;
   String? get error;
   set error(String? v);
 

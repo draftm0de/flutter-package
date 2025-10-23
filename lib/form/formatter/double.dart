@@ -5,7 +5,7 @@ class DraftModeFormTypeDouble extends DraftModeFormTypeNumber<double> {
     : super(
         digits: 2,
         digitDelimiter: ",",
-        thousandDelimiter: null,
+        thousandDelimiter: ".",
         signed: false,
       );
 }

@@ -10,8 +10,6 @@ class DraftModeEntityAttribute<T>
     implements DraftModeEntityAttributeInterface<T> {
   @override
   final String? debugName;
-  final DraftModeEntityAttributeKind? kind;
-
   T? _value;
 
   @override
@@ -30,7 +28,6 @@ class DraftModeEntityAttribute<T>
     this.debugName,
     this.validator,
     List<DraftModeEntityValidator>? validators,
-    this.kind,
   }) : validators = validators != null
            ? List.of(validators)
            : <DraftModeEntityValidator>[] {

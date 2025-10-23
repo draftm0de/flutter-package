@@ -61,9 +61,6 @@ class _FakeAttribute<T> implements DraftModeEntityAttributeInterface<T> {
   Iterable<DraftModeEntityTypedValidator> validatorsByType(
     DraftModeValidatorType type,
   ) => const <DraftModeEntityTypedValidator>[];
-
-  @override
-  DraftModeEntityAttributeKind? get kind => throw UnimplementedError();
 }
 
 class _FakeFormState implements DraftModeFormStateI {
@@ -320,6 +317,38 @@ void main() {
 
       expect(error, loc.validationGreaterThan(expected: 25));
       expect(ok, isNull);
+    });
+  });
+
+  group('typed validator metadata', () {
+    testWidgets('lookupTypedValidator exposes payload and type', (
+      tester,
+    ) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+
+      final validator = vMaxLen(4);
+      final typed = lookupTypedValidator(validator)!;
+      expect(typed.type, DraftModeValidatorType.maxLength);
+      expect(typed.payload, 4);
+
+      expect(validator(context, null, 'abcd'), isNull);
+      expect(validator(context, null, 'abcde'), isNotNull);
+
+      final DraftModeEntityValidator bare =
+          (BuildContext _, DraftModeFormContext? __, dynamic ___) => null;
+      expect(lookupTypedValidator(bare), isNull);
+    });
+
+    testWidgets('vGreaterThan surfaces errors for integers', (tester) async {
+      await tester.pumpWidget(wrapWithLoc(const SimpleContext()));
+      await tester.pump();
+      final context = SimpleContext.lastContext!;
+      final validator = vGreaterThan(10);
+
+      expect(validator(context, null, 9), isNotNull);
+      expect(validator(context, null, 11), isNull);
     });
   });
 }

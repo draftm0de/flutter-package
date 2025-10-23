@@ -36,10 +36,12 @@ class DraftModeFormTypeNumber<T extends num> extends TextInputFormatter
   /// Format a double → display string
   String encode(T? value) {
     if (value == null) return '';
-    final fixed = value.toStringAsFixed(digits);
+    final num numeric = value;
+    final bool negative = numeric.isNegative;
+    final fixed = numeric.abs().toStringAsFixed(digits);
     final dotParts = fixed.split('.'); // always '.' from toStringAsFixed
     final intPart = _group(dotParts[0]);
-    final sign = value.isNegative ? '-' : '';
+    final sign = negative ? '-' : '';
     if (digits == 0) return '$sign$intPart';
     final fracPart = dotParts.length > 1 ? dotParts[1] : '';
     return '$sign$intPart$digitDelimiter$fracPart';
@@ -129,10 +131,12 @@ class DraftModeFormTypeNumber<T extends num> extends TextInputFormatter
     // 2) Split on first decimal delimiter occurrence
     String intPart = raw;
     String fracPart = "";
+    bool endsWithDelimiter = false;
     if (digitDelimiter != null) {
       final parts = raw.split(digitDelimiter!);
       intPart = parts.isNotEmpty ? parts[0] : '';
       fracPart = parts.length > 1 ? parts.sublist(1).join() : '';
+      endsWithDelimiter = raw.endsWith(digitDelimiter!);
     }
 
     // Filter non-digits
@@ -152,8 +156,13 @@ class DraftModeFormTypeNumber<T extends num> extends TextInputFormatter
 
     // Rebuild display
     final sign = negative ? '-' : '';
-    final display = (digits > 0 && fracPart.isNotEmpty)
+    final bool hasFractionDigits = digits > 0 && fracPart.isNotEmpty;
+    final bool shouldShowDelimiter =
+        digits > 0 && !hasFractionDigits && endsWithDelimiter;
+    final display = hasFractionDigits
         ? '$sign$groupedInt$digitDelimiter$fracPart'
+        : shouldShowDelimiter
+        ? '$sign$groupedInt$digitDelimiter'
         : '$sign$groupedInt';
 
     // Place caret at the end (simple + robust). If you want smarter caret preservation,

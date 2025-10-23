@@ -19,7 +19,8 @@ class DraftModeFormField<T> extends StatefulWidget {
   final String? placeholder;
   final bool obscureText;
   final bool obscureEye;
-  final DraftModerFormFormatterInterface? formatter;
+  final DraftModerFormFormatterInterface<T>? formatter;
+  final TextInputType? keyboardType;
   final ValueChanged<T?>? onSaved;
   final Widget? prefix;
   final Widget? suffix;
@@ -41,13 +42,14 @@ class DraftModeFormField<T> extends StatefulWidget {
     this.autocorrect = false,
     this.lines,
     this.formatter,
+    this.keyboardType,
   });
 
   @override
-  State<DraftModeFormField> createState() => DraftModeFormFieldState<T>();
+  State<DraftModeFormField<T>> createState() => DraftModeFormFieldState<T>();
 }
 
-class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
+class DraftModeFormFieldState<T> extends State<DraftModeFormField<T>> {
   late final TextEditingController _controller;
   final _fieldKey = GlobalKey<FormFieldState<T>>();
 
@@ -57,19 +59,18 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   DraftModeFormState? _form;
   bool _fieldRegistered = false;
   bool _showErrorOnBlur = false;
-  late DraftModerFormFormatterInterface? _inputFormatter;
+  DraftModerFormFormatterInterface<T>? _inputFormatter;
   late TextInputType? _keyboardType;
 
   @override
   void initState() {
     super.initState();
-    _inputFormatter = widget.formatter ?? _getInputFormatter<T>();
-    _keyboardType = _inputFormatter?.getTextInputType();
-    dynamic _value =
+    _recomputeFormatterAndKeyboard();
+    final dynamic initialValue =
         _inputFormatter?.encode(widget.attribute.value) ??
         widget.attribute.value;
 
-    _controller = TextEditingController(text: _value.toString());
+    _controller = TextEditingController(text: _stringify(initialValue));
     _obscureOn = widget.obscureText;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -114,16 +115,32 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
   @override
   void didUpdateWidget(covariant DraftModeFormField<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _recomputeFormatterAndKeyboard();
     if (!identical(oldWidget.attribute, widget.attribute)) {
       _detachFromForm(attribute: oldWidget.attribute);
       _syncFormAssociation();
     }
     if (!_focusNode.hasFocus) {
-      String? _value = (_inputFormatter != null)
+      final dynamic nextValue = (_inputFormatter != null)
           ? _inputFormatter?.encode(widget.attribute.value)
           : widget.attribute.value;
-      _applyFormattedText(_value ?? "");
+      _applyFormattedText(_stringify(nextValue));
     }
+  }
+
+  void _recomputeFormatterAndKeyboard() {
+    final nextFormatter = widget.formatter ?? _inferFormatter();
+    final nextKeyboardType =
+        widget.keyboardType ?? nextFormatter?.getTextInputType();
+
+    _inputFormatter = nextFormatter;
+    _keyboardType = nextKeyboardType;
+  }
+
+  String _stringify(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value;
+    return value.toString();
   }
 
   void _applyFormattedText(String next) {
@@ -136,12 +153,12 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     );
   }
 
-  DraftModerFormFormatterInterface? _getInputFormatter<T>() {
+  DraftModerFormFormatterInterface<T>? _inferFormatter() {
     switch (T) {
       case int:
-        return DraftModeFormTypeInt();
+        return DraftModeFormTypeInt() as DraftModerFormFormatterInterface<T>;
       case double:
-        return DraftModeFormTypeDouble();
+        return DraftModeFormTypeDouble() as DraftModerFormFormatterInterface<T>;
       default:
         return null;
     }
@@ -153,12 +170,12 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     _form?.registerProperty(widget.attribute);
     final bool _keyboardTypeDecimal = _keyboardType?.decimal ?? false;
     final bool _keyboardTypeSigned = _keyboardType?.signed ?? false;
-    final useKeyboardType = (_keyboardTypeSigned)
+    final TextInputType useKeyboardType = _keyboardTypeSigned
         ? TextInputType.numberWithOptions(
             decimal: _keyboardTypeDecimal,
             signed: false,
           )
-        : _keyboardType;
+        : (_keyboardType ?? TextInputType.text);
     final List<TextInputFormatter>? inputFormatter = (_inputFormatter != null)
         ? [_inputFormatter!]
         : null;
@@ -232,12 +249,9 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             onChanged: (val) {
               // Convert the localized input back into the widget's generic type
               // so form consumers never see the grouped string representation.
-              final typed = (_inputFormatter != null)
-                  ? _inputFormatter?.decode(val)
-                  : val;
-              // `T` defaults to `dynamic`, but explicit cast keeps type
-              // inference stable when callers opt into a concrete type.
-              // ignore: unnecessary_cast
+              final T? typed = (_inputFormatter != null)
+                  ? _inputFormatter!.decode(val)
+                  : val as T?;
               field.didChange(typed);
               _form?.updateProperty(widget.attribute, typed);
             },
@@ -255,8 +269,9 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
                   _controller.selection = TextSelection.collapsed(
                     offset: _controller.text.length,
                   );
-                  final value = _inputFormatter?.decode(_controller.text) as T?;
+                  final T? value = _inputFormatter?.decode(_controller.text);
                   _fieldKey.currentState?.didChange(value);
+                  _form?.updateProperty(widget.attribute, value);
                 },
               )
             : child;
