@@ -61,6 +61,9 @@ class _FakeAttribute<T> implements DraftModeEntityAttributeInterface<T> {
   Iterable<DraftModeEntityTypedValidator> validatorsByType(
     DraftModeValidatorType type,
   ) => const <DraftModeEntityTypedValidator>[];
+
+  @override
+  DraftModeEntityAttributeKind? get kind => throw UnimplementedError();
 }
 
 class _FakeFormState implements DraftModeFormStateI {

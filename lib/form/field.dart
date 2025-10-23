@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
 import '../entity/interface.dart';
 import '../platform/buttons.dart';
@@ -111,10 +112,50 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
     }
   }
 
+  DraftModeEntityAttributeKind _typeToAttributeType<S>() {
+    if (S == int) return DraftModeEntityAttributeKind.number;
+    if (S == double) return DraftModeEntityAttributeKind.decimal;
+    return DraftModeEntityAttributeKind.text;
+  }
+
+  TextInputType _keyboardFor(DraftModeEntityAttributeKind kind) {
+    switch (kind) {
+      case DraftModeEntityAttributeKind.number:
+        return TextInputType.number;
+      case DraftModeEntityAttributeKind.decimal:
+        return TextInputType.numberWithOptions(decimal: true, signed: true);
+      case DraftModeEntityAttributeKind.phone:
+        return TextInputType.phone;
+      case DraftModeEntityAttributeKind.email:
+        return TextInputType.emailAddress;
+      case DraftModeEntityAttributeKind.datetime:
+        return TextInputType.datetime;
+      default:
+        return TextInputType.text;
+    }
+  }
+
+  List<TextInputFormatter>? _formattersFor<S>(
+    DraftModeEntityAttributeKind kind,
+  ) {
+    switch (kind) {
+      case DraftModeEntityAttributeKind.number:
+        return [FilteringTextInputFormatter.digitsOnly];
+      case DraftModeEntityAttributeKind.decimal:
+        return [FilteringTextInputFormatter.allow(RegExp(r'[-0-9.,]'))];
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _syncFormAssociation();
     _form?.registerProperty(widget.attribute);
+    debugPrint("debugName:${widget.attribute.debugName ?? "-"}");
+    final DraftModeEntityAttributeKind attributeKind =
+        widget.attribute.kind ?? _typeToAttributeType<T>();
+    debugPrint("kind:${attributeKind.toString()}");
     return FormField<T>(
       key: _fieldKey,
       initialValue: widget.attribute.value,
@@ -157,6 +198,9 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             ? maxLengthValidator?.payload as int
             : null;
 
+        final DraftModeEntityAttributeKind attributeKind =
+            widget.attribute.kind ?? _typeToAttributeType<T>();
+
         Widget child = Focus(
           focusNode: _focusNode,
           onFocusChange: (hasFocus) {
@@ -173,7 +217,8 @@ class DraftModeFormFieldState<T> extends State<DraftModeFormField> {
             enabled: widget.enabled,
             placeholder: widget.placeholder,
             obscureText: obscured,
-            keyboardType: widget.keyboardType,
+            keyboardType: widget.keyboardType ?? _keyboardFor(attributeKind),
+            inputFormatters: _formattersFor<T>(attributeKind),
             textInputAction: widget.textInputAction,
             prefix: widget.prefix,
             autocorrect: widget.autocorrect,
