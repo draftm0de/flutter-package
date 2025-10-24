@@ -1,6 +1,7 @@
 import 'package:draftmode/platform/buttons.dart';
 import 'package:draftmode/platform/config.dart';
 import 'package:draftmode/platform/styles.dart';
+import 'package:draftmode/ui/box_circle.dart';
 import 'package:draftmode/ui/button.dart';
 import 'package:draftmode/ui/confirm.dart';
 import 'package:draftmode/ui/date_time/time_line.dart';
@@ -175,6 +176,75 @@ void main() {
   group('DraftModeDateTimeline asserts', () {
     test('throws when width is not positive', () {
       expect(() => DraftModeDateTimeline(width: 0), throwsAssertionError);
+    });
+  });
+
+  group('DraftModeUIBoxCircle', () {
+    testWidgets('applies provided styling and child', (tester) async {
+      const double size = 36;
+      const Color color = CupertinoColors.systemIndigo;
+      const Color borderColor = CupertinoColors.black;
+      const Color backgroundColor = CupertinoColors.systemGrey2;
+
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: DraftModeUIBoxCircle(
+            size: size,
+            color: color,
+            borderColor: borderColor,
+            backgroundColor: backgroundColor,
+            borderWidth: 3,
+            child: Icon(CupertinoIcons.check_mark_circled),
+          ),
+        ),
+      );
+
+      final Finder sizedBoxFinder = find.descendant(
+        of: find.byType(DraftModeUIBoxCircle),
+        matching: find.byType(SizedBox),
+      );
+      final SizedBox sizeBox = tester.widget<SizedBox>(sizedBoxFinder.first);
+      expect(sizeBox.width, size);
+      expect(sizeBox.height, size);
+      expect(find.byIcon(CupertinoIcons.check_mark_circled), findsOneWidget);
+
+      final Finder containerFinder = find.descendant(
+        of: find.byType(DraftModeUIBoxCircle),
+        matching: find.byType(Container),
+      );
+      final Container container = tester.widget<Container>(
+        containerFinder.first,
+      );
+      final BoxDecoration decoration = container.decoration! as BoxDecoration;
+      expect(decoration.color, backgroundColor);
+      final Border border = decoration.border! as Border;
+      expect(border.top.width, 3);
+      expect(border.top.color, borderColor);
+    });
+
+    testWidgets('falls back to the primary color for the border', (
+      tester,
+    ) async {
+      const Color color = CupertinoColors.activeGreen;
+
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: DraftModeUIBoxCircle(color: color),
+        ),
+      );
+
+      final Finder containerFinder = find.descendant(
+        of: find.byType(DraftModeUIBoxCircle),
+        matching: find.byType(Container),
+      );
+      final Container container = tester.widget<Container>(
+        containerFinder.first,
+      );
+      final BoxDecoration decoration = container.decoration! as BoxDecoration;
+      final Border border = decoration.border! as Border;
+      expect(border.top.color, color);
     });
   });
 

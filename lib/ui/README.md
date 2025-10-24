@@ -25,6 +25,9 @@ entity logic:
   platform red accent.
 - `date_time/time_line.dart` – decorative timeline gutter that mirrors the
   inset grouped lists on iOS so contextual date content has a native anchor.
+- `box_circle.dart` – circular icon container backing the timeline nodes and
+  other status adornments, replacing the legacy `icon_filled` helper with
+  configurable border and background styling.
 - `button.dart` – reusable platform-aware button used by higher-level widgets
   such as form actions.
 
