@@ -1,33 +1,26 @@
 import 'package:flutter/cupertino.dart';
 
-class DraftModeUIIconFilled extends StatelessWidget {
+class DraftModeUIBoxCircle extends StatelessWidget {
   final double size;
   final Color color;
   final Color? borderColor;
-  final Color? iconColor;
   final Color backgroundColor;
   final double borderWidth;
-  final IconData? innerIcon;
-  final double? innerIconSize;
+  final Widget? child;
 
-  const DraftModeUIIconFilled({
+  const DraftModeUIBoxCircle({
     super.key,
+    this.child,
     this.size = 26,
     this.color = CupertinoColors.activeBlue,
     this.borderColor,
-    this.iconColor,
     this.backgroundColor = CupertinoColors.white,
     this.borderWidth = 1.5,
-    this.innerIcon,
-    this.innerIconSize = 20,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double innerSize = innerIconSize ?? size * 0.8;
-
     final Color resolvedBorderColor = borderColor ?? color;
-    final Color resolvedIconColor = iconColor ?? color;
 
     return SizedBox(
       width: size,
@@ -48,8 +41,7 @@ class DraftModeUIIconFilled extends StatelessWidget {
               ),
             ),
           ),
-          if (innerIcon != null)
-            Icon(innerIcon, size: innerSize, color: resolvedIconColor),
+          if (child != null) child!,
         ],
       ),
     );

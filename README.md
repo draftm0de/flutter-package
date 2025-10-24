@@ -23,7 +23,8 @@ with existing projects, from validation and draft handling to secure storage.
 - [Storage](lib/storage/README.md): persistence contracts plus shared/secure
   implementations.
 - [UI](lib/ui/README.md): stateless layout widgets for rows, sections, dialogs,
-  and adaptive controls.
+  and adaptive controls, including the new `DraftModeUIBoxCircle` badge helper
+  that replaces the legacy icon_filled timeline adornment.
 - [Platform](lib/platform/README.md): platform detection, shared styling, icon
   helpers, and localisation fallbacks.
 - [Page](lib/page/README.md): scaffolding, navigation bars, and loading

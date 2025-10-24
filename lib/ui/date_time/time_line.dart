@@ -1,11 +1,10 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-
 import 'package:flutter/cupertino.dart';
 
 import '../../platform/buttons.dart';
 import '../../platform/styles.dart';
-import '../icon_filled.dart';
+import '../box_circle.dart';
 
 /// Paints a vertical timeline gutter used in date/time pickers to match the
 /// native grouped form layout on iOS.
@@ -89,15 +88,17 @@ class DraftModeDateTimeline extends StatelessWidget {
                 Positioned(
                   left: nodeLeft,
                   top: nodeTop,
-                  child: DraftModeUIIconFilled(
+                  child: DraftModeUIBoxCircle(
                     size: _nodeDiameter,
                     color: resolvedLineColor,
                     borderColor: _scaledOpacity(resolvedLineColor, 0.6),
-                    iconColor: _scaledOpacity(resolvedLineColor, 0.9),
                     backgroundColor: DraftModeStyleColor.primary.background,
                     borderWidth: _nodeBorderWidth,
-                    innerIcon: resolvedIcon,
-                    innerIconSize: resolvedIcon != null ? 20 : null,
+                    child: Icon(
+                      resolvedIcon,
+                      size: resolvedIcon != null ? 20 : null,
+                      color: _scaledOpacity(resolvedLineColor, 0.9),
+                    ),
                   ),
                 ),
               ],
