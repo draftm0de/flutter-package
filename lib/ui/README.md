@@ -6,8 +6,9 @@ entity logic:
 - `confirm.dart` – platform-aware confirmation and error dialogs with
   localization fallbacks, a convenience `show` helper, and a
   `DraftModeUIConfirmStyle` toggle for destructive acknowledgements.
-- `row.dart` – labeled form row shell that applies platform padding and label
-  styling.
+- `row.dart` – labeled form row shell that applies platform padding/label
+  styling and supports optional background, height, and padding overrides for
+  grouped lists.
 - `section.dart` – groups rows into platform-appropriate sections and exposes an
   inherited scope for descendants.
 - `switch.dart` – adaptive boolean toggle that mirrors the native widget.
@@ -24,7 +25,8 @@ entity logic:
   view while paging through weeks and highlights the active day with the
   platform red accent.
 - `date_time/time_line.dart` – decorative timeline gutter that mirrors the
-  inset grouped lists on iOS so contextual date content has a native anchor.
+  inset grouped lists on iOS so contextual date content has a native anchor,
+  backed by the shared `DraftModeUIBoxCircle` node renderer.
 - `box_circle.dart` – circular icon container backing the timeline nodes and
   other status adornments, replacing the legacy `icon_filled` helper with
   configurable border and background styling.

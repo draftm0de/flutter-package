@@ -71,9 +71,6 @@ class DraftModeDateTimeline extends StatelessWidget {
           final double resolvedCenterY =
               nodeCenterY ?? top + (bottom - top) / 2;
           final double nodeTop = resolvedCenterY - _nodeDiameter / 2;
-          final double nodeLeft =
-              (width - _nodeDiameter) / 2 + _nodeBorderWidth / 2;
-
           return SizedBox(
             width: width,
             height: height,
@@ -86,7 +83,7 @@ class DraftModeDateTimeline extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  left: nodeLeft,
+                  left: 0,
                   top: nodeTop,
                   child: DraftModeUIBoxCircle(
                     size: _nodeDiameter,
@@ -118,7 +115,7 @@ class _TimelinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double cx = size.width / 2;
+    final double cx = size.width / 2 - DraftModeDateTimeline._lineWidth;
     final double top = DraftModeDateTimeline._padTop;
     final double bottom = math.max(
       top,
@@ -139,6 +136,7 @@ class _TimelinePainter extends CustomPainter {
 }
 
 Color _scaledOpacity(Color color, double factor) {
-  final double scaled = (color.a * 255.0 * factor).clamp(0.0, 255.0);
+  final int baseAlpha = ((color.a * 255.0).round()) & 0xff;
+  final double scaled = (baseAlpha * factor).clamp(0.0, 255.0);
   return color.withAlpha(scaled.round());
 }
