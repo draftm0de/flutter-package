@@ -45,11 +45,14 @@ void main() {
       );
     });
 
-    testWidgets('doubles vertical padding when requested', (tester) async {
+    testWidgets('allows custom vertical padding', (tester) async {
       await tester.pumpWidget(
-        const Directionality(
+        Directionality(
           textDirection: TextDirection.ltr,
-          child: DraftModeUIRow(child: Text('value'), verticalDoubled: true),
+          child: DraftModeUIRow(
+            child: const Text('value'),
+            verticalPadding: DraftModeStylePadding.tertiary * 2,
+          ),
         ),
       );
 
@@ -63,6 +66,41 @@ void main() {
       );
       expect(find.byType(Row), findsNothing);
     });
+
+    testWidgets(
+      'wraps content in a container when background styling supplied',
+      (tester) async {
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: DraftModeUIRow(
+              child: const Text('value'),
+              backgroundColor: CupertinoColors.systemGrey5,
+              height: 64,
+            ),
+          ),
+        );
+
+        final container = tester.widget<Container>(find.byType(Container));
+        expect(container.color, CupertinoColors.systemGrey5);
+        expect(container.constraints?.minHeight, 64);
+        expect(container.constraints?.maxHeight, 64);
+        expect(
+          tester
+              .widget<Padding>(
+                find.descendant(
+                  of: find.byType(Container),
+                  matching: find.byType(Padding),
+                ),
+              )
+              .padding,
+          EdgeInsets.symmetric(
+            horizontal: DraftModeStylePadding.primary,
+            vertical: DraftModeStylePadding.tertiary,
+          ),
+        );
+      },
+    );
   });
 
   group('DraftModeDateTimeline', () {
@@ -86,6 +124,7 @@ void main() {
 
       final Size size = tester.getSize(find.byType(DraftModeDateTimeline));
       expect(size, const Size(32, 80));
+      expect(find.byType(DraftModeUIBoxCircle), findsOneWidget);
       expect(
         find.descendant(
           of: find.byType(DraftModeDateTimeline),
