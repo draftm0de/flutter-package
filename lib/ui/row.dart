@@ -7,11 +7,14 @@ import '../platform/styles.dart';
 /// [PlatformStyles.labelWidth] before expanding [child]. Padding follows the
 /// shared spacing constants in [DraftModeStylePadding] so rows visually align
 /// with native grouped lists.
+/// Use [alignment] to fine-tune how [child] should sit within the content area
+/// and provide custom [padding], [backgroundColor], or [height] overrides to
+/// blend with bespoke grouped list treatments.
 class DraftModeUIRow extends StatelessWidget {
   final Widget child;
   final String? label;
   final AlignmentGeometry alignment;
-  final double? verticalPadding;
+  final EdgeInsets? padding;
   final double? height;
   final Color? backgroundColor;
 
@@ -20,7 +23,7 @@ class DraftModeUIRow extends StatelessWidget {
     required this.child,
     this.label,
     this.alignment = Alignment.centerLeft,
-    this.verticalPadding,
+    this.padding,
     this.backgroundColor,
     this.height,
   });
@@ -29,8 +32,6 @@ class DraftModeUIRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasLabel = label?.trim().isNotEmpty ?? false;
     final Widget content = Align(alignment: alignment, child: child);
-    final double paddingVertical =
-        verticalPadding ?? DraftModeStylePadding.tertiary;
 
     final Widget body = hasLabel
         ? Row(
@@ -46,20 +47,22 @@ class DraftModeUIRow extends StatelessWidget {
           )
         : content;
 
-    final EdgeInsets padding = EdgeInsets.symmetric(
-      horizontal: DraftModeStylePadding.primary,
-      vertical: paddingVertical,
-    );
+    final EdgeInsets containerPadding =
+        padding ??
+        EdgeInsets.symmetric(
+          horizontal: DraftModeStylePadding.primary,
+          vertical: DraftModeStylePadding.tertiary,
+        );
 
     if (backgroundColor != null || height != null) {
       return Container(
         height: height,
         color: backgroundColor,
-        padding: padding,
+        padding: containerPadding,
         child: body,
       );
     }
 
-    return Padding(padding: padding, child: body);
+    return Padding(padding: containerPadding, child: body);
   }
 }

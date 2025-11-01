@@ -45,13 +45,16 @@ void main() {
       );
     });
 
-    testWidgets('allows custom vertical padding', (tester) async {
+    testWidgets('allows custom padding overrides', (tester) async {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
           child: DraftModeUIRow(
             child: const Text('value'),
-            verticalPadding: DraftModeStylePadding.tertiary * 2,
+            padding: EdgeInsets.symmetric(
+              horizontal: DraftModeStylePadding.primary,
+              vertical: DraftModeStylePadding.tertiary * 2,
+            ),
           ),
         ),
       );
@@ -81,19 +84,17 @@ void main() {
           ),
         );
 
-        final container = tester.widget<Container>(find.byType(Container));
+        final containerFinder = find.byWidgetPredicate(
+          (widget) =>
+              widget is Container &&
+              widget.color == CupertinoColors.systemGrey5,
+        );
+        final container = tester.widget<Container>(containerFinder);
         expect(container.color, CupertinoColors.systemGrey5);
         expect(container.constraints?.minHeight, 64);
         expect(container.constraints?.maxHeight, 64);
         expect(
-          tester
-              .widget<Padding>(
-                find.descendant(
-                  of: find.byType(Container),
-                  matching: find.byType(Padding),
-                ),
-              )
-              .padding,
+          container.padding,
           EdgeInsets.symmetric(
             horizontal: DraftModeStylePadding.primary,
             vertical: DraftModeStylePadding.tertiary,
@@ -101,6 +102,21 @@ void main() {
         );
       },
     );
+
+    testWidgets('aligns child using the provided alignment', (tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: DraftModeUIRow(
+            alignment: Alignment.centerRight,
+            child: SizedBox.square(dimension: 12),
+          ),
+        ),
+      );
+
+      final align = tester.widget<Align>(find.byType(Align));
+      expect(align.alignment, Alignment.centerRight);
+    });
   });
 
   group('DraftModeDateTimeline', () {

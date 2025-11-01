@@ -5,16 +5,16 @@ import '../storage/interface.dart';
 /// Translates a value of type [T] between strongly typed objects and raw map
 /// representations stored by a [DraftModeEntityRepository]. Implementations are
 /// expected to be pure and deterministic.
-abstract class DraftModeEntityMapper<T> {
+abstract class DraftModeEntityMapperInterface<T> {
   T fromMap(Map<String, dynamic> map);
   Map<String, dynamic> toMap(T value);
   Future<T> empty();
 }
 
 /// Base class for JSON-backed repositories. Handles encoding/decoding and
-/// delegates concrete mapping logic to [DraftModeEntityMapper].
+/// delegates concrete mapping logic to [DraftModeEntityMapperInterface].
 abstract class DraftModeEntityRepository<T>
-    implements DraftModeEntityMapper<T> {
+    implements DraftModeEntityMapperInterface<T> {
   final DraftModeStorage store;
 
   DraftModeEntityRepository(this.store);

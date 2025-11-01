@@ -7,8 +7,8 @@ entity logic:
   localization fallbacks, a convenience `show` helper, and a
   `DraftModeUIConfirmStyle` toggle for destructive acknowledgements.
 - `row.dart` – labeled form row shell that applies platform padding/label
-  styling and supports optional background, height, and padding overrides for
-  grouped lists.
+  styling and supports optional alignment, background, height, and padding
+  overrides for grouped lists.
 - `section.dart` – groups rows into platform-appropriate sections and exposes an
   inherited scope for descendants.
 - `switch.dart` – adaptive boolean toggle that mirrors the native widget.
