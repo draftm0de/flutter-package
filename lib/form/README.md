@@ -43,8 +43,10 @@ Key files:
   customizable `emptyPlaceholder` widget for empty states so call sites can
   render richer guidance than a plain string.
 - `switch.dart` - boolean toggle wired into the draft map and validation flow.
-- `button.dart` / `button_text.dart` - submit buttons that validate associated
-  forms before invoking async handlers.
+- `button.dart` / `button_text.dart` / `button_submit.dart` - submit buttons
+  that validate associated forms before invoking async handlers. The submit
+  wrapper stretches to the container width and applies the primary color
+  palette by default.
 - `date_time.dart` - slim single-attribute picker that wraps the inline iOS
   calendar and time controls without range or duration features. The widget
   hooks a `DraftModeEntityAttribute.addValueMapper` to normalize timestamps (for
