@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:draftmode/form.dart';
 import 'package:draftmode/platform/config.dart';
+import 'package:draftmode/platform/styles.dart';
 
 void main() {
   setUp(() {
@@ -113,7 +114,7 @@ void main() {
         home: DraftModeForm(
           child: DraftModeFormButton(
             content: const Text('Submit'),
-            styleSize: DraftModeFormButtonSize.large,
+            styleSize: DraftModeStyleButtonSize.large,
             stretched: true,
           ),
         ),

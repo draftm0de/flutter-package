@@ -2,18 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../platform/config.dart';
+import '../platform/styles.dart';
 import '../ui/button.dart';
 import '../ui/diagnostics.dart';
 import 'button_spinner.dart';
-
-/// Available button sizes exposed by [DraftModeFormButton]. The medium variant
-/// mirrors the default `CupertinoButton` height while the large variant offers
-/// more comfortable tap targets for primary actions.
-typedef DraftModeFormButtonSize = DraftModeUIButtonSize;
-
-/// Optional palette used by [DraftModeFormButton] to render contextual
-/// variations (e.g. neutral time pickers vs. primary submit buttons).
-typedef DraftModeFormButtonColor = DraftModeUIButtonColor;
 
 /// Adaptive form button that understands Draftmode validation semantics. When
 /// provided with a [formKey] it validates and saves before invoking
@@ -25,8 +17,8 @@ class DraftModeFormButton extends StatefulWidget {
   final Future<void> Function()? onPressed;
 
   final GlobalKey<FormState>? formKey;
-  final DraftModeFormButtonSize? styleSize;
-  final DraftModeFormButtonColor? styleColor;
+  final DraftModeStyleButtonSizeRole? styleSize;
+  final DraftModeStyleButtonColorRole? styleColor;
   final bool stretched;
 
   const DraftModeFormButton({
@@ -46,12 +38,6 @@ class DraftModeFormButton extends StatefulWidget {
 
 class _DraftModeFormButtonState extends State<DraftModeFormButton> {
   bool _isPending = false;
-
-  DraftModeFormButtonColor get _color =>
-      widget.styleColor ?? DraftModeFormButtonColor.submit;
-
-  DraftModeFormButtonSize get _size =>
-      widget.styleSize ?? DraftModeFormButtonSize.medium;
 
   Future<void> _handlePressed(BuildContext context) async {
     if (_isPending) return;
@@ -95,8 +81,8 @@ class _DraftModeFormButtonState extends State<DraftModeFormButton> {
       ),
       isPending: _isPending,
       onPressed: () => _handlePressed(context),
-      size: _size,
-      color: _color,
+      styleSize: widget.styleSize,
+      styleColor: widget.styleColor,
       stretched: widget.stretched,
     );
   }

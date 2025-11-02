@@ -119,7 +119,7 @@ class DraftModeElementDateTimeMonthGrid extends StatelessWidget {
                     const SizedBox(width: 6),
                     Icon(
                       PlatformButtons.arrowDown,
-                      size: PlatformStyles.buttonSizeSmall,
+                      size: DraftModeStyleIconSize.medium,
                     ),
                   ],
                 ),

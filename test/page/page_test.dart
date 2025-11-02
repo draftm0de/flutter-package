@@ -3,6 +3,7 @@ import 'package:draftmode/l10n/app_localizations_en.dart';
 import 'package:draftmode/page/page.dart';
 import 'package:draftmode/page/navigation/bottom_item.dart';
 import 'package:draftmode/platform/config.dart';
+import 'package:draftmode/platform/styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -243,6 +244,25 @@ void main() {
 
       expect(called, isTrue);
       expect(find.text('Body'), findsOneWidget);
+    });
+
+    testWidgets('defaults to tertiary background when not overridden', (
+      tester,
+    ) async {
+      PlatformConfig.mode = ForcedPlatform.ios;
+
+      await tester.pumpWidget(
+        _cupertinoShell(
+          const DraftModePage(navigationTitle: 'Title', body: Text('Body')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CupertinoPageScaffold), findsOneWidget);
+      final scaffold = tester.widget<CupertinoPageScaffold>(
+        find.byType(CupertinoPageScaffold),
+      );
+      expect(scaffold.backgroundColor, DraftModeStyleColor.tertiary.background);
     });
 
     testWidgets('renders body directly and applies background override', (

@@ -2,24 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' as material;
 
 import '../platform/config.dart';
-
-/// Shared button sizing used by [DraftModeUIButton].
-enum DraftModeUIButtonSize { medium, large }
-
-/// Semantic palette applied to [DraftModeUIButton] variants.
-enum DraftModeUIButtonColor { dateTime, submit }
+import '../platform/styles.dart';
 
 /// Platform-aware button that mirrors native styling on iOS and Material.
 ///
 /// Presentation belongs to the UI layer; calling code is responsible for
-/// providing any domain behaviour such as form validation.
+/// providing any domain behaviour such as form validation. Consumers can pass
+/// the semantic sizing and colour roles defined in `DraftModeStyleButton*` to
+/// keep CTA treatments consistent across the app.
 class DraftModeUIButton extends StatelessWidget {
   final Widget child;
   final Widget? pendingChild;
   final bool isPending;
   final VoidCallback? onPressed;
-  final DraftModeUIButtonSize size;
-  final DraftModeUIButtonColor color;
+  final DraftModeStyleButtonSizeRole? styleSize;
+  final DraftModeStyleButtonColorRole? styleColor;
   final bool stretched;
 
   const DraftModeUIButton({
@@ -28,36 +25,35 @@ class DraftModeUIButton extends StatelessWidget {
     this.pendingChild,
     this.isPending = false,
     this.onPressed,
-    this.size = DraftModeUIButtonSize.medium,
-    this.color = DraftModeUIButtonColor.submit,
+    this.styleSize,
+    this.styleColor,
     this.stretched = false,
   });
 
   CupertinoButtonSize _resolveCupertinoSize() {
-    switch (size) {
-      case DraftModeUIButtonSize.large:
-        return CupertinoButtonSize.large;
-      case DraftModeUIButtonSize.medium:
-        return CupertinoButtonSize.medium;
+    if (styleSize == DraftModeStyleButtonSize.medium) {
+      return CupertinoButtonSize.medium;
     }
+    if (styleSize == DraftModeStyleButtonSize.small) {
+      return CupertinoButtonSize.small;
+    }
+    return CupertinoButtonSize.large;
   }
 
-  double _resolveMaterialHeight() {
-    switch (size) {
-      case DraftModeUIButtonSize.large:
-        return 48;
-      case DraftModeUIButtonSize.medium:
-        return 40;
-    }
+  Color _resolveBackgroundColor() {
+    return (styleColor != null)
+        ? styleColor!.background
+        : DraftModeStyleButtonColor.submit.background;
   }
 
-  Color _resolveCupertinoColor() {
-    switch (color) {
-      case DraftModeUIButtonColor.dateTime:
-        return CupertinoColors.systemGrey5;
-      case DraftModeUIButtonColor.submit:
-        return CupertinoColors.activeBlue;
+  double _resolveHeight() {
+    if (styleSize == DraftModeStyleButtonSize.medium) {
+      return DraftModeStyleButtonSize.medium.height;
     }
+    if (styleSize == DraftModeStyleButtonSize.small) {
+      return DraftModeStyleButtonSize.small.height;
+    }
+    return DraftModeStyleButtonSize.large.height;
   }
 
   Widget _buildCupertino() {
@@ -65,37 +61,16 @@ class DraftModeUIButton extends StatelessWidget {
       padding: EdgeInsets.zero,
       sizeStyle: _resolveCupertinoSize(),
       borderRadius: BorderRadius.circular(12),
-      color: _resolveCupertinoColor(),
+      color: _resolveBackgroundColor(),
       onPressed: isPending ? null : onPressed,
       child: isPending && pendingChild != null ? pendingChild! : child,
     );
   }
 
-  Color _materialBackground(BuildContext context) {
-    final scheme = material.Theme.of(context).colorScheme;
-    switch (color) {
-      case DraftModeUIButtonColor.dateTime:
-        return scheme.surfaceContainerHighest;
-      case DraftModeUIButtonColor.submit:
-        return scheme.primary;
-    }
-  }
-
-  Color _materialForeground(BuildContext context) {
-    final scheme = material.Theme.of(context).colorScheme;
-    switch (color) {
-      case DraftModeUIButtonColor.dateTime:
-        return scheme.onSurface;
-      case DraftModeUIButtonColor.submit:
-        return material.Colors.white;
-    }
-  }
-
   Widget _buildMaterial(BuildContext context) {
-    final height = _resolveMaterialHeight();
+    final height = _resolveHeight();
     final baseStyle = material.FilledButton.styleFrom(
-      backgroundColor: _materialBackground(context),
-      foregroundColor: _materialForeground(context),
+      backgroundColor: _resolveBackgroundColor(),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       minimumSize: Size(0, height),
       padding: const EdgeInsets.symmetric(horizontal: 16),

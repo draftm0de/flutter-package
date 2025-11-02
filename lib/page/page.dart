@@ -132,8 +132,7 @@ class DraftModePage extends StatelessWidget {
           );
 
     final Color background =
-        containerBackgroundColor ??
-        PlatformStyles.containerBackgroundColor(context);
+        containerBackgroundColor ?? DraftModeStyleColor.tertiary.background;
 
     return PlatformConfig.isIOS
         ? CupertinoPageScaffold(
