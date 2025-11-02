@@ -19,8 +19,7 @@ with existing projects, from validation and draft handling to secure storage.
 - [Entity](lib/entity/README.md): attribute interfaces, collections, repositories,
   validators.
 - [Form](lib/form/interface.dart): form state contract consumed by the widget
-  layer (`lib/form/*`), plus helpers like `DraftModeFormButtonSubmit` for
-  consistent primary CTA styling.
+  layer (`lib/form/*`).
 - [Storage](lib/storage/README.md): persistence contracts plus shared/secure
   implementations.
 - [UI](lib/ui/README.md): stateless layout widgets for rows, sections, dialogs,

@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'config.dart';
-
 class DraftModeStyleColorRole {
   final Color background;
   final Color text;
@@ -23,6 +21,10 @@ class DraftModeStyleColor {
   );
   static DraftModeStyleColorRole get secondary => const DraftModeStyleColorRole(
     background: CupertinoColors.secondarySystemBackground,
+    text: CupertinoColors.secondaryLabel,
+  );
+  static DraftModeStyleColorRole get tertiary => const DraftModeStyleColorRole(
+    background: CupertinoColors.systemGroupedBackground,
     text: CupertinoColors.secondaryLabel,
   );
 }
@@ -77,6 +79,60 @@ class DraftModeStyleText {
   );
 }
 
+class DraftModeStyleButtonSizeRole {
+  final double height;
+  final double fontSize;
+  final FontWeight fontWeight;
+  const DraftModeStyleButtonSizeRole({
+    required this.height,
+    required this.fontSize,
+    required this.fontWeight,
+  });
+}
+
+class DraftModeStyleButtonSize {
+  static DraftModeStyleButtonSizeRole get large => DraftModeStyleButtonSizeRole(
+    height: 48,
+    fontSize: 18,
+    fontWeight: FontWeight.normal,
+  );
+
+  static DraftModeStyleButtonSizeRole get medium =>
+      DraftModeStyleButtonSizeRole(
+        height: 40,
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
+      );
+
+  static DraftModeStyleButtonSizeRole get small => DraftModeStyleButtonSizeRole(
+    height: 34,
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+  );
+}
+
+class DraftModeStyleButtonColorRole {
+  final Color background;
+  final Color font;
+  const DraftModeStyleButtonColorRole({
+    required this.background,
+    required this.font,
+  });
+}
+
+class DraftModeStyleButtonColor {
+  static DraftModeStyleButtonColorRole get submit =>
+      DraftModeStyleButtonColorRole(
+        background: DraftModeStyleColorTint.primary.background,
+        font: DraftModeStyleColorTint.primary.text,
+      );
+  static DraftModeStyleButtonColorRole get dateTime =>
+      DraftModeStyleButtonColorRole(
+        background: CupertinoColors.systemGrey5,
+        font: Colors.black,
+      );
+}
+
 class DraftModeStyleFontSize {
   static double get primary => 17;
   static double get secondary => 15;
@@ -87,6 +143,12 @@ class DraftModeStyleFontWeight {
   static FontWeight get primary => FontWeight.normal;
   static FontWeight get secondary => FontWeight.w500;
   static FontWeight get tertiary => FontWeight.bold;
+}
+
+class DraftModeStyleIconSize {
+  static double get large => 22;
+  static double get medium => 18;
+  static double get small => 16;
 }
 
 class DraftModeStylePadding {
@@ -115,28 +177,4 @@ class DraftModeStyleNavigationBar {
 class PlatformStyles {
   /// Default width reserved for labels in form rows.
   static double labelWidth = 100;
-
-  /// Default vertical padding around content containers.
-  static double verticalContainerPadding = 8;
-
-  /// Default size for small icon-only buttons.
-  static double buttonSizeSmall = 18;
-
-  /// Returns a neutral background colour for page scaffolds.
-  static Color containerBackgroundColor(BuildContext context) =>
-      PlatformConfig.isIOS
-      ? CupertinoColors.systemGroupedBackground
-      : Theme.of(context).scaffoldBackgroundColor;
-
-  /// Platform-specific button text style used across DraftMode components.
-  static TextStyle buttonTextStyle(BuildContext context) {
-    if (PlatformConfig.isIOS) {
-      return const TextStyle(
-        color: CupertinoColors.white,
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
-      );
-    }
-    return const TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
-  }
 }

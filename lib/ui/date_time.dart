@@ -52,8 +52,8 @@ class DraftModeUIDateTimeField extends StatelessWidget {
       width: width,
       child: DraftModeUIButton(
         stretched: false,
-        size: DraftModeUIButtonSize.medium,
-        color: DraftModeUIButtonColor.dateTime,
+        styleSize: DraftModeStyleButtonSize.medium,
+        styleColor: DraftModeStyleButtonColor.dateTime,
         onPressed: () => onPickerModeChanged(target),
         child: Text(
           textAlign: TextAlign.center,

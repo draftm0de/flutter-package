@@ -23,6 +23,8 @@ This file captures conventions and guardrails for automated contributors.
   hook already runs format + tests; confirm it stays executable (`chmod +x
   .git/hooks/pre-commit`).
 - Avoid committing artefacts such as `coverage/` outputs.
+- When preparing commit summaries, respond with commit-ready prose (no file
+  paths or line references) so the text can be used verbatim.
 - Never commit directly to the `main` branch; if a session starts on `main`,
   create a feature branch automatically before staging changes. When in doubt,
   prefer creating a new branch before making edits.

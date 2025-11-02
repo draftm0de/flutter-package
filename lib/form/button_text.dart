@@ -4,15 +4,15 @@ import '../platform/styles.dart';
 import 'button.dart';
 
 /// Convenience wrapper around [DraftModeFormButton] that renders a styled text
-/// label matching the platform typography conventions defined in
-/// [PlatformStyles].
+/// label using the shared `DraftModeStyleButton*` tokens. Opt into alternate
+/// palettes or sizing by supplying the relevant role objects.
 class DraftModeFormButtonText extends StatelessWidget {
   final String text;
   final Widget? loadWidget;
   final Future<void> Function()? onPressed;
   final GlobalKey<FormState>? formKey;
-  final DraftModeFormButtonSize? styleSize;
-  final DraftModeFormButtonColor? styleColor;
+  final DraftModeStyleButtonSizeRole? styleSize;
+  final DraftModeStyleButtonColorRole? styleColor;
   final bool stretched;
 
   const DraftModeFormButtonText({
@@ -27,31 +27,28 @@ class DraftModeFormButtonText extends StatelessWidget {
   });
 
   TextStyle _resolveTextStyle(BuildContext context) {
-    final base = PlatformStyles.buttonTextStyle(context);
-    final resolvedColor = () {
-      switch (styleColor ?? DraftModeFormButtonColor.submit) {
-        case DraftModeFormButtonColor.dateTime:
-          return CupertinoColors.black;
-        case DraftModeFormButtonColor.submit:
-          return CupertinoColors.white;
-      }
-    }();
+    final Color textColor = (styleColor != null)
+        ? styleColor!.font
+        : DraftModeStyleButtonColor.submit.font;
 
-    final resolvedSize = () {
-      switch (styleSize ?? DraftModeFormButtonSize.medium) {
-        case DraftModeFormButtonSize.large:
-          return 16.0;
-        case DraftModeFormButtonSize.medium:
-          return 14.0;
-      }
-    }();
+    final double fontSize = (styleSize != null)
+        ? styleSize!.fontSize
+        : DraftModeStyleButtonSize.large.fontSize;
 
-    return base.copyWith(color: resolvedColor, fontSize: resolvedSize);
+    final FontWeight fontWeight = (styleSize != null)
+        ? styleSize!.fontWeight
+        : DraftModeStyleButtonSize.large.fontWeight;
+
+    return TextStyle(
+      color: textColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final content = Text(text, style: _resolveTextStyle(context));
+    final Widget content = Text(text, style: _resolveTextStyle(context));
     return DraftModeFormButton(
       content: content,
       loadWidget: loadWidget,

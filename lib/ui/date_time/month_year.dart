@@ -52,7 +52,7 @@ class DraftModeUIDateTimeMonthYear extends StatelessWidget {
                     const SizedBox(width: 6),
                     Icon(
                       PlatformButtons.arrowUp,
-                      size: PlatformStyles.buttonSizeSmall,
+                      size: DraftModeStyleIconSize.medium,
                     ),
                   ],
                 ),
